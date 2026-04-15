@@ -1,0 +1,19 @@
+{
+	"spec": "05840bae5c831c76f28eacf1c5530248",
+	"manifest": "a6cb8cbc83c3eff981f91adf5d9a2fc8",
+	"setup": "1efbf0076108ae703c69a8085ea642f9",
+	"schemas": [
+		{
+			"identifier": "geolocate_bulk/schema.py",
+			"hash": "436f3a5fc04f82eb3bfedabb8e15ce57"
+		},
+		{
+			"identifier": "geolocate_ip/schema.py",
+			"hash": "19e82f9be71bdbed10e7909297a22c8c"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "bd524b567f9638ba1c6f7e0c9e45ff2e"
+		}
+	]
+}

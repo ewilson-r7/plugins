@@ -1,0 +1,240 @@
+plugin_spec_version: v2
+extension: plugin
+products:
+  - insightconnect
+name: ip_api
+title: IP API
+description: Geolocate IPv4 addresses, IPv6 addresses, and domain names using the ip-api.com service
+version: 1.0.0
+cloud_ready: true
+vendor: rapid7
+support: rapid7
+status: []
+sdk:
+  type: full
+  version: 6.4.3
+  user: nobody
+key_features:
+  - Geolocate a single IP address or domain name
+  - Geolocate up to 100 IPs or domains in a single batch request
+requirements:
+  - No API key required
+  - Rate limit of 45 requests/minute for single lookups
+  - Rate limit of 15 requests/minute for batch lookups
+resources:
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/ip_api
+  license_url: https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE
+  vendor_url: https://ip-api.com
+tags:
+  - ip
+  - geolocation
+  - network
+  - threat intelligence
+hub_tags:
+  use_cases:
+    - threat_detection_and_response
+  keywords:
+    - network
+  features: []
+
+version_history:
+  - version: "1.0.0"
+    date: "2026-04-15"
+    description: Initial plugin release
+
+types:
+  geolocation_result:
+    status:
+      title: Status
+      description: Query status, either success or fail
+      type: string
+      required: false
+    message:
+      title: Message
+      description: Failure reason when status is fail
+      type: string
+      required: false
+    continent:
+      title: Continent
+      description: Continent name
+      type: string
+      required: false
+    continentCode:
+      title: Continent Code
+      description: Two-letter continent code
+      type: string
+      required: false
+    country:
+      title: Country
+      description: Country name
+      type: string
+      required: false
+    countryCode:
+      title: Country Code
+      description: Two-letter country code (ISO 3166-1 alpha-2)
+      type: string
+      required: false
+    region:
+      title: Region
+      description: Region or state code
+      type: string
+      required: false
+    regionName:
+      title: Region Name
+      description: Region or state name
+      type: string
+      required: false
+    city:
+      title: City
+      description: City name
+      type: string
+      required: false
+    district:
+      title: District
+      description: District name
+      type: string
+      required: false
+    zip:
+      title: ZIP Code
+      description: ZIP or postal code
+      type: string
+      required: false
+    lat:
+      title: Latitude
+      description: Latitude
+      type: float
+      required: false
+    lon:
+      title: Longitude
+      description: Longitude
+      type: float
+      required: false
+    timezone:
+      title: Timezone
+      description: City timezone (tz database format)
+      type: string
+      required: false
+    offset:
+      title: UTC Offset
+      description: Timezone UTC DST offset in seconds
+      type: integer
+      required: false
+    currency:
+      title: Currency
+      description: National currency
+      type: string
+      required: false
+    isp:
+      title: ISP
+      description: Internet Service Provider name
+      type: string
+      required: false
+    org:
+      title: Organization
+      description: Organization name
+      type: string
+      required: false
+    as_number:
+      title: AS Number
+      description: AS number and name (e.g. AS15169 Google LLC)
+      type: string
+      required: false
+    asname:
+      title: AS Name
+      description: AS name (RIR)
+      type: string
+      required: false
+    reverse:
+      title: Reverse DNS
+      description: Reverse DNS of the IP
+      type: string
+      required: false
+    mobile:
+      title: Mobile
+      description: Mobile (cellular) connection
+      type: boolean
+      required: false
+    proxy:
+      title: Proxy
+      description: Proxy, VPN, or Tor exit address
+      type: boolean
+      required: false
+    hosting:
+      title: Hosting
+      description: Hosting, colocated, or data center
+      type: boolean
+      required: false
+    query:
+      title: Query
+      description: IP address or domain used in the query
+      type: string
+      required: false
+
+connection: {}
+
+actions:
+  geolocate_ip:
+    title: Geolocate IP
+    description: Look up geolocation data for a single IPv4 address, IPv6 address, or domain name
+    input:
+      query:
+        title: Query
+        description: IPv4 address, IPv6 address, or domain name to look up
+        type: string
+        required: true
+        example: "8.8.8.8"
+      lang:
+        title: Language
+        description: Language for localized city and country names
+        type: string
+        required: false
+        default: "en"
+        enum:
+          - en
+          - de
+          - es
+          - pt-BR
+          - fr
+          - ja
+          - zh-CN
+          - ru
+        example: "en"
+    output:
+      result:
+        title: Result
+        description: Geolocation result for the queried IP or domain
+        type: geolocation_result
+        required: false
+
+  geolocate_bulk:
+    title: Geolocate Bulk
+    description: Look up geolocation data for up to 100 IPv4 addresses, IPv6 addresses, or domain names in a single request
+    input:
+      queries:
+        title: Queries
+        description: List of IPv4 addresses, IPv6 addresses, or domain names to look up (maximum 100)
+        type: "[]string"
+        required: true
+        example: '["8.8.8.8", "1.1.1.1"]'
+      lang:
+        title: Language
+        description: Language for localized city and country names
+        type: string
+        required: false
+        default: "en"
+        enum:
+          - en
+          - de
+          - es
+          - pt-BR
+          - fr
+          - ja
+          - zh-CN
+          - ru
+        example: "en"
+    output:
+      results:
+        title: Results
+        description: List of geolocation results for the queried IPs or domains
+        type: "[]geolocation_result"
+        required: false
