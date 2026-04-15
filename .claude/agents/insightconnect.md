@@ -131,15 +131,17 @@ If you create stubs for these files they will be overwritten (and your stubs wil
 
 **Never skip `insight-plugin validate`** before declaring work done.
 
-### Empty connection (unauthenticated APIs)
+### Unauthenticated APIs — omit the connection field entirely
 
-For APIs that require no credentials, use an empty connection in the spec:
+For APIs that require no credentials, **do not include a `connection:` field in `plugin.spec.yaml` at all**. The SDK will generate a minimal no-input `ConnectionSchema` automatically.
 
-```yaml
-connection: {}
+The `connection.py` `connect()` method simply instantiates the API client with no credential params:
+
+```python
+def connect(self, params: dict = None) -> None:
+    from icon_my_plugin.util.api import ApiClient
+    self.client = ApiClient(logger=self.logger)
 ```
-
-This generates a minimal `ConnectionSchema` with no inputs. The `connection.py` `connect()` method simply instantiates the API client with no credential params.
 
 ---
 
@@ -152,19 +154,21 @@ This file defines everything: connection inputs, action/trigger/task inputs and 
 ```yaml
 plugin_spec_version: v2
 extension: plugin
-products: [insightconnect]
+products:
+  - insightconnect
 name: plugin_name                  # snake_case, matches directory name
 title: Human Readable Title
 description: One-sentence description of what the plugin does.
 version: 1.0.0                     # semver — see versioning rules below
-connection_version: 1
+cloud_ready: true                  # true unless the integration requires on-prem network access
 vendor: rapid7
 support: rapid7
-cloud_ready: true                  # true unless the integration requires on-prem network access
 status: []
+supported_versions: ["YYYY-MM-DD"] # REQUIRED — date the vendor API version was last verified
 sdk:
   type: full
   version: 6.4.3                   # use the current SDK version from the Dockerfile base image
+  user: nobody
 key_features:
   - Brief feature description
 
@@ -172,12 +176,21 @@ requirements:
   - API credentials
   - Base URL
 
-documentation_links: []
+resources:
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/plugin_name
+  license_url: https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE
+  vendor_url: https://vendor.example.com
+tags:
+  - tag1
+hub_tags:
+  use_cases:
+    - threat_detection_and_response
+  keywords:
+    - network                      # only approved keywords — avoid generic terms like "ip" or "geolocation"
+  features: []
 
 version_history:                   # REQUIRED — validate crashes without this
-  - version: "1.0.0"               # quote the version string
-    date: "YYYY-MM-DD"
-    description: Initial plugin
+  - 1.0.0 - Initial plugin release # format: "x.y.z - Description" as a plain string
 
 # Optional — define reusable complex types
 types:
@@ -191,6 +204,8 @@ types:
       type: integer
       required: false
 
+# Only include the connection section when the plugin requires credentials.
+# If the API needs no authentication, omit this field entirely.
 connection:
   api_key:
     title: API Key

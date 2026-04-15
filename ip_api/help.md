@@ -14,23 +14,14 @@ Geolocate IPv4 addresses, IPv6 addresses, and domain names using the ip-api.com 
 * Rate limit of 15 requests/minute for batch lookups
 
 # Supported Product Versions
-  
-*This plugin does not contain any supported product versions.*
+
+* 2026-04-15
 
 # Documentation
 
 ## Setup
-
-The connection configuration accepts the following parameters:  
-
-|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-
-Example input:
-
-```
-{}
-```
+  
+*This plugin does not contain a connection.*
 
 ## Technical Details
 
@@ -207,8 +198,8 @@ Example output:
 *This plugin does not contain a troubleshooting.*
 
 # Version History
-  
-*This plugin does not contain a version history.*
+
+* 1.0.0 - Initial plugin release
 
 # Links
   
