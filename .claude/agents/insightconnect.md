@@ -154,13 +154,12 @@ This file defines everything: connection inputs, action/trigger/task inputs and 
 ```yaml
 plugin_spec_version: v2
 extension: plugin
-products:
-  - insightconnect
+products: [insightconnect]
 name: plugin_name                  # snake_case, matches directory name
 title: Human Readable Title
 description: One-sentence description of what the plugin does.
 version: 1.0.0                     # semver — see versioning rules below
-cloud_ready: true                  # true unless the integration requires on-prem network access
+cloud_ready: false                 # false unless specified
 vendor: rapid7
 support: rapid7
 status: []

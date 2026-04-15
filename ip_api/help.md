@@ -202,8 +202,8 @@ Example output:
 * 1.0.0 - Initial plugin release
 
 # Links
-  
-*This plugin does not contain any links.*
+
+* [ip-api.com](https://ip-api.com)
 
 ## References
   
