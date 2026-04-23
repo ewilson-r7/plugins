@@ -1,10 +1,68 @@
-**/tests/
-**/__pycache__/
+# AWS
+.boto
+
+# Snyk
+.dccache
+
+# Coverage
+.coverage
+
+# vim
+*.sw*
+
+# vscode
+.vscode
+
+# sed -i.bu
+*.bu
+
+# Python bytecode
 **/*.pyc
-**/*.pyo
-**/.coverage
-**/.pytest_cache/
-**/*.egg-info/
-**/dist/
-**/build/
+
+# OSX thumbnails/files
+**/.DS_Store
+
+# PyCharm cruft
+.idea/
+**/.idea
+
+# virtual environments
+**/venv
+
+# We don't want a spec file in the root of the repo, people end up editing it
+/plugin.spec.yaml
+/plugin.spec.yml
+
+# We don't want run files
+**/*-run
+**/run.sh
+
+# packages
+**/*.tar.gz
+**/*.tgz
+komand-*.tar.gz
+demo-*.tar.gz
+**/*.tar
 **/*.plg
+
+.drone.sec.unencrypted
+
+# IntelliJ
+.idea/
+*.iml
+
+# merge trash
+*.orig
+
+# Ignore test output generated from icon-plugin tool
+**/.output
+
+# Ignore .json files
+*.json
+**/*.json
+!/plugins/*/unit_test/payloads/*.json
+
+# Ignore archives
+**/*.rar
+**/*.7z
+**/*.zip
