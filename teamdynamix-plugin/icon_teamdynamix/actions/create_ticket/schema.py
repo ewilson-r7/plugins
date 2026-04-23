@@ -4,7 +4,7 @@ import json
 
 
 class Component:
-    DESCRIPTION = "Create a new ticket in TeamDynamix. Use this action to open remediation tickets."
+    DESCRIPTION = "Create a new ticket in TeamDynamix to open remediation workflows"
 
 
 class Input:
@@ -40,7 +40,7 @@ class CreateTicketInput(insightconnect_plugin_runtime.Input):
     "additional_fields": {
       "type": "object",
       "title": "Additional Fields",
-      "description": "JSON object of additional fields to include in the ticket payload  (e.g., custom attributes)\n",
+      "description": "JSON object of additional fields to include in the ticket payload (e.g., custom attributes)",
       "order": 9
     },
     "description": {

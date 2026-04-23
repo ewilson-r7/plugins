@@ -1,0 +1,18 @@
+[
+  {
+    "ID": 12345,
+    "Title": "Remediate Critical Vulnerability CVE-2024-1234",
+    "StatusID": 602,
+    "StatusName": "New",
+    "PriorityID": 20,
+    "PriorityName": "High"
+  },
+  {
+    "ID": 12346,
+    "Title": "Remediate CVE-2024-5678",
+    "StatusID": 602,
+    "StatusName": "New",
+    "PriorityID": 10,
+    "PriorityName": "Low"
+  }
+]

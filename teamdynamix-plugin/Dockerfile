@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 rapid7/insightconnect-python-3-slim-plugin:6.4.3 AS builder
+FROM --platform=linux/amd64 rapid7/insightconnect-python-3-slim-plugin:6.5.0 AS builder
 
 WORKDIR /python/src
 
@@ -11,9 +11,9 @@ ADD . /python/src
 RUN pip install .
 RUN pip uninstall -y setuptools
 
-FROM --platform=linux/amd64 rapid7/insightconnect-python-3-slim-plugin:6.4.3
+FROM --platform=linux/amd64 rapid7/insightconnect-python-3-slim-plugin:6.5.0
 
-LABEL organization=your_org
+LABEL organization=rapid7_test
 LABEL sdk=python
 
 WORKDIR /python/src

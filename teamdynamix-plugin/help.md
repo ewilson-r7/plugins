@@ -1,7 +1,6 @@
 # Description
 
-TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management  platform. This plugin allows users to create, read, update, and search tickets  within a TeamDynamix instance, enabling automated ticketing workflows in  Rapid7 InsightConnect - including remediation ticket creation from Remediation Hub.
-
+TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management platform. This plugin allows users to create, read, update, and search tickets within a TeamDynamix instance, enabling automated ticketing workflows in Rapid7 InsightConnect
 
 # Key Features
 
@@ -17,8 +16,8 @@ TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management 
 * Application ID for the target TeamDynamix application
 
 # Supported Product Versions
-  
-*This plugin does not contain any supported product versions.*
+
+* 2026-04-23
 
 # Documentation
 
@@ -29,8 +28,7 @@ The connection configuration accepts the following parameters:
 |Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 |app_id|integer|None|True|The numeric Application ID for the TeamDynamix ticketing application|None|42|None|None|
-|base_url|string|None|True|The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com
-|None|https://yourorg.teamdynamix.com|None|None|
+|base_url|string|None|True|The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com|None|https://yourorg.teamdynamix.com|None|None|
 |beid|string|None|True|The BEID (Back End Identifier) from TeamDynamix Admin|None|xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|None|None|
 |web_services_key|credential_secret_key|None|True|The Web Services Key from TeamDynamix Admin|None|xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|None|None|
 
@@ -52,15 +50,14 @@ Example input:
 
 #### Create Ticket
 
-This action is used to create a new ticket in TeamDynamix. Use this action to open remediation tickets.
+This action is used to create a new ticket in TeamDynamix to open remediation workflows
 
 ##### Input
 
 |Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 |account_id|integer|None|False|Numeric ID of the account or department|None|789|None|None|
-|additional_fields|object|None|False|JSON object of additional fields to include in the ticket payload  (e.g., custom attributes)
-|None|{"StatusID": 602}|None|None|
+|additional_fields|object|None|False|JSON object of additional fields to include in the ticket payload (e.g., custom attributes)|None|{"StatusID": 602}|None|None|
 |description|string|None|False|Full description of the ticket|None|Critical vulnerability found on host 192.168.1.10|None|None|
 |form_id|integer|None|False|Numeric ID of the ticket form in TeamDynamix|None|456|None|None|
 |priority_id|integer|None|False|Numeric ID of the priority level in TeamDynamix|None|20|None|None|
@@ -91,17 +88,17 @@ Example input:
 
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
-|success|boolean|True|Whether the ticket was created successfully|None|
-|ticket_id|integer|True|Numeric ID of the newly created ticket|None|
-|ticket_url|string|True|Direct URL to the created ticket in TeamDynamix|None|
+|success|boolean|True|Whether the ticket was created successfully|True|
+|ticket_id|integer|True|Numeric ID of the newly created ticket|12345|
+|ticket_url|string|True|Direct URL to the created ticket in TeamDynamix|https://yourorg.teamdynamix.com/TDClient/42/Requests/TicketDet?TicketID=12345|
   
 Example output:
 
 ```
 {
   "success": true,
-  "ticket_id": 0,
-  "ticket_url": ""
+  "ticket_id": 12345,
+  "ticket_url": "https://yourorg.teamdynamix.com/TDClient/42/Requests/TicketDet?TicketID=12345"
 }
 ```
 
@@ -127,19 +124,22 @@ Example input:
 
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
-|status|string|False|Current status of the ticket|None|
-|ticket|object|True|The full ticket object returned by TeamDynamix|None|
-|ticket_id|integer|False|Numeric ID of the ticket|None|
-|title|string|False|Title of the ticket|None|
+|status|string|False|Current status of the ticket|New|
+|ticket|object|True|The full ticket object returned by TeamDynamix|{"ID": 12345, "Title": "Example Ticket"}|
+|ticket_id|integer|False|Numeric ID of the ticket|12345|
+|title|string|False|Title of the ticket|Example Ticket|
   
 Example output:
 
 ```
 {
-  "status": "",
-  "ticket": {},
-  "ticket_id": 0,
-  "title": ""
+  "status": "New",
+  "ticket": {
+    "ID": 12345,
+    "Title": "Example Ticket"
+  },
+  "ticket_id": 12345,
+  "title": "Example Ticket"
 }
 ```
 
@@ -169,16 +169,19 @@ Example input:
 
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
-|count|integer|True|Number of tickets returned|None|
-|tickets|[]object|True|List of matching ticket objects|None|
+|count|integer|True|Number of tickets returned|1|
+|tickets|[]object|True|List of matching ticket objects|[{"ID": 12345, "Title": "Example Ticket"}]|
   
 Example output:
 
 ```
 {
-  "count": 0,
+  "count": 1,
   "tickets": [
-    {}
+    {
+      "ID": 12345,
+      "Title": "Example Ticket"
+    }
   ]
 }
 ```
@@ -217,7 +220,7 @@ Example input:
 
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
-|success|boolean|True|Whether the ticket was updated successfully|None|
+|success|boolean|True|Whether the ticket was updated successfully|True|
   
 Example output:
 

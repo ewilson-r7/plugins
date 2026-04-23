@@ -25,7 +25,7 @@ class ConnectionSchema(insightconnect_plugin_runtime.Input):
     "base_url": {
       "type": "string",
       "title": "Base URL",
-      "description": "The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com\n",
+      "description": "The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com",
       "order": 1
     },
     "beid": {

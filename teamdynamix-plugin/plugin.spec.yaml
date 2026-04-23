@@ -3,20 +3,17 @@ extension: plugin
 products: [insightconnect]
 name: teamdynamix
 title: TeamDynamix
-description: >
-  TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management 
-  platform. This plugin allows users to create, read, update, and search tickets 
-  within a TeamDynamix instance, enabling automated ticketing workflows in 
-  Rapid7 InsightConnect - including remediation ticket creation from Remediation Hub.
+description: TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management platform. This plugin allows users to create, read, update, and search tickets within a TeamDynamix instance, enabling automated ticketing workflows in Rapid7 InsightConnect
 version: 1.0.0
 connection_version: 1
-vendor: your_org
-support: your_org
+vendor: rapid7_test
+support: rapid7_test
 status: []
 cloud_ready: false
+supported_versions: ["2026-04-23"]
 resources:
-  vendor_url: https://www.teamdynamix.com/
-  source_url: https://github.com/your_org/insightconnect-plugins/tree/master/plugins/teamdynamix
+  vendor_url: https://teamdynamix.com
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/teamdynamix
 tags:
   - teamdynamix
   - itsm
@@ -24,11 +21,11 @@ tags:
   - remediation
 hub_tags:
   use_cases: [remediation_management]
-  keywords: [teamdynamix, tickets, itsm]
+  keywords: [itsm]
   features: []
 sdk:
   type: slim
-  version: 6.4.3
+  version: 6.5.0
   user: nobody
 key_features:
   - Create TeamDynamix tickets to initiate remediation workflows
@@ -59,8 +56,7 @@ version_history:
 connection:
   base_url:
     title: Base URL
-    description: >
-      The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com
+    description: The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com
     type: string
     required: true
     example: https://yourorg.teamdynamix.com
@@ -86,7 +82,7 @@ connection:
 actions:
   create_ticket:
     title: Create Ticket
-    description: Create a new ticket in TeamDynamix. Use this action to open remediation tickets.
+    description: Create a new ticket in TeamDynamix to open remediation workflows
     input:
       title:
         title: Title
@@ -138,9 +134,7 @@ actions:
         example: 100
       additional_fields:
         title: Additional Fields
-        description: >
-          JSON object of additional fields to include in the ticket payload 
-          (e.g., custom attributes)
+        description: JSON object of additional fields to include in the ticket payload (e.g., custom attributes)
         type: object
         required: false
         example: '{"StatusID": 602}'
@@ -150,16 +144,19 @@ actions:
         description: Numeric ID of the newly created ticket
         type: integer
         required: true
+        example: 12345
       ticket_url:
         title: Ticket URL
         description: Direct URL to the created ticket in TeamDynamix
         type: string
         required: true
+        example: https://yourorg.teamdynamix.com/TDClient/42/Requests/TicketDet?TicketID=12345
       success:
         title: Success
         description: Whether the ticket was created successfully
         type: boolean
         required: true
+        example: true
 
   get_ticket:
     title: Get Ticket
@@ -177,21 +174,25 @@ actions:
         description: The full ticket object returned by TeamDynamix
         type: object
         required: true
+        example: '{"ID": 12345, "Title": "Example Ticket"}'
       title:
         title: Title
         description: Title of the ticket
         type: string
         required: false
+        example: Example Ticket
       status:
         title: Status
         description: Current status of the ticket
         type: string
         required: false
+        example: New
       ticket_id:
         title: Ticket ID
         description: Numeric ID of the ticket
         type: integer
         required: false
+        example: 12345
 
   update_ticket:
     title: Update Ticket
@@ -239,6 +240,7 @@ actions:
         description: Whether the ticket was updated successfully
         type: boolean
         required: true
+        example: true
 
   search_tickets:
     title: Search Tickets
@@ -269,8 +271,10 @@ actions:
         description: List of matching ticket objects
         type: "[]object"
         required: true
+        example: '[{"ID": 12345, "Title": "Example Ticket"}]'
       count:
         title: Count
         description: Number of tickets returned
         type: integer
         required: true
+        example: 1
