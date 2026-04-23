@@ -1,142 +1,257 @@
-# TeamDynamix
+# Description
 
-## About
+TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management  platform. This plugin allows users to create, read, update, and search tickets  within a TeamDynamix instance, enabling automated ticketing workflows in  Rapid7 InsightConnect - including remediation ticket creation from Remediation Hub.
 
-[TeamDynamix](https://www.teamdynamix.com/) is an IT Service Management (ITSM) and Project Portfolio Management platform widely used in higher education and enterprise environments. This plugin integrates TeamDynamix with Rapid7 InsightConnect, enabling automated ticketing workflows—including creating remediation tickets triggered by Remediation Hub findings.
 
-## Actions
+# Key Features
 
-### Create Ticket
+* Create TeamDynamix tickets to initiate remediation workflows
+* Get ticket details to monitor ticket status
+* Update existing tickets with new information or status
+* Search tickets by various criteria
 
-Creates a new ticket in TeamDynamix. This is the primary action for Remediation Hub integration.
+# Requirements
 
-**Input:**
+* TeamDynamix instance base URL (e.g., https://yourorg.teamdynamix.com)
+* TeamDynamix Web API BEID and Web Services Key for authentication
+* Application ID for the target TeamDynamix application
 
-| Name | Type | Required | Description | Example |
-|------|------|----------|-------------|---------|
-| title | string | Yes | Short title of the ticket | Remediate CVE-2024-1234 |
-| description | string | No | Full ticket description | Critical vulnerability on host 192.168.1.10 |
-| type_id | integer | Yes | TeamDynamix ticket Type ID | 123 |
-| form_id | integer | No | TeamDynamix Form ID | 456 |
-| account_id | integer | No | Account/Department ID | 789 |
-| priority_id | integer | No | Priority ID | 20 |
-| requestor_uid | string | No | Requestor user GUID | xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx |
-| responsible_group_id | integer | No | Responsible group ID | 100 |
-| additional_fields | object | No | Additional JSON fields | {"StatusID": 602} |
+# Supported Product Versions
+  
+*This plugin does not contain any supported product versions.*
 
-**Output:**
+# Documentation
 
-| Name | Type | Description |
-|------|------|-------------|
-| ticket_id | integer | ID of the created ticket |
-| ticket_url | string | Direct URL to the ticket |
-| success | boolean | Whether creation succeeded |
+## Setup
 
-### Get Ticket
+The connection configuration accepts the following parameters:  
 
-Retrieves a ticket by its numeric ID.
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|app_id|integer|None|True|The numeric Application ID for the TeamDynamix ticketing application|None|42|None|None|
+|base_url|string|None|True|The base URL of your TeamDynamix instance, e.g. https://yourorg.teamdynamix.com
+|None|https://yourorg.teamdynamix.com|None|None|
+|beid|string|None|True|The BEID (Back End Identifier) from TeamDynamix Admin|None|xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|None|None|
+|web_services_key|credential_secret_key|None|True|The Web Services Key from TeamDynamix Admin|None|xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|None|None|
 
-**Input:**
+Example input:
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| ticket_id | integer | Yes | TeamDynamix Ticket ID |
+```
+{
+  "app_id": 42,
+  "base_url": "https://yourorg.teamdynamix.com",
+  "beid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "web_services_key": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+```
 
-**Output:**
+## Technical Details
 
-| Name | Type | Description |
-|------|------|-------------|
-| ticket | object | Full ticket object |
-| title | string | Ticket title |
-| status | string | Current status name |
-| ticket_id | integer | Ticket ID |
+### Actions
 
-### Update Ticket
 
-Updates fields on an existing ticket (status, title, description, priority).
+#### Create Ticket
 
-**Input:**
+This action is used to create a new ticket in TeamDynamix. Use this action to open remediation tickets.
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| ticket_id | integer | Yes | ID of ticket to update |
-| title | string | No | New title |
-| description | string | No | New description |
-| status_id | integer | No | New status ID |
-| priority_id | integer | No | New priority ID |
-| additional_fields | object | No | Additional fields |
+##### Input
 
-**Output:**
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|account_id|integer|None|False|Numeric ID of the account or department|None|789|None|None|
+|additional_fields|object|None|False|JSON object of additional fields to include in the ticket payload  (e.g., custom attributes)
+|None|{"StatusID": 602}|None|None|
+|description|string|None|False|Full description of the ticket|None|Critical vulnerability found on host 192.168.1.10|None|None|
+|form_id|integer|None|False|Numeric ID of the ticket form in TeamDynamix|None|456|None|None|
+|priority_id|integer|None|False|Numeric ID of the priority level in TeamDynamix|None|20|None|None|
+|requestor_uid|string|None|False|UID of the ticket requestor (TeamDynamix user GUID)|None|xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|None|None|
+|responsible_group_id|integer|None|False|Numeric ID of the group responsible for the ticket|None|100|None|None|
+|title|string|None|True|Short title/subject of the ticket|None|Remediate Critical Vulnerability CVE-2024-1234|None|None|
+|type_id|integer|None|True|Numeric ID of the ticket type in TeamDynamix|None|123|None|None|
+  
+Example input:
 
-| Name | Type | Description |
-|------|------|-------------|
-| success | boolean | Whether update succeeded |
+```
+{
+  "account_id": 789,
+  "additional_fields": {
+    "StatusID": 602
+  },
+  "description": "Critical vulnerability found on host 192.168.1.10",
+  "form_id": 456,
+  "priority_id": 20,
+  "requestor_uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "responsible_group_id": 100,
+  "title": "Remediate Critical Vulnerability CVE-2024-1234",
+  "type_id": 123
+}
+```
 
-### Search Tickets
+##### Output
 
-Searches for tickets using TeamDynamix's ticket search API.
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|success|boolean|True|Whether the ticket was created successfully|None|
+|ticket_id|integer|True|Numeric ID of the newly created ticket|None|
+|ticket_url|string|True|Direct URL to the created ticket in TeamDynamix|None|
+  
+Example output:
 
-**Input:**
+```
+{
+  "success": true,
+  "ticket_id": 0,
+  "ticket_url": ""
+}
+```
 
-| Name | Type | Required | Description | Default |
-|------|------|----------|-------------|---------|
-| search_text | string | No | Text to search | — |
-| status_id | integer | No | Filter by status ID | — |
-| max_results | integer | No | Max results to return | 25 |
+#### Get Ticket
 
-**Output:**
+This action is used to retrieve a TeamDynamix ticket by its ID
 
-| Name | Type | Description |
-|------|------|-------------|
-| tickets | []object | List of matching tickets |
-| count | integer | Number of results |
+##### Input
 
----
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|ticket_id|integer|None|True|The numeric ID of the ticket to retrieve|None|12345|None|None|
+  
+Example input:
 
-## Connection
+```
+{
+  "ticket_id": 12345
+}
+```
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| base_url | string | Yes | TeamDynamix instance URL, e.g. https://yourorg.teamdynamix.com |
-| beid | string | Yes | BEID from TeamDynamix Admin > Integration > Web API |
-| web_services_key | credential_secret_key | Yes | Web Services Key from TeamDynamix Admin |
-| app_id | integer | Yes | Numeric Application ID of your ticketing app |
+##### Output
 
-### How to Obtain Credentials
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|status|string|False|Current status of the ticket|None|
+|ticket|object|True|The full ticket object returned by TeamDynamix|None|
+|ticket_id|integer|False|Numeric ID of the ticket|None|
+|title|string|False|Title of the ticket|None|
+  
+Example output:
 
-1. Log in to TeamDynamix as an administrator.
-2. Navigate to **Admin > Integration > Web API**.
-3. Copy the **BEID** and create/copy a **Web Services Key**.
-4. Find your **Application ID** under **Admin > Applications** — it is the numeric ID shown next to your ticketing application.
+```
+{
+  "status": "",
+  "ticket": {},
+  "ticket_id": 0,
+  "title": ""
+}
+```
 
----
+#### Search Tickets
 
-## Remediation Hub Workflow
+This action is used to search for tickets in TeamDynamix
 
-To mirror the ServiceNow Remediation Hub workflow:
+##### Input
 
-1. Add a **TeamDynamix – Create Ticket** step after a Remediation Hub trigger.
-2. Map Remediation Hub fields to ticket inputs:
-   - `{{finding.title}}` → **Title**
-   - `{{finding.description}}` → **Description**
-   - Set your organization's **Type ID** and **Priority ID**
-3. Optionally add a **Get Ticket** step to monitor ticket status.
-4. Use **Update Ticket** to close the ticket when the finding is remediated.
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|max_results|integer|25|False|Maximum number of tickets to return (default 25)|None|25|None|None|
+|search_text|string|None|False|Text to search in ticket titles and descriptions|None|CVE-2024|None|None|
+|status_id|integer|None|False|Filter by status ID|None|602|None|None|
+  
+Example input:
 
----
+```
+{
+  "max_results": 25,
+  "search_text": "CVE-2024",
+  "status_id": 602
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|count|integer|True|Number of tickets returned|None|
+|tickets|[]object|True|List of matching ticket objects|None|
+  
+Example output:
+
+```
+{
+  "count": 0,
+  "tickets": [
+    {}
+  ]
+}
+```
+
+#### Update Ticket
+
+This action is used to update an existing TeamDynamix ticket
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|additional_fields|object|None|False|JSON object of additional fields to update|None|{"AssignedAppID": 42}|None|None|
+|description|string|None|False|New description for the ticket|None|Updated description|None|None|
+|priority_id|integer|None|False|New priority ID for the ticket|None|20|None|None|
+|status_id|integer|None|False|New status ID for the ticket|None|602|None|None|
+|ticket_id|integer|None|True|The numeric ID of the ticket to update|None|12345|None|None|
+|title|string|None|False|New title for the ticket|None|Updated title|None|None|
+  
+Example input:
+
+```
+{
+  "additional_fields": {
+    "AssignedAppID": 42
+  },
+  "description": "Updated description",
+  "priority_id": 20,
+  "status_id": 602,
+  "ticket_id": 12345,
+  "title": "Updated title"
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|success|boolean|True|Whether the ticket was updated successfully|None|
+  
+Example output:
+
+```
+{
+  "success": true
+}
+```
+### Triggers
+  
+*This plugin does not contain any triggers.*
+### Tasks
+  
+*This plugin does not contain any tasks.*
+
+### Custom Types
+  
+*This plugin does not contain any custom output types.*
 
 ## Troubleshooting
 
-- **Authentication failures:** Verify the BEID and Web Services Key have not expired. Regenerate from TeamDynamix Admin if needed.
-- **404 on ticket actions:** Confirm the `app_id` matches the target application.
-- **Missing fields on create:** Use `additional_fields` to pass any required custom attributes specific to your TeamDynamix configuration.
-- **API URL format:** The plugin appends `/TDWebApi/api/{app_id}/tickets` to the base URL. Do not include `/TDWebApi` in your `base_url` connection setting.
+* Ensure your BEID and Web Services Key are correct and have not expired.
+* Verify the Application ID matches the target TeamDynamix application.
+* The base URL should not include a trailing slash.
 
----
+# Version History
 
-## Version History
+* 1.0.0 - Initial plugin release with Create, Get, Update, and Search Ticket actions
 
-| Version | Date | Description |
-|---------|------|-------------|
-| 1.0.0 | 2026-04-21 | Initial release — Create, Get, Update, Search Ticket actions |
+# Links
 
+* [TeamDynamix](https://www.teamdynamix.com/)
+* [TeamDynamix Web API](https://solutions.teamdynamix.com/TDWebApi/)
+
+## References
+
+* [TeamDynamix Web API Documentation](https://solutions.teamdynamix.com/TDWebApi/)

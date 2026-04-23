@@ -1,4 +1,5 @@
 """TeamDynamix InsightConnect Plugin Connection."""
+
 import insightconnect_plugin_runtime
 from insightconnect_plugin_runtime.exceptions import ConnectionTestException
 

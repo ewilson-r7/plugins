@@ -1,4 +1,5 @@
 """TeamDynamix API request helper."""
+
 import requests
 from insightconnect_plugin_runtime.exceptions import PluginException
 

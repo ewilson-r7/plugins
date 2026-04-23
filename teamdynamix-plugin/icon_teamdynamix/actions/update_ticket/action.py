@@ -1,4 +1,5 @@
 """Update Ticket action for TeamDynamix InsightConnect plugin."""
+
 import insightconnect_plugin_runtime
 from .schema import UpdateTicketInput, UpdateTicketOutput, Input, Output, Component
 

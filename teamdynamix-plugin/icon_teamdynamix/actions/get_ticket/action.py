@@ -1,4 +1,5 @@
 """Get Ticket action for TeamDynamix InsightConnect plugin."""
+
 import insightconnect_plugin_runtime
 from insightconnect_plugin_runtime.exceptions import PluginException
 from .schema import GetTicketInput, GetTicketOutput, Input, Output, Component

@@ -1,4 +1,5 @@
 """Search Tickets action for TeamDynamix InsightConnect plugin."""
+
 import insightconnect_plugin_runtime
 from .schema import SearchTicketsInput, SearchTicketsOutput, Input, Output, Component
 
