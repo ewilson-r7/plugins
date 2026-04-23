@@ -77,7 +77,6 @@ my_plugin/
 ├── .dockerignore
 ├── Dockerfile
 ├── Makefile
-├── CHANGELOG.md
 ├── help.md
 ├── icon.png
 ├── extension.png
@@ -122,11 +121,11 @@ If you create stubs for these files they will be overwritten (and your stubs wil
 
 ### Updating an existing plugin
 
-1. Read the current `plugin.spec.yaml` and `CHANGELOG.md` before touching anything
-2. Edit `plugin.spec.yaml` for any schema changes
+1. Read the current `plugin.spec.yaml` before touching anything
+2. Edit `plugin.spec.yaml` for any schema changes — bump `version` and add a new entry to `version_history`
 3. Run `insight-plugin refresh` from inside the plugin directory — regenerates all schema files
 4. Update the hand-written implementation files
-5. Update unit tests and `CHANGELOG.md`
+5. Update unit tests
 6. Run `insight-plugin validate`
 
 **Never skip `insight-plugin validate`** before declaring work done.
@@ -682,25 +681,18 @@ parameterized==0.9.0
 
 ---
 
-## CHANGELOG.md
+## Version History
 
-Every version change requires a `CHANGELOG.md` entry. Use this format:
+Every version change requires a new entry in the `version_history` block of `plugin.spec.yaml`. There is no separate `CHANGELOG.md` — the spec is the single source of truth for version history.
 
-```markdown
-# Changelog
-
-## [1.1.0] - 2024-06-15
-### Added
-- New action `list_items` to retrieve all items
-
-## [1.0.1] - 2024-05-01
-### Fixed
-- Resolved issue where connection test failed on valid credentials
-
-## [1.0.0] - 2024-04-01
-### Added
-- Initial plugin release with `get_item` action
+```yaml
+version_history:
+  - "1.1.0 - Added list_items action"
+  - "1.0.1 - Fixed connection test failure on valid credentials"
+  - "1.0.0 - Initial plugin release"
 ```
+
+Entries are plain strings in the format `"x.y.z - Description"`, listed newest-first.
 
 ---
 
@@ -713,7 +705,7 @@ Every version change requires a `CHANGELOG.md` entry. Use this format:
 5. **Using `print()`** — always `self.logger.info/debug/warning/error`.
 6. **Unpinned requirements** — every dep in `requirements.txt` must have an exact version.
 7. **Skipping `insight-plugin validate`** — run it before declaring the plugin finished.
-8. **Missing CHANGELOG entry** — every version bump needs a corresponding entry.
+8. **Missing version_history entry** — every version bump needs a new entry added to `version_history` in `plugin.spec.yaml`.
 9. **Wrong major/minor/patch bump** — follow the versioning rules table strictly.
 10. **Coverage below 80%** — all new code must be covered by unit tests.
 
@@ -723,11 +715,10 @@ Every version change requires a `CHANGELOG.md` entry. Use this format:
 
 When updating an existing plugin:
 
-- [ ] Read the current `plugin.spec.yaml` and `CHANGELOG.md` before making any changes
+- [ ] Read the current `plugin.spec.yaml` before making any changes
 - [ ] Determine the correct semver bump (major/minor/patch) per the versioning rules
-- [ ] Edit `plugin.spec.yaml` for any schema changes
+- [ ] Edit `plugin.spec.yaml` — bump `version` and prepend a new entry to `version_history`
 - [ ] Run `insight-plugin refresh` to regenerate schema files
 - [ ] Update only the hand-written implementation files
 - [ ] Update or add unit tests to maintain ≥80% coverage
-- [ ] Add a `CHANGELOG.md` entry for the new version
 - [ ] Run `insight-plugin validate` as the final step
