@@ -1,0 +1,2 @@
+insightconnect_plugin_runtime
+requests>=2.28.0

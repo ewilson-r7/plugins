@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+# entry point
+from sys import argv
+from icon_teamdynamix import main
+main()
