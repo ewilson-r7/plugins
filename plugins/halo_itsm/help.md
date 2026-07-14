@@ -506,8 +506,7 @@ Example output:
 
 # Version History
 
-* 1.1.0 - Added Attach File to Ticket action
-* 1.0.0 - Initial plugin release
+* 1.0.0 - Initial plugin release with Create, Get, Update, Delete, List Tickets, Add Action, and Attach File actions
 
 # Links
 

@@ -179,7 +179,9 @@ class HaloItsmApi:
             return response[0]
         return response
 
-    def attach_file_to_ticket(self, ticket_id: int, filename: str, content: str, note: str, hiddenfromuser: bool = False) -> dict:
+    def attach_file_to_ticket(
+        self, ticket_id: int, filename: str, content: str, note: str, hiddenfromuser: bool = False
+    ) -> dict:
         """Attach a file to a ticket via an action with multipart form data."""
         import base64
 
