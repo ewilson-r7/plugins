@@ -16,31 +16,17 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 | [teamdynamix](plugins/teamdynamix/) | 1.0.0 | Initial release — create, get, update, and search tickets in TeamDynamix ITSM |
 | [zscaler](plugins/zscaler/) | 2.0.0 | Migrate to Zscaler OneAPI with OAuth 2.0 Private Key auth, add DLP/firewall/logs/threat feed/ZPA/ZCC VPN gateway bypass actions |
 
-## Distribution (for Sales Engineers)
+## Documentation
 
-The `exports/` directory contains pre-built plugin images and setup documentation for importing into customer InsightConnect environments.
+The `docs/` directory contains setup guides and reference documentation for each plugin, served as a static site with sidebar navigation.
 
-Each plugin folder under `exports/` includes:
-- **README.md** — Setup guide with connection requirements and action summary
-- **`.tar.gz`** — Importable plugin image (not stored in git due to size — build locally, see below)
-- **`.html`** docs (where available) — Detailed reference with schemas and examples
+**[Browse Plugin Documentation](docs/index.html)**
 
-### Importing a Plugin
-
-1. Download or build the `.tar.gz` for the plugin
+To import a plugin into InsightConnect:
+1. Build the `.plg` file: `insight-plugin export -d plugins/<name>`
 2. In InsightConnect, go to **Settings > Plugins > Import**
-3. Upload the `.tar.gz` file
-4. Configure the connection using the setup guide in the plugin's `exports/` folder
-
-### Building Exports Locally
-
-```bash
-# Export a single plugin (builds Docker image + saves tarball)
-insight-plugin export --no-pull -d plugins/<plugin_name>
-docker save rapid7/<plugin_name>:<version> | gzip > exports/<plugin_name>/rapid7_<plugin_name>_<version>.tar.gz
-```
-
-See [`exports/README.md`](exports/README.md) for the full list of available plugins and versions.
+3. Upload the `.plg` file from the plugin directory
+4. Configure the connection using the setup guide in `docs/`
 
 ## Project Structure
 
@@ -83,7 +69,7 @@ The `.kiro/` directory contains development environment configuration:
 ## Changelog
 
 ### 2026-07-14
-- Added `exports/` directory with pre-built plugin images and setup documentation for SE distribution
+- Added `docs/` site with sidebar navigation and plugin documentation for SE reference
 - Added `active_directory_ldap` (v11.0.0) - Kerberos SASL GSSAPI authentication ([upstream PR #3987](https://github.com/rapid7/insightconnect-plugins/pull/3987))
 - Added `microsoft_teams` (v8.0.0) - installed_apps support for create_teams_chat ([upstream PR #3931](https://github.com/rapid7/insightconnect-plugins/pull/3931))
 - Updated `teamdynamix` (v1.0.0) with upstream PR version ([upstream PR #3874](https://github.com/rapid7/insightconnect-plugins/pull/3874))

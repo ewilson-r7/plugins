@@ -1,4 +1,0 @@
-# Tarballs are too large for git - download from releases or build locally
-# Use `insight-plugin export --no-pull -d plugins/<name>` then `docker save` to rebuild
-*.tar.gz
-*.tar
