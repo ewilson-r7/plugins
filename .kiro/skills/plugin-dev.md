@@ -51,7 +51,7 @@ Triggered by verbs like build, create, add, update, enhance, refactor, fix, rele
 
 1. **Ask "prod or dev?"** if the user has not already said which. Do not guess, and do not infer from the working directory.
    - **prod** → work in `~/Documents/GitHub/insightconnect-plugins/plugins/<plugin_name>` (origin `rapid7/insightconnect-plugins`). Use the full release workflow (`git-workflow.md`).
-   - **dev** → work in `~/Documents/GitHub/plugins/plugins/<plugin_name>` (your fork `ewilson-r7/plugins`, upstream rapid7). Use the lightweight dev workflow (feature branch on the fork → commit → push).
+   - **dev** → work in `~/Documents/GitHub/plugins/plugins/<plugin_name>` (your personal repo `ewilson-r7/plugins`). All plugins live on `main` — commit directly, no feature branches. Use the lightweight dev workflow (commit to `main` → push).
 2. **Run PRE-BUILD READINESS** (see below) before writing or scaffolding anything.
 3. Then follow the build/update workflow.
 
@@ -99,7 +99,20 @@ See `repos.md` steering for the full routing table.
 5. Keep version at `1.0.0` until initial release
 
 ## Git flow after the build
-- **dev target** (`plugins` fork): create/checkout `feature/<plugin>-<desc>` on the fork, stage specific files, commit as `plugin_name: Short description`, push to `origin` (your fork). No release branch needed. **Skip unit tests for dev builds** — they are not required for the dev workflow.
+- **dev target** (`plugins` repo — `ewilson-r7/plugins`): commit directly to `main`. All plugins live in `plugins/<plugin_name>/` on the `main` branch. Stage specific files, commit as `plugin_name: Short description`, push to `origin main`. No feature branches or release branches needed — the repo is your personal workspace. **Skip unit tests for dev builds** — they are not required for the dev workflow.
+  ```bash
+  git add plugins/<plugin_name>/
+  git commit -m "plugin_name: Short description"
+  git push origin main
+  ```
+  When ready to PR upstream, create a feature branch off `upstream/master`:
+  ```bash
+  git fetch upstream
+  git checkout -b feature/<plugin>-<desc> upstream/master
+  # copy plugin files or cherry-pick commits
+  git push -u origin feature/<plugin>-<desc>
+  # then open PR against rapid7/insightconnect-plugins master
+  ```
 - **prod target** (`insightconnect-plugins`): follow the full `git-workflow.md` release-branch flow. Never push directly to master.
 
 ## Core Rules (ALWAYS enforce these)

@@ -10,7 +10,7 @@ There are several local clones of Rapid7 plugin repos. Which one you use depends
 | Intent | Target | Path | Git origin | Workflow |
 |--------|--------|------|------------|----------|
 | Build / Update / Enhance | **prod** | `~/Documents/GitHub/insightconnect-plugins/plugins/<name>` | `rapid7/insightconnect-plugins` | Full release flow (`git-workflow.md`) |
-| Build / Update / Enhance | **dev** | `~/Documents/GitHub/plugins/plugins/<name>` | `ewilson-r7/plugins` (fork; upstream rapid7) | Lightweight dev flow (below) |
+| Build / Update / Enhance | **dev** | `~/Documents/GitHub/plugins/plugins/<name>` | `ewilson-r7/plugins` (personal repo; upstream rapid7) | Commit to `main` (below) |
 | Review / Question | current | `~/Documents/GitHub/insightconnect-plugins/plugins/<name>` | `rapid7/insightconnect-plugins` | Read-only |
 | Review / Question | legacy | `~/Documents/GitHub/komand-plugins/plugins/<name>` | rapid7 (legacy) | Read-only |
 | SDK version lookup | — | `~/Documents/GitHub/komand-plugin-sdk-python/README.md` (`## Changelog`) | rapid7 | Read top entry |
@@ -25,15 +25,25 @@ There are several local clones of Rapid7 plugin repos. Which one you use depends
 3. If a review turns into a fix, stop and re-enter build intent (ask prod or dev) before writing anything.
 4. Before any build, run the **pre-build readiness** step (`plugin-build-prep` skill): verify tooling and pull the latest SDK version from the SDK README changelog.
 
-## Dev Fork Workflow (lightweight)
+## Dev Repo Workflow (lightweight)
 
-For **dev** builds on the `plugins` fork (`ewilson-r7/plugins`):
+For **dev** builds on the personal repo (`ewilson-r7/plugins`):
+
+All plugins live on `main` in `plugins/<plugin_name>/`. No feature branches needed for dev work — commit directly to `main`:
 ```bash
-git checkout master && git pull upstream master      # keep fork current with rapid7
-git checkout -b feature/<plugin>-<short-desc>
-# ... make changes ...
-git add <specific files>
+# Make changes in plugins/<plugin_name>/
+git add plugins/<plugin_name>/
 git commit -m "plugin_name: Short description"
-git push -u origin feature/<plugin>-<short-desc>      # push to your fork (origin)
+git push origin main
 ```
-No release branch is required for dev work. Reserve the full release-branch flow (`git-workflow.md`) for **prod** builds on `insightconnect-plugins`.
+
+When ready to submit upstream as a PR:
+```bash
+git fetch upstream
+git checkout -b feature/<plugin>-<short-desc> upstream/master
+# copy or cherry-pick the plugin changes
+git push -u origin feature/<plugin>-<short-desc>
+# open PR against rapid7/insightconnect-plugins master
+```
+
+Reserve the full release-branch flow (`git-workflow.md`) for **prod** builds on `insightconnect-plugins`.
