@@ -1,0 +1,540 @@
+plugin_spec_version: v2
+extension: plugin
+products: ["insightconnect"]
+name: microsoft_office365_email_security
+title: Microsoft Office365 Email Security
+description: The Microsoft Office 365 email security plugin adds utilities to help administrators manage their Office 365 instances. This plugin will allow administrators to take remediation actions across their organization
+version: 4.1.0
+connection_version: 4
+supported_versions: ["Microsoft Office 365 2026-07-14"]
+vendor: rapid7_custom
+support: rapid7
+status: []
+resources:
+  vendor_url: https://www.rapid7.com
+tags:
+  - Office365
+  - Microsoft
+  - Administration
+  - Spam
+  - Phishing
+  - Remediation
+  - Email
+hub_tags:
+  use_cases: [threat_detection_and_response, reporting_and_analytics, devops]
+  keywords: [office365, microsoft, administration, phishing, remediation, email]
+  features: []
+sdk:
+  type: slim
+  version: 6.6.0
+  user: root
+troubleshooting:
+  - "Queries are expected to be wrapped in quotes e.g. subject:\"a subject\""
+  - "If the 8192 character (per rule) limit is reached when adding additional conditions/emails to an existing rule, conditions/emails within that rule will need to be deleted to allow for the addition of new conditions/emails."
+  - "If the 20480 bytes (overall limit for all rules combined) is reached when making a new rule, existing rules can be deleted to make space, otherwise deleting conditions/emails within existing rules will allow for the addition of a new rule'"
+links:
+  - "[Connect to Security & Compliance PowerShell](https://learn.microsoft.com/en-us/powershell/exchange/connect-to-scc-powershell?view=exchange-ps)"
+references:
+  - "[Microsoft Office365 ](https://www.office.com/)"
+  - "[Transport Rule Limits](https://docs.microsoft.com/en-us/office365/servicedescriptions/exchange-online-service-description/exchange-online-limits#journal-transport-and-inbox-rule-limits)"
+  - "[New-TransportRule](https://docs.microsoft.com/en-us/powershell/module/exchange/policy-and-compliance/new-transportrule?view=exchange-ps)"
+  - "[Set-TransportRule](https://docs.microsoft.com/en-us/powershell/module/exchange/policy-and-compliance/set-transportrule?view=exchange-ps)"
+  - "[Connect to Security & Compliance PowerShell](https://learn.microsoft.com/en-us/powershell/exchange/connect-to-scc-powershell?view=exchange-ps)"
+key_features:
+  - "Block senders by domain or email address"
+  - "Search for and optionally delete email across an organization"
+  - "Get email trace information"
+  - "Manage entries in the Tenant Allow/Block List"
+requirements:
+  - "An administrative account with modern authentication enabled"
+  - "Powershell connectivity to the Office 365 cloud servers"
+  - "For more information on these requirements and setup please see the Connect to Security & Compliance PowerShell reference at the end of this document\n\nRoles required for the action to work:"
+  - "Block Sender Transport Rule action"
+  - "Transport Rules role"
+  - "Email Compliance Search action"
+  - "Mailbox Search role"
+  - "Email Compliance Purge action"
+  - "Mailbox Import Export role"
+  - "Email Compliance Search and Purge action"
+  - "Mailbox Import Export role"
+  - "Mailbox Search role"
+  - "Message Trace action"
+  - "Message Tracking role"
+  - "Tenant Allow/Block List actions"
+  - "Tenant AllowBlockList Manager role"
+version_history:
+  - "4.1.0 - Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0"
+  - "4.0.8 - Fixed `mass_purge` action timing out due to backslash escape characters being injected into `content_match_query` | Improved error handling | Updated SDK to the latest version (6.5.0)"
+  - "4.0.7 - Updated `Exchange Online` module version to `3.9.2` | Updated SDK to the latest version (6.4.2)"
+  - "4.0.6 - Script update to address Block Sender Transport Rules issues"
+  - "4.0.5 - Updated 'block_sender_transport_rule' action to handle additional domain or email to be blocked | Updated SDK to the latest version (6.3.10)"
+  - "4.0.4 - Adding Powershell package back in Dockerfile"
+  - "4.0.3 - Updating documentation regarding 'block_sender_transport_rule' action | SDK Bump to 6.2.0 | Bumping requirements.txt"
+  - "4.0.2 - Updated the SDK to latest version | Updated the `Exchange Online` module version to `3.4.0` | `Email Compliance Search`: Invalid characters are being stripped from `Compliance Search Name`"
+  - "4.0.1 - Updated the SDK version | Updated the `Exchange Online` module version"
+  - "4.0.0 - Remove Basic Authentication connection. Added Modern Authentication(OAuth) for ExchangeOnline Powershell and Security & Compliance PowerShell. Connection Input Office365 URL is no longer required. This change is due to the fact Basic Authentication for Exchange Online has now been deprecated. For further information on this, please view the resources listed at the bottom of this help document."
+  - "3.0.3 - Fixing the release issues related to 3.0.2"
+  - "3.0.2 - Fix the bug related to JSON marshalling"
+  - "3.0.1 - Search through multiple mailboxes in Email Compilance Search"
+  - "3.0.0 - Create new actions Update List of Blocked Domains and Get List of Blocked Domains | Create one class to communicate with Microsoft Outlook | Update SDK to version 4 | Fix Email Compliance Purge action bug with bytes in output"
+  - "2.3.5 - Add logger in `Transport-Rules.ps1` | Change silent 'stop' to 'SilentlyContinue'"
+  - "2.3.4 - Fixed bugs impacting searches where the name contained a space, impacting the Block Sender Transport Rule action, and empty message traces errors."
+  - "2.3.3 - Updated all actions to automatically monitor and reconnect when needed. Fixed several other minor bugs."
+  - "2.3.2 - Added try/catch handling for remote powershell commands (all actions)"
+  - "2.3.1 - Update error handling for cleaner and clearer logs on errors"
+  - "2.3.0 - Add Exchange Location to Email Compliance Search action | Update to make Email Compliance Search action overwrite existing searches instead of just rerunning them"
+  - "2.2.7 - Fix issue where connection test could use the wrong URI to authenticate which could cause false test results"
+  - "2.2.6 - Update to make error logging more visible in the Email Compliance Search action"
+  - "2.2.5 - Fix issue where creating a new compliance search could fail by prompting the user for confirmation on continue"
+  - "2.2.4 - Add example inputs in all actions | Move connection to new `ps` script | Fix method name in Message Trace action | Defined instance attributes inside `_init_` in connection file | Regenerate help.md | Change user in Dockerfile to `nobody`"
+  - "2.2.3 - Update to add logging to warn of dollar sign in password Microsoft bug"
+  - "2.2.2 - Updated out of date Powershell module in Email Security Compliance Search"
+  - "2.2.1 - New spec and help.md format for the Extension Library"
+  - "2.2.0 - New action Message Trace"
+  - "2.1.0 - Add user email address array to Search action"
+  - "2.0.0 - New actions Mass Search, Purge and combined Search and Purge"
+  - "1.0.1 - Fix issue where plugin would fail when creating transport rule on first run"
+  - "1.0.0 - Initial plugin"
+types:
+  message_trace:
+    Organization:
+      title: Organization
+      description: Organization that message trace was run on
+      type: string
+      required: true
+    MessageId:
+      title: Message ID
+      description: ID of found email
+      type: string
+      required: true
+    Received:
+      title: Received Date
+      description: Date email was received
+      type: string
+      required: true
+    RecipientAddress:
+      title: Recipient Address
+      description: Recipient address
+      type: string
+      required: true
+    Subject:
+      title: Subject
+      description: Subject
+      type: string
+      required: true
+    SenderAddress:
+      title: Sender Address
+      description: Sender address
+      type: string
+      required: true
+  spam_policy:
+    Name:
+      title: Name
+      description: Name of policy
+      required: false
+      type: string
+    DistinguishedName:
+      title: Distinguished Name
+      description: Distinguished name (DN)
+      required: false
+      type: string
+    Guid:
+      title: GUID
+      description: GUID attribute
+      required: false
+      type: string
+    BlockedSenderDomains:
+      title: Blocked Sender Domains
+      description: List of blocked sender domains
+      required: false
+      type: "[]string"
+  tenant_allow_block_list_entry:
+    Identity:
+      title: Identity
+      description: Unique identifier of the entry
+      type: string
+      required: false
+    Value:
+      title: Value
+      description: The blocked or allowed value (URL, sender, file hash, or IP)
+      type: string
+      required: false
+    Action:
+      title: Action
+      description: Whether this is an Allow or Block entry
+      type: string
+      required: false
+    ListType:
+      title: List Type
+      description: The type of entry (Sender, URL, FileHash, or IP)
+      type: string
+      required: false
+    ExpirationDate:
+      title: Expiration Date
+      description: The expiration date of the entry in UTC
+      type: string
+      required: false
+    Notes:
+      title: Notes
+      description: Notes associated with the entry
+      type: string
+      required: false
+    LastModifiedDateTime:
+      title: Last Modified Date Time
+      description: When the entry was last modified
+      type: string
+      required: false
+    CreatedDateTime:
+      title: Created Date Time
+      description: When the entry was created
+      type: string
+      required: false
+connection:
+  credentials:
+    type: credential_username_password
+    title: Credentials
+    description: Username and password
+    required: true
+    example: '{"username": "user@example.com", "password": "mypassword"}'
+actions:
+  block_sender_transport_rule:
+    title: Block Sender Transport Rule
+    description: Add a domain or email address to a blocking transport rule in Exchange Admin Center. In Office 365 cloud, transport rules are limited to 8k of data or roughly 8100 characters. This is roughly 400 email addresses. If a new email address is added (that would break that limit), existing emails would need to be manually deleted to make room for new additions
+    input:
+      domain_or_email_to_block:
+        title: Domain or Email to Block
+        type: string
+        description: Domain or email address to block
+        required: true
+        example: example.com
+      transport_rule_name:
+        title: Transport Rule Name
+        description: Name of transport rule
+        type: string
+        required: true
+        default: InsightConnect Block List
+        example: InsightConnect Block List
+    output:
+      result:
+        title: Result
+        description: Result
+        type: string
+        required: true
+        example: Success
+  mass_search_and_purge:
+    title: Email Compliance Search and Purge
+    description: Search and purge a provided email
+    input:
+      compliance_search_name:
+        title: Compliance Search Name
+        description: Name of compliance search
+        type: string
+        required: true
+        example: InsightConnect Compliance Search
+      content_match_query:
+        title: Content Match Query
+        description: This parameter uses a text search string or a query that's formatted by using the Keyword Query Language (KQL). For more information about KQL, see Keyword Query Language syntax reference (https://go.microsoft.com/fwlink/p/?linkid=269603)
+        type: string
+        required: true
+        example: 'from:example AND subject:"Click Me!"'
+      query_timeout:
+        title: Query Timeout
+        description: Query timeout in minutes
+        type: integer
+        required: false
+        default: 60
+        example: 60
+      delete_items:
+        title: Delete Items
+        description: The script only executes the delete action if this parameter is true
+        required: false
+        type: boolean
+        default: false
+        example: true
+    output:
+      success:
+        title: Success
+        description: Success
+        type: boolean
+        required: true
+        example: true
+  email_compliance_search:
+    title: Email Compliance Search
+    description: Create a compliance search for provided email
+    input:
+      compliance_search_name:
+        title: Compliance Search Name
+        description: Name of compliance search
+        type: string
+        required: true
+        example: InsightConnect Compliance Search
+      content_match_query:
+        title: Content Match Query
+        description: This parameter uses a text search string or a query that's formatted by using the Keyword Query Language (KQL). For more information about KQL, see Keyword Query Language syntax reference (https://go.microsoft.com/fwlink/p/?linkid=269603)
+        type: string
+        required: true
+        example: 'from:example AND subject:"Click Me!"'
+      query_timeout:
+        title: Query Timeout
+        description: Query timeout in minutes
+        type: integer
+        required: false
+        default: 60
+        example: 60
+      exchange_location:
+        title: Exchange Location
+        description: Exchange location to limit this search to. An Exchange Location can be a mailbox, group mailbox, or 'All'. If this is ommitted it will be set to All
+        type: string
+        required: false
+        default: All
+        example: "user@example.com, user2@example.com"
+    output:
+      affected_users:
+        title: Users
+        description: Number of affected users
+        type: integer
+        required: true
+        example: 1
+      users:
+        title: User Email Addresses
+        description: Email address of all affected users
+        type: "[]string"
+        required: true
+        example: '["user1@example.com", "user2@example.com"]'
+      emails_found:
+        title: Emails Found
+        description: Emails found that matched
+        type: integer
+        required: true
+        example: 4
+  mass_purge:
+    title: Email Compliance Purge
+    description: Purge a provided email
+    input:
+      compliance_search_name:
+        title: Compliance Search Name
+        description: Name of compliance search
+        type: string
+        required: true
+        example: InsightConnect Compliance Search
+      query_timeout:
+        title: Query Timeout
+        description: Query timeout in minutes
+        type: integer
+        required: false
+        default: 60
+        example: 60
+    output:
+      success:
+        title: Success
+        description: Success
+        type: boolean
+        required: true
+        example: true
+  message_trace:
+    title: Message Trace
+    description: Run a message trace
+    input:
+      Sender_address:
+        title: Sender Address
+        description: Sender e-mail address
+        type: string
+        required: true
+        example: user@example.com
+      start_date:
+        title: Start Date
+        description: Start date in format MM/DD/YYYY
+        type: string
+        required: true
+        example: 09/27/2019
+      end_date:
+        title: End Date
+        description: End date in format MM/DD/YYYY
+        type: string
+        required: true
+        example: 09/27/2019
+    output:
+      message_traces:
+        title: Message Traces
+        description: Message Trace results
+        type: "[]message_trace"
+        required: true
+        example: '[ { "PSComputerName": "outlook.office365.com", "RunspaceId": "eb0ea814-0c3d-45eb-a189-f41118e8582d", "PSShowComputerName": false, "Organization": "things.com", "MessageId": "<***********************.namprd12.prod.outlook.com>", "Received": "2019-09-24T14:18:57.4237718", "SenderAddress": "user@example.com", "RecipientAddress": "user@example.com", "Subject": "Android Update 5.2.1", "Status": "Delivered", "ToIP": null, "FromIP": "216.93.244.203", "Size": 15846, "MessageTraceId": "d7b67cd8-a69c-46e5-8816-08d740fa2349", "StartDate": "2019-09-20T00:00:00", "EndDate": "2019-09-25T00:00:00", "Index": 0 } ]'
+  get_list_of_blocked_domains:
+    title: Get List of Blocked Domains
+    description: Return spam filter policies in your cloud based organization
+    output:
+      spam_policy:
+        title: Spam Policy
+        description: Information about blocked sender domain
+        type: "[]spam_policy"
+        required: true
+        example: '[ { "BlockedSenderDomains": [ "example.com" ], "DistinguishedName": "CN=Default,CN=Hosted Content Filter,CN=Transport Settings,CN=Configuration,CN=example.com,CN=ConfigurationUnits,DC=NAMPR12A004,DC=PROD,DC=OUTLOOK,DC=COM", "Guid": "9a5bb292-d659-4ac2-ac72-f6127c82189b", "Name": "Default" }, { "BlockedSenderDomains": [ "hacky.com" ], "DistinguishedName": "CN=Domain Block List,CN=Hosted Content Filter,CN=Transport Settings,CN=Configuration,CN=example.com,CN=ConfigurationUnits,DC=NAMPR12A004,DC=PROD,DC=OUTLOOK,DC=COM", "Guid": "fe557a1b-e0fa-4c13-8674-c4da30a8e884", "Name": "Domain Block List" } ]'
+  update_list_of_blocked_domains:
+    title: Update List of Blocked Domains
+    description: Add or remove domains from blocked domain list
+    input:
+      identity:
+        title: Identity
+        description: The Identity parameter specifies the spam filter policy that you want to view. Could be Name/Distinguished name (DN)/GUID
+        type: string
+        required: true
+        example: Domain Block List
+      domains:
+        title: Domains
+        description: Domains which will be blocked
+        type: "[]string"
+        required: true
+        example: '["example.com", "example2.com"]'
+      operation:
+        title: Operation
+        description: Operation which will be apply on list of blocked domains
+        type: string
+        enum:
+          - Add
+          - Remove
+        required: true
+        example: Add
+    output:
+      success:
+        title: Success
+        description: Success of operation
+        type: boolean
+        required: true
+        example: true
+  get_tenant_allow_block_list_items:
+    title: Get Tenant Allow/Block List Items
+    description: Retrieve entries from the Tenant Allow/Block List filtered by list type and action
+    input:
+      list_type:
+        title: List Type
+        description: The type of entries to retrieve
+        type: string
+        enum:
+          - Sender
+          - Url
+          - FileHash
+          - IP
+        required: true
+        order: 1
+        example: Sender
+      action_type:
+        title: Action Type
+        description: Filter by allow or block entries. Leave empty to return both
+        type: string
+        enum:
+          - Allow
+          - Block
+          - ""
+        required: false
+        order: 2
+        example: Block
+    output:
+      entries:
+        title: Entries
+        description: List of Tenant Allow/Block List entries
+        type: "[]tenant_allow_block_list_entry"
+        required: true
+        example: '[{"Identity": "RgAAAAAI8gSyOVN1GYaKkFe7hRJnBwA87CsZ-sample", "Value": "evil@example.com", "Action": "Block", "ListType": "Sender", "ExpirationDate": "2026-08-14T00:00:00Z", "Notes": "Phishing sender", "LastModifiedDateTime": "2026-07-14T12:00:00Z", "CreatedDateTime": "2026-07-14T12:00:00Z"}]'
+  create_tenant_allow_block_list_entry:
+    title: Create Tenant Allow/Block List Entry
+    description: Add a new entry to the Tenant Allow/Block List to block or allow senders, URLs, file hashes, or IPs
+    input:
+      list_type:
+        title: List Type
+        description: The type of entry to create
+        type: string
+        enum:
+          - Sender
+          - Url
+          - FileHash
+          - IP
+        required: true
+        order: 1
+        example: Sender
+      entries:
+        title: Entries
+        description: Values to add to the list. For Sender use email or domain, for URL use the URL value, for FileHash use SHA256 hashes, for IP use IPv6 addresses or CIDR ranges
+        type: "[]string"
+        required: true
+        order: 2
+        placeholder: "evil@example.com, malicious-domain.com"
+        example: '["evil@example.com", "malicious-domain.com"]'
+      action_type:
+        title: Action Type
+        description: Whether to create an allow or block entry
+        type: string
+        enum:
+          - Allow
+          - Block
+        required: true
+        order: 3
+        example: Block
+      no_expiration:
+        title: No Expiration
+        description: If true, the entry will never expire. Only valid for block entries
+        type: boolean
+        required: false
+        default: false
+        order: 4
+        example: false
+      expiration_days:
+        title: Expiration Days
+        description: Number of days until the entry expires (default 30 if no_expiration is false). Ignored if no_expiration is true
+        type: integer
+        required: false
+        default: 30
+        order: 5
+        example: 30
+      notes:
+        title: Notes
+        description: Optional notes to associate with the entry
+        type: string
+        required: false
+        order: 6
+        placeholder: "Blocked due to phishing campaign"
+        example: "Blocked due to phishing campaign"
+    output:
+      success:
+        title: Success
+        description: Whether the entries were created successfully
+        type: boolean
+        required: true
+        example: true
+      entries:
+        title: Entries
+        description: The created Tenant Allow/Block List entries
+        type: "[]tenant_allow_block_list_entry"
+        required: true
+        example: '[{"Identity": "RgAAAAAI8gSyOVN1GYaKkFe7hRJnBwA87CsZ-sample", "Value": "evil@example.com", "Action": "Block", "ListType": "Sender", "ExpirationDate": "2026-08-14T00:00:00Z", "Notes": "Blocked due to phishing campaign", "LastModifiedDateTime": "2026-07-14T12:00:00Z", "CreatedDateTime": "2026-07-14T12:00:00Z"}]'
+  remove_tenant_allow_block_list_entry:
+    title: Remove Tenant Allow/Block List Entry
+    description: Remove entries from the Tenant Allow/Block List by specifying the list type and values to remove
+    input:
+      list_type:
+        title: List Type
+        description: The type of entries to remove
+        type: string
+        enum:
+          - Sender
+          - Url
+          - FileHash
+          - IP
+        required: true
+        order: 1
+        example: Sender
+      entries:
+        title: Entries
+        description: Values to remove from the list. Must match existing entry values exactly
+        type: "[]string"
+        required: true
+        order: 2
+        placeholder: "evil@example.com"
+        example: '["evil@example.com"]'
+    output:
+      success:
+        title: Success
+        description: Whether the entries were removed successfully
+        type: boolean
+        required: true
+        example: true

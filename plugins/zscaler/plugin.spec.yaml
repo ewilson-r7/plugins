@@ -1,0 +1,1487 @@
+plugin_spec_version: v2
+extension: plugin
+products: [insightconnect]
+name: zscaler
+title: Zscaler
+version: 2.0.0
+connection_version: 2
+supported_versions: ["Zscaler OneAPI 2024"]
+description: Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network
+vendor: rapid7
+support: rapid7
+status: []
+sdk:
+  type: slim
+  version: 6.6.0
+  user: nobody
+resources:
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/zscaler
+  license_url: https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE
+  vendor_url: https://www.zscaler.com/
+links:
+  - "[Zscaler](https://www.zscaler.com/)"
+references:
+  - "[Zscaler](https://www.zscaler.com/)"
+tags:
+- zscaler
+- security
+- oneapi
+- oauth
+hub_tags:
+  use_cases: [threat_detection_and_response]
+  keywords: [url, blacklist, dlp, firewall, zpa, oneapi]
+  features: []
+key_features:
+  - "Lookup categories for a given URL"
+  - "Blacklist or unblacklist URLs"
+  - "Create user"
+  - "Delete user"
+  - "Get users"
+  - "Get URL category by name"
+  - "Update URLs of URL category"
+  - "Manage DLP incidents"
+  - "Manage firewall rules"
+  - "Retrieve web and firewall logs"
+  - "Submit threat feed IoCs"
+  - "Manage ZPA application segments and server groups"
+  - "Audit and manage ZCC VPN gateway bypass entries"
+requirements:
+  - "Requires a Zscaler OneAPI OAuth 2.0 Client ID from ZIdentity"
+  - "Requires a PEM private key for JWT signing (RS256)"
+  - "Requires the customer vanity domain (e.g., mycompany)"
+troubleshooting:
+  - "To configure OneAPI access:\n
+    1. Log in to ZIdentity at https://{vanity_domain}.zsapi.net.\n
+    2. Navigate to **Administration > API Clients** and create a new OAuth client.\n
+    3. Generate an RSA private key and upload the corresponding public key to the API client."
+  - "Ensure the OAuth client has the required scopes for the actions you intend to use (ZIA, ZPA).
+    For more information see the [Zscaler OneAPI documentation](https://help.zscaler.com/oneapi/understanding-oneapi)."
+version_history:
+  - "2.0.0 - Major version bump: migrate to Zscaler OneAPI with OAuth 2.0 Private Key authentication | Add DLP, firewall, logs, threat feed, ZPA, and ZCC VPN gateway bypass actions | SDK bump to 6.6.0"
+  - "1.5.2 - SDK Bump to 6.3.10 | Update connection test"
+  - "1.5.1 - Requirements.txt bumped | SDK Bump to 6.1.4"
+  - "1.5.0 - Add Actions: `Create User`, `Delete User`, `Get Users`, `Get URL Category by Name`, `Update URLs of URL Category`"
+  - "1.4.0 - Add Activate Configuration input in Blacklist URL action"
+  - "1.3.0 - Add Get Blacklist URL action"
+  - "1.2.1 - Usability updates and updated icon"
+  - "1.2.0 - New action Get Sandbox Report for Hash"
+  - "1.1.2 - Support both domains and URL inputs in the Blacklist URL and Lookup URL actions"
+  - "1.1.1 - Improve documentation around action inputs"
+  - "1.1.0 - New action Blacklist URL"
+  - "1.0.0 - Initial plugin"
+types:
+  url_categorization:
+    url:
+      title: URL
+      type: string
+      description: Checked URL
+      required: false
+    urlClassifications:
+      title: URL Classifications
+      type: "[]string"
+      description: URL classifications
+      required: false
+    urlClassificationsWithSecurityAlert:
+      title: URL classifications with security alert
+      type: "[]string"
+      description: URL classifications with security alert
+      required: false
+  Classification:
+    Category:
+      title: Category
+      type: string
+      description: Category
+      required: false
+    DetectedMalware:
+      title: Detected Malware
+      type: string
+      description: Detected malware
+      required: false
+    Score:
+      title: Score
+      type: integer
+      description: Score
+      required: false
+    Type:
+      title: Type
+      type: string
+      description: Type
+      required: false
+  FileProperties:
+    DigitalCerificate:
+      title: Digital Certificate
+      type: string
+      description: Digital certificate
+      required: false
+    FileSize:
+      title: File Size
+      type: integer
+      description: File size
+      required: false
+    FileType:
+      title: File Type
+      type: string
+      description: File type
+      required: false
+    Issuer:
+      title: Issuer
+      type: string
+      description: Issuer
+      required: false
+    MD5:
+      title: MD5
+      type: string
+      description: MD5
+      required: false
+    RootCA:
+      title: Root CA
+      type: string
+      description: Root CA
+      required: false
+    SHA1:
+      title: SHA1
+      type: string
+      description: SHA1
+      required: false
+    SSDeep:
+      title: SS Deep
+      type: string
+      description: SS deep
+      required: false
+    Sha256:
+      title: SHA256
+      type: string
+      description: SHA256
+      required: false
+  PersistenceSummary:
+    Risk:
+      title: Risk
+      type: string
+      description: Risk
+      required: false
+    Signature:
+      title: Signature
+      type: string
+      description: Signature
+      required: false
+    SignatureSources:
+      title: Signature Sources
+      type: "[]string"
+      description: Signature sources
+      required: false
+  Summary:
+    Category:
+      title: Category
+      type: string
+      description: Category
+      required: false
+    Duration:
+      title: Duration
+      type: integer
+      description: Duration
+      required: false
+    FileType:
+      title: File Type
+      type: string
+      description: File type
+      required: false
+    StartTime:
+      title: Start Time
+      type: integer
+      description: Start time
+      required: false
+    Status:
+      title: Status
+      type: string
+      description: Status
+      required: false
+  FullDetails:
+    Classification:
+      title: Classification
+      type: Classification
+      description: Classification
+      required: false
+    FileProperties:
+      title: File Properties
+      type: FileProperties
+      description: File properties
+      required: false
+    Persistence:
+      title: Persistence
+      type: "[]PersistenceSummary"
+      description: Persistence
+      required: false
+    SecurityBypass:
+      title: Security Bypass
+      type: "[]PersistenceSummary"
+      description: Security bypass
+      required: false
+    Summary:
+      title: Summary
+      type: Summary
+      description: Summary
+      required: false
+    Networking:
+      title: Networking
+      type: "[]PersistenceSummary"
+      description: Networking
+      required: false
+    Stealth:
+      title: Stealth
+      type: "[]PersistenceSummary"
+      description: Stealth
+      required: false
+    SystemSummary:
+      title: System Summary
+      type: "[]PersistenceSummary"
+      description: System summary
+      required: false
+  full_report:
+    FullDetails:
+      title: Full Details
+      type: FullDetails
+      description: Full details
+      required: false
+  department:
+    id:
+      title: ID
+      description: Department ID
+      type: integer
+      required: false
+      example: 123456789
+    name:
+      title: Name
+      description: Department name
+      type: string
+      required: false
+      example: Department Name
+    idpId:
+      title: IdpId
+      description: Identity provider (IdP) ID
+      type: integer
+      required: false
+      example: 123456789
+    comments:
+      title: Comments
+      description: Additional information about this department
+      type: string
+      required: false
+      example: Example comment
+    deleted:
+      title: Deleted
+      description: Is department deleted
+      type: boolean
+      required: false
+      example: false
+  group:
+    id:
+      title: ID
+      description: Unique identifier for the group
+      type: integer
+      required: false
+      example: 123456789
+    name:
+      title: Name
+      description: Group name
+      type: string
+      required: false
+      example: Group Name
+    idpId:
+      title: IdpId
+      description: Unique identifier for the identity provider (IdP)
+      type: integer
+      required: false
+      example: 123456789
+    comments:
+      title: Comments
+      description: Additional information about the group
+      type: string
+      required: false
+      example: Example comment
+  user:
+    id:
+      title: ID
+      description: User ID
+      type: integer
+      required: false
+      example: 123456789
+    name:
+      title: Name
+      description: User name
+      type: string
+      required: false
+      example: John
+    email:
+      title: Email
+      description: User email consists of a user name and domain name. It does not have to be a valid email address, but it must be unique and its domain must belong to the organization
+      type: string
+      required: false
+      example: user@example.com
+    groups:
+      title: Groups
+      description: List of groups a user belongs to
+      type: "[]group"
+      required: false
+      example: [ ]
+    department:
+      title: Department
+      description: Department a user belongs to
+      type: department
+      required: false
+      example: { }
+    comments:
+      title: Comments
+      description: Additional information about this user
+      type: string
+      required: false
+      example: Example comment
+    tempAuthEmail:
+      title: Temporary Authentication Email
+      description: If you enabled one-time tokens or links, enter the email address to which the Zscaler service sends the tokens or links. If this is empty, the service sends the email to the User email
+      type: string
+      required: false
+      example: user@example.com
+    adminUser:
+      title: Admin User
+      description: True if this user is an Admin user
+      type: boolean
+      required: false
+      example: false
+    type:
+      title: Type
+      description: User type. Provided only if this user is not an end user
+      type: string
+      required: false
+      example: ADMIN
+    deleted:
+      title: Deleted
+      description: Is user deleted
+      type: boolean
+      required: false
+      example: false
+    isNonEditable:
+      title: Is Non Editable
+      description: Is user non-editable
+      type: boolean
+      required: false
+      example: false
+  urlKeywordCounts:
+    totalUrlCount:
+      title: Total URL Count
+      description: Custom URL count for the category
+      type: integer
+      required: false
+      example: 1
+    retainParentUrlCount:
+      title: Retain Parent URL Count
+      description: Count of URLs with retain parent category
+      type: integer
+      required: false
+      example: 0
+    totalKeywordCount:
+      title: Total Keyword Count
+      description: Total keyword count for the category
+      type: integer
+      required: false
+      example: 1
+    retainParentKeywordCount:
+      title: Retain Parent Keyword Count
+      description: Count of total keywords with retain parent category
+      type: integer
+      required: false
+      example: 0
+  entityReference:
+    id:
+      title: ID
+      description: Identifier that uniquely identifies an entity
+      type: integer
+      required: false
+      example: 12345678
+    name:
+      title: Name
+      description: The configured name of the entity
+      type: string
+      required: false
+      example: Entity Name
+    extensions:
+      title: Extensions
+      description: Extensions
+      type: object
+      required: false
+      example: { }
+  adminScope:
+    scopeGroupMemberEntities:
+      title: Scope Group Member Entities
+      description: List of ID/name pairs of locations within the location group
+      type: "[]entityReference"
+      required: false
+      example: [ ]
+    type:
+      title: Type
+      description: The admin scope type
+      type: string
+      required: false
+      example: ORGANIZATION
+    scopeEntities:
+      title: Scope Entities
+      description: Based on the admin scope type, the entities can be the ID/name pair of departments, locations, or location groups
+      type: "[]entityReference"
+      required: false
+      example: [ ]
+  urlCategory:
+    id:
+      title: ID
+      description: The identifier of the URL category
+      type: string
+      required: false
+      example: CUSTOM_01
+    configuredName:
+      title: Configured Name
+      description: Name of the URL category
+      type: string
+      required: false
+      example: Example Name
+    superCategory:
+      title: Super Category
+      description: Super Category of the URL category
+      type: string
+      required: false
+      example: Games
+    keywords:
+      title: Keywords
+      description: Custom keywords associated with a URL category. Up to 2048 custom keywords can be added per organization across all categories
+      type: "[]string"
+      required: false
+      example: [ ]
+    keywordsRetainingParentCategory:
+      title: Keywords Retaining Parent Category
+      description: Retained custom keywords from the parent URL category that is associated to a URL category. Up to 2048 retained parent keywords can be added per organization across all categories (including bandwidth classes)
+      type: "[]string"
+      required: false
+      example: [ ]
+    urls:
+      title: URLs
+      description: Custom URLs to add to a URL category. Up to 25,000 custom URLs can be added per organization across all categories (including bandwidth classes)
+      type: "[]string"
+      required: false
+      example: [ ]
+    dbCategorizedUrls:
+      title: DB Categorized URLs
+      description: URLs added to a custom URL category are also retained under the original parent URL category (i.e., the predefined category the URL previously belonged to). The URLs entered are covered by policies that reference the original parent URL category as well as those that reference the custom URL category
+      type: "[]string"
+      required: false
+      example: [ ]
+    ipRanges:
+      title: IP Ranges
+      description: Custom IP address ranges associated with a URL category. Up to 2000 custom IP address ranges and retaining parent custom IP address ranges can be added, per organization, across all categories
+      type: "[]string"
+      required: false
+      example: [ ]
+    ipRangesRetainingParentCategory:
+      title: IP Ranges Retaining Parent Category
+      description: The retaining parent custom IP address ranges associated with a URL category. Up to 2000 custom IP ranges and retaining parent custom IP address ranges can be added, per organization, across all categories
+      type: "[]string"
+      required: false
+      example: [ ]
+    customCategory:
+      title: Custom Category
+      description: Whether the URL category is custom. Up to 48 custom URL categories can be added per organization
+      type: boolean
+      required: false
+      example: true
+    scopes:
+      title: Scopes
+      description: Scope of the custom categories
+      type: "[]adminScope"
+      required: false
+      example: [ ]
+    editable:
+      title: Editable
+      description: Value is set to false for custom URL category when due to scope user does not have edit permission
+      type: boolean
+      required: false
+      example: true
+    description:
+      title: Description
+      description: Description of the URL category. Contains tag name and needs to be localized on client side in case of predefined category, else it contains the user-entered description which does not have localization support
+      type: string
+      required: false
+      example: Example description
+    type:
+      title: Type
+      description: Type of the URL category
+      type: string
+      required: false
+      example: URL_CATEGORY
+    urlKeywordCounts:
+      title: URL Keyword Counts
+      description: URL and keyword counts for the URL category
+      type: urlKeywordCounts
+      required: false
+      example: { }
+    customUrlsCount:
+      title: Custom URLs Count
+      description: The number of custom URLs associated to the URL category
+      type: integer
+      required: false
+      example: 1
+    urlsRetainingParentCategoryCount:
+      title: URLs Retaining Parent Category Count
+      description: The number of custom URLs associated to the URL category, that also need to be retained under the original parent category
+      type: integer
+      required: false
+      example: 0
+    customIpRangesCount:
+      title: Custom IP Ranges Count
+      description: The number of custom IP address ranges associated to the URL category
+      type: integer
+      required: false
+      example: 0
+    ipRangesRetainingParentCategoryCount:
+      title: IP Ranges Retaining Parent Category Count
+      description: The number of custom IP address ranges associated to the URL category, that also need to be retained under the original parent category
+      type: integer
+      required: false
+      example: 0
+
+  idNameReference:
+    id:
+      title: ID
+      description: Unique identifier
+      type: integer
+      required: false
+      example: 12345
+    name:
+      title: Name
+      description: Name of the resource
+      type: string
+      required: false
+      example: "Example Name"
+
+  firewallRule:
+    id:
+      title: ID
+      description: Unique identifier for the firewall rule
+      type: integer
+      required: false
+      example: 12345
+    name:
+      title: Name
+      description: Name of the firewall filtering rule
+      type: string
+      required: false
+      example: "Block Malware"
+    order:
+      title: Order
+      description: Rule order number
+      type: integer
+      required: false
+      example: 1
+    rank:
+      title: Rank
+      description: Admin rank of the rule
+      type: integer
+      required: false
+      example: 7
+    action:
+      title: Action
+      description: Action taken when packets match the rule
+      type: string
+      required: false
+      example: "BLOCK_RESET"
+    state:
+      title: State
+      description: Whether the rule is enabled or disabled
+      type: string
+      required: false
+      example: "ENABLED"
+    description:
+      title: Description
+      description: Additional information about the rule
+      type: string
+      required: false
+      example: "Block known malware destinations"
+    defaultRule:
+      title: Default Rule
+      description: Whether this is the default rule
+      type: boolean
+      required: false
+      example: false
+    predefined:
+      title: Predefined
+      description: Whether this is a predefined rule
+      type: boolean
+      required: false
+      example: false
+    locations:
+      title: Locations
+      description: Locations to which the rule applies
+      type: "[]idNameReference"
+      required: false
+      example: []
+    departments:
+      title: Departments
+      description: Departments to which the rule applies
+      type: "[]idNameReference"
+      required: false
+      example: []
+    groups:
+      title: Groups
+      description: Groups to which the rule applies
+      type: "[]idNameReference"
+      required: false
+      example: []
+    users:
+      title: Users
+      description: Users to which the rule applies
+      type: "[]idNameReference"
+      required: false
+      example: []
+    srcIps:
+      title: Source IPs
+      description: Source IP addresses for which the rule is applicable
+      type: "[]string"
+      required: false
+      example: []
+    destAddresses:
+      title: Destination Addresses
+      description: Destination IP addresses for which the rule is applicable
+      type: "[]string"
+      required: false
+      example: []
+    nwApplications:
+      title: Network Applications
+      description: Network service applications on which the rule is applied
+      type: "[]string"
+      required: false
+      example: []
+
+  dlpIncident:
+    id:
+      title: ID
+      description: Unique identifier for the DLP incident
+      type: integer
+      required: false
+      example: 12345
+    eventTime:
+      title: Event Time
+      description: Time the DLP incident occurred
+      type: string
+      required: false
+      example: "2024-01-01T12:00:00Z"
+    dlpPolicy:
+      title: DLP Policy
+      description: Name of the DLP policy that triggered the incident
+      type: string
+      required: false
+      example: "PCI Data Protection"
+    severity:
+      title: Severity
+      description: Severity level of the incident
+      type: string
+      required: false
+      example: "HIGH"
+    user:
+      title: User
+      description: User associated with the incident
+      type: string
+      required: false
+      example: "user@example.com"
+    department:
+      title: Department
+      description: Department of the user
+      type: string
+      required: false
+      example: "Engineering"
+
+  webLogEntry:
+    datetime:
+      title: Date Time
+      description: Timestamp of the web transaction
+      type: string
+      required: false
+      example: "2024-01-01T12:00:00Z"
+    user:
+      title: User
+      description: User who made the request
+      type: string
+      required: false
+      example: "user@example.com"
+    url:
+      title: URL
+      description: Requested URL
+      type: string
+      required: false
+      example: "https://example.com/path"
+    action:
+      title: Action
+      description: Action taken on the request
+      type: string
+      required: false
+      example: "ALLOWED"
+    department:
+      title: Department
+      description: Department of the user
+      type: string
+      required: false
+      example: "Engineering"
+    location:
+      title: Location
+      description: Location of the user
+      type: string
+      required: false
+      example: "Headquarters"
+
+  firewallLogEntry:
+    datetime:
+      title: Date Time
+      description: Timestamp of the firewall event
+      type: string
+      required: false
+      example: "2024-01-01T12:00:00Z"
+    sourceIp:
+      title: Source IP
+      description: Source IP address
+      type: string
+      required: false
+      example: "192.168.1.100"
+    destinationIp:
+      title: Destination IP
+      description: Destination IP address
+      type: string
+      required: false
+      example: "10.0.0.1"
+    destinationPort:
+      title: Destination Port
+      description: Destination port
+      type: integer
+      required: false
+      example: 443
+    action:
+      title: Action
+      description: Action taken by the firewall
+      type: string
+      required: false
+      example: "BLOCKED"
+    rule:
+      title: Rule
+      description: Firewall rule that was matched
+      type: string
+      required: false
+      example: "Block Malware"
+
+  applicationSegment:
+    id:
+      title: ID
+      description: Unique identifier for the application segment
+      type: string
+      required: false
+      example: "123456"
+    name:
+      title: Name
+      description: Name of the application segment
+      type: string
+      required: false
+      example: "Internal App"
+    enabled:
+      title: Enabled
+      description: Whether the application segment is enabled
+      type: boolean
+      required: false
+      example: true
+    domainNames:
+      title: Domain Names
+      description: Domain names associated with the segment
+      type: "[]string"
+      required: false
+      example: ["app.internal.com"]
+    description:
+      title: Description
+      description: Description of the application segment
+      type: string
+      required: false
+      example: "Internal application"
+
+  serverGroup:
+    id:
+      title: ID
+      description: Unique identifier for the server group
+      type: string
+      required: false
+      example: "654321"
+    name:
+      title: Name
+      description: Name of the server group
+      type: string
+      required: false
+      example: "Production Servers"
+    enabled:
+      title: Enabled
+      description: Whether the server group is enabled
+      type: boolean
+      required: false
+      example: true
+    description:
+      title: Description
+      description: Description of the server group
+      type: string
+      required: false
+      example: "Production server pool"
+
+  vpn_gateway_entry:
+    hostname:
+      title: Hostname
+      description: The hostname of the VPN gateway bypass entry
+      type: string
+      required: false
+      example: "gateway.example.com"
+    ip:
+      title: IP
+      description: The IP address of the VPN gateway bypass entry
+      type: string
+      required: false
+      example: "10.0.0.1"
+    type:
+      title: Type
+      description: The type of entry (e.g., "hostname", "ip")
+      type: string
+      required: false
+      example: "hostname"
+
+  vpn_gateway_profile:
+    profile_id:
+      title: Profile ID
+      description: The application profile ID
+      type: string
+      required: true
+      example: "12345"
+    profile_name:
+      title: Profile Name
+      description: The application profile name
+      type: string
+      required: true
+      example: "Default Profile"
+    vpn_gateways:
+      title: VPN Gateways
+      description: List of VPN gateway bypass entries
+      type: "[]vpn_gateway_entry"
+      required: true
+      example: [{"hostname": "gateway.example.com", "type": "hostname"}]
+
+connection:
+  client_id:
+    title: Client ID
+    type: string
+    description: OAuth Client ID from ZIdentity
+    required: true
+    example: "abc123-client-id"
+  private_key:
+    title: Private Key
+    type: credential_asymmetric_key
+    description: PEM private key for JWT signing (RS256)
+    required: true
+    example: '{"privateKey": "-----BEGIN RSA PRIVATE KEY-----..."}'
+  vanity_domain:
+    title: Vanity Domain
+    type: string
+    description: Customer vanity domain (e.g., mycompany)
+    required: true
+    example: mycompany
+  cloud:
+    title: Cloud
+    type: string
+    description: Zscaler cloud domain
+    required: false
+    default: zsapi.net
+    example: zsapi.net
+actions:
+  lookup_url:
+    title: Lookup URL
+    description: Look up the categorization of a given set of URLs
+    input:
+      urls:
+        title: URLs
+        description: The given set of URLs or domains to be looked up
+        type: "[]string"
+        required: true
+        example: ["example.com", "https://rapid7.com"]
+    output:
+      url_categorization:
+        title: URL Categorization
+        description: Information about given URLs
+        type: "[]url_categorization"
+        required: true
+        example: [{"url":"example.com","urlClassifications":["REFERENCE_SITES","INTERNET_SERVICES"],"urlClassificationsWithSecurityAlert":[]},{"url":"rapid7.com","urlClassifications":["CORPORATE_MARKETING","PROFESSIONAL_SERVICES"],"urlClassificationsWithSecurityAlert":[]}]
+  blacklist_url:
+    title: Blacklist URL
+    description: Add or remove URLs from a blacklist. These URLs will appear in the 'Blocked Malicious URLs' section on the Advanced Threats Policy page
+    input:
+      urls:
+        title: URLs
+        description: A given set of one or more URLs or domains to update in the blacklist
+        type: "[]string"
+        required: true
+        example: ["www.example.com", "http://rapid7.com"]
+      blacklist_state:
+        title: Blacklist State
+        description: True to blacklist a URL, false to unblacklist a URL
+        type: boolean
+        required: false
+        default: true
+        example: true
+      activate_configuration:
+        title: Activate Configuration
+        description: Set to true to activate configuration changes
+        type: boolean
+        required: true
+        default: false
+        example: false
+    output:
+      success:
+        title: Success
+        description: Whether or not the request succeeded
+        type: boolean
+        required: true
+        example: true
+      status:
+        title: Status
+        description: Activation status for a configuration change
+        type: string
+        example: ACTIVE
+        required: true
+  get_sandbox_report_for_hash:
+    title: Get Sandbox Report for Hash
+    description: Get a full report for an MD5 hash of a file that was analyzed by Sandbox
+    input:
+      hash:
+        title: Hash
+        description: MD5 hash to get report
+        type: string
+        required: true
+        example: 9de5069c5afe602b2ea0a04b66beb2c0
+    output:
+      full_report:
+        title: Full Report
+        description: Full report of an analyzed MD5 hash
+        type: full_report
+        required: true
+        example: {"Full Details":{"Summary":{"Status":"COMPLETED","Category":"EXECS","FileType":"EXE","StartTime":1520333667,"Duration":520797},"Classification":{"Type":"MALICIOUS","Category":"ADWARE","Score":76,"DetectedMalware":"Adware.Generic.48627"},"FileProperties":{"FileType":"EXE","FileSize":23323,"MD5":"afcb861561f7416c5e852001d31f8921","SHA1":"1dce4aacf1e17418ebc05d6d2e9034a8271185f9","Sha256":"fc9003461e52006be0188e1fc1b7656c81e930ec78a93eb7ab21fdff3e566314","Issuer":"","DigitalCerificate":"","SSDeep":"384:YcBdTF8O3Fnp7JWmbiV2SBsJmnnB76RF/ewf4XXI9volVL9EFlfnvY1NvJml7Wc:lZF8OXJWmbLW0mnnp6X6rfLC3Osl6c","RootCA":""},"SystemSummary":[{"Risk":"LOW","Signature":"Binary contains paths to debug symbols","SignatureSources":["Not_a_virus.pdb source: 5A9E736319EE0000_5A9E736E00000000.exe"]}],"SecurityBypass":[{"Risk":"LOW","Signature":"Entrypoint lies outside standard sections","SignatureSources":["section where entry point is pointing to: .Stone"]}],"Persistence":[{"Risk":"LOW","Signature":"PE file contains sections with non-standard names","SignatureSources":["","section name: .Stone"]}]}}
+  get_blacklist_url:
+    title: Get Blacklist URL
+    description: Get blacklisted URLs
+    output:
+      blacklisted_urls:
+        title: Blacklisted URLs
+        description: URLs added to the blacklist
+        type: "[]string"
+        required: false
+        example: ["domain.com","example.com","example1.com","example2.com","example3.com","example4.com","example5.com"]
+  get_users:
+    title: Get Users
+    description: Gets a list of all users and allows user filtering by name, department, or group. The name search parameter performs a partial match. The dept and group parameters perform a 'starts with' match
+    input:
+      name:
+        title: Name
+        description: Filters by user name
+        type: string
+        required: false
+        example: John
+      department:
+        title: Department
+        description: Filters by department name
+        type: string
+        required: false
+        example: Department Name
+      group:
+        title: Group
+        description: Filters by group name
+        type: string
+        required: false
+        example: Group Name
+      page:
+        title: Page
+        description: Specifies the page offset
+        type: integer
+        required: false
+        example: 1
+      pageSize:
+        title: Page Size
+        description: Specifies the page size
+        type: integer
+        required: false
+        example: 100
+    output:
+      users:
+        title: User
+        description: List of organization users
+        type: "[]user"
+        required: false
+        example: [{"id":123456789,"name":"Sample user","email":"user@example.com","groups":[{"id":123456789,"name":"Test Group"}],"department":{"id":123456789,"name":"Test Department"},"adminUser":false,"isNonEditable":false,"deleted":false}]
+  delete_user:
+    title: Delete User
+    description: Deletes the user for the specified ID
+    input:
+      userId:
+        title: User Id
+        description: The unique identifier for the user
+        type: integer
+        required: true
+        example: 12345678
+    output:
+      success:
+        title: Success
+        description: Whether or not the request succeeded
+        type: boolean
+        required: false
+        example: true
+  create_user:
+    title: Create User
+    description: Adds a new user. A user can belong to multiple groups, but can only belong to one department
+    input:
+      name:
+        title: Name
+        description: User name
+        type: string
+        required: true
+        example: John
+      email:
+        title: Email
+        description: User email consists of a user name and domain name. It does not have to be a valid email address, but it must be unique and its domain must belong to the organization
+        type: string
+        required: true
+        example: user@example.com
+      groupNames:
+        title: Group Names
+        description: List of groups a user belongs to
+        type: "[]string"
+        required: true
+        example: [ 'Group Name' ]
+      departmentName:
+        title: Department Name
+        description: Department a user belongs to
+        type: string
+        required: true
+        example: Department Name
+      comments:
+        title: Comments
+        description: Additional information about this user
+        type: string
+        required: false
+        example: Example comment
+      tempAuthEmail:
+        title: Temporary Authentication Email
+        description: If you enabled one-time tokens or links, enter the email address to which the Zscaler service sends the tokens or links. If this is empty, the service sends the email to the User email
+        type: string
+        required: false
+        example: user@example.com
+      password:
+        title: Password
+        description: User's password. Applicable only when authentication type is Hosted DB. Password strength must follow what is defined in the auth settings
+        type: password
+        required: true
+        example: password12!
+    output:
+      user:
+        title: User
+        description: An organization user
+        type: user
+        required: false
+        example: {"id":123456789,"name":"Sample user","email":"user@example.com","groups":[{"id":123456789,"name":"Test Group","idpId":123456789,"comments":"Sample comment"}],"department":{"id":123456789,"name":"Test Department","idpId":123456789,"comments":"Sample comment","deleted":false},"comments":"Sample comment","tempAuthEmail":"user@example.com","adminUser":false}
+  get_url_category_by_name:
+    title: Get URL Category by Name
+    description: Get the URL category information for the specified name. Supports both predefined Zscaler categories and custom categories
+    input:
+      urlCategoryName:
+        title: URL Category Name
+        description: Name of the URL category to retrieve. Can be a predefined Zscaler category name or a custom category name
+        type: string
+        required: true
+        example: "News and Media"
+    output:
+      urlCategory:
+        title: URL Category
+        description: Information about the given URL category
+        type: urlCategory
+        required: false
+        example: {"id":"CUSTOM_01","configuredName":"Custom Category Example","superCategory":"USER_DEFINED","keywords":["key1"],"keywordsRetainingParentCategory":["test1"],"urls":["example.com"],"dbCategorizedUrls":[],"customCategory":true,"scopes":[{"type":"ORGANIZATION"},{"type":"DEPARTMENT","scopeEntities":[{"id":12345678,"name":"Test Department"}]},{"type":"LOCATION","scopeEntities":[{"id":12345678,"name":"Location Example"}]},{"scopeGroupMemberEntities":[],"type":"LOCATION","scopeEntities":[{"id":12345678,"name":"Location Group Example"}]}],"editable":true,"description":"Example Description","type":"URL_CATEGORY","val":123,"customUrlsCount":1,"urlsRetainingParentCategoryCount":0,"customIpRangesCount":0,"ipRangesRetainingParentCategoryCount":0}
+  update_urls_of_url_category:
+    title: Update URLs of URL Category
+    description: Adds or removes URLs for the specified URL category. Supports both predefined Zscaler categories and custom categories
+    input:
+      urlCategoryName:
+        title: URL Category Name
+        description: Name of the URL category to update. Can be a predefined Zscaler category name or a custom category name
+        type: string
+        required: true
+        example: "News and Media"
+      action:
+        title: Action
+        description: The action applied to the URLs
+        type: string
+        enum:
+          - "Add to the list"
+          - "Remove from the list"
+        required: true
+        example: Add to the list
+      urlList:
+        title: URL List
+        description: List of the URLs to be updated
+        type: "[]string"
+        required: true
+        example: [ "example.com", "example1.com" ]
+    output:
+      urlCategory:
+        title: URL Category
+        description: Information about the updated URL category
+        type: urlCategory
+        required: false
+        example: {"id":"CUSTOM_01","configuredName":"Custom Category Example","superCategory":"USER_DEFINED","keywords":["key1"],"keywordsRetainingParentCategory":["test1"],"urls":["example.com"],"dbCategorizedUrls":[],"customCategory":true,"scopes":[{"type":"ORGANIZATION"},{"type":"DEPARTMENT","scopeEntities":[{"id":12345678,"name":"Test Department"}]},{"type":"LOCATION","scopeEntities":[{"id":12345678,"name":"Location Example"}]},{"scopeGroupMemberEntities":[],"type":"LOCATION_GROUP","scopeEntities":[{"id":12345678,"name":"Location Group Example"}]}],"editable":true,"description":"Example Description","type":"URL_CATEGORY","val":123,"customUrlsCount":1,"urlsRetainingParentCategoryCount":0,"customIpRangesCount":0,"ipRangesRetainingParentCategoryCount":0}
+  get_dlp_incidents:
+    title: Get DLP Incidents
+    description: Retrieve DLP incident data from Zscaler OneAPI with time range filtering and pagination support
+    input:
+      start_time:
+        title: Start Time
+        description: The start time for the DLP incidents query in ISO 8601 format (e.g., 2024-01-01T00:00:00+00:00)
+        type: string
+        required: true
+        example: "2024-01-01T00:00:00+00:00"
+      end_time:
+        title: End Time
+        description: The end time for the DLP incidents query in ISO 8601 format (e.g., 2024-01-02T00:00:00+00:00)
+        type: string
+        required: true
+        example: "2024-01-02T00:00:00+00:00"
+      next_link:
+        title: Next Link
+        description: Pagination token from a previous response to retrieve the next page of results
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+    output:
+      incidents:
+        title: Incidents
+        description: List of DLP incidents matching the query
+        type: "[]dlpIncident"
+        required: false
+        example: [{"id": 1, "eventTime": "2024-01-01T12:00:00+00:00", "dlpPolicy": "PCI", "severity": "HIGH"}]
+      next_link:
+        title: Next Link
+        description: Pagination token to retrieve the next page of results. Empty if no more pages
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+  list_firewall_rules:
+    title: List Firewall Rules
+    description: List all firewall filtering rules with pagination support
+    input:
+      next_link:
+        title: Next Link
+        description: Pagination token from a previous response to retrieve the next page of results
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+      search:
+        title: Search
+        description: Filter rules by name (case-insensitive partial match). If provided, only rules whose name contains this string will be returned
+        type: string
+        required: false
+        example: "Block"
+    output:
+      rules:
+        title: Rules
+        description: List of firewall filtering rules
+        type: "[]firewallRule"
+        required: false
+        example: [{"id": 1, "name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET"}]
+      next_link:
+        title: Next Link
+        description: Pagination token to retrieve the next page of results. Empty if no more pages
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+  get_firewall_rule:
+    title: Get Firewall Rule
+    description: Get a specific firewall filtering rule by its ID
+    input:
+      rule_id:
+        title: Rule ID
+        description: The unique identifier of the firewall rule to retrieve
+        type: integer
+        required: true
+        example: 12345
+    output:
+      rule:
+        title: Rule
+        description: The firewall filtering rule details
+        type: firewallRule
+        required: false
+        example: {"id": 12345, "name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}
+  create_firewall_rule:
+    title: Create Firewall Rule
+    description: Create a new firewall filtering rule
+    input:
+      rule_data:
+        title: Rule Data
+        description: The firewall rule configuration object containing rule properties such as name, state, action, and conditions
+        type: object
+        required: true
+        example: {"name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}
+    output:
+      rule:
+        title: Rule
+        description: The created firewall filtering rule
+        type: firewallRule
+        required: false
+        example: {"id": 12345, "name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}
+  update_firewall_rule:
+    title: Update Firewall Rule
+    description: Update an existing firewall filtering rule
+    input:
+      rule_id:
+        title: Rule ID
+        description: The unique identifier of the firewall rule to update
+        type: integer
+        required: true
+        example: 12345
+      rule_data:
+        title: Rule Data
+        description: The updated firewall rule configuration object containing rule properties to modify
+        type: object
+        required: true
+        example: {"name": "Block Malware Updated", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}
+    output:
+      rule:
+        title: Rule
+        description: The updated firewall filtering rule
+        type: firewallRule
+        required: false
+        example: {"id": 12345, "name": "Block Malware Updated", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}
+  get_web_logs:
+    title: Get Web Logs
+    description: Retrieve web transaction logs from Zscaler with time range filtering and pagination support
+    input:
+      start_time:
+        title: Start Time
+        description: The start time for the log query in ISO 8601 format (e.g., 2024-01-01T00:00:00+00:00)
+        type: string
+        required: true
+        example: "2024-01-01T00:00:00+00:00"
+      end_time:
+        title: End Time
+        description: The end time for the log query in ISO 8601 format (e.g., 2024-01-02T00:00:00+00:00)
+        type: string
+        required: true
+        example: "2024-01-02T00:00:00+00:00"
+      next_link:
+        title: Next Link
+        description: Pagination token from a previous response to retrieve the next page of results
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+    output:
+      logs:
+        title: Logs
+        description: List of web transaction log entries
+        type: "[]webLogEntry"
+        required: false
+        example: [{"datetime": "2024-01-01T12:00:00+00:00", "user": "user@example.com", "url": "https://example.com", "action": "ALLOWED"}]
+      next_link:
+        title: Next Link
+        description: Pagination token to retrieve the next page of results. Empty if no more pages
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+  get_firewall_logs:
+    title: Get Firewall Logs
+    description: Retrieve firewall logs from Zscaler with time range filtering and pagination support
+    input:
+      start_time:
+        title: Start Time
+        description: The start time for the log query in ISO 8601 format (e.g., 2024-01-01T00:00:00+00:00)
+        type: string
+        required: true
+        example: "2024-01-01T00:00:00+00:00"
+      end_time:
+        title: End Time
+        description: The end time for the log query in ISO 8601 format (e.g., 2024-01-02T00:00:00+00:00)
+        type: string
+        required: true
+        example: "2024-01-02T00:00:00+00:00"
+      next_link:
+        title: Next Link
+        description: Pagination token from a previous response to retrieve the next page of results
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+    output:
+      logs:
+        title: Logs
+        description: List of firewall log entries
+        type: "[]firewallLogEntry"
+        required: false
+        example: [{"datetime": "2024-01-01T12:00:00+00:00", "sourceIP": "192.168.1.1", "destIP": "10.0.0.1", "action": "BLOCKED", "rule": "Block Malware"}]
+      next_link:
+        title: Next Link
+        description: Pagination token to retrieve the next page of results. Empty if no more pages
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+  submit_threat_feed:
+    title: Submit Threat Feed
+    description: Submit custom threat indicators (IoCs) to a Zscaler threat feed
+    input:
+      feed_type:
+        title: Feed Type
+        description: The type of threat indicators to submit
+        type: string
+        required: true
+        enum:
+          - "IP"
+          - "DOMAIN"
+          - "URL"
+        example: "IP"
+      indicators:
+        title: Indicators
+        description: List of threat indicators to submit to the feed
+        type: "[]string"
+        required: true
+        example: ["192.168.1.100", "10.0.0.50"]
+      description:
+        title: Description
+        description: Optional description for the submitted threat indicators
+        type: string
+        required: false
+        example: "Malicious IPs from incident response"
+    output:
+      success:
+        title: Success
+        description: Whether the threat feed submission was successful
+        type: boolean
+        required: true
+        example: true
+      submitted_count:
+        title: Submitted Count
+        description: The number of indicators successfully submitted
+        type: integer
+        required: true
+        example: 2
+  list_application_segments:
+    title: List Application Segments
+    description: List ZPA application segments with pagination support
+    input:
+      next_link:
+        title: Next Link
+        description: Pagination token from a previous response to retrieve the next page of results
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+    output:
+      segments:
+        title: Segments
+        description: List of ZPA application segments
+        type: "[]applicationSegment"
+        required: false
+        example: [{"id": "123456", "name": "Internal App", "enabled": true, "domainNames": ["app.internal.com"]}]
+      next_link:
+        title: Next Link
+        description: Pagination token to retrieve the next page of results. Empty if no more pages
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+  get_application_segment:
+    title: Get Application Segment
+    description: Get a specific ZPA application segment by its ID
+    input:
+      segment_id:
+        title: Segment ID
+        description: The unique identifier of the ZPA application segment to retrieve
+        type: string
+        required: true
+        example: "123456"
+    output:
+      segment:
+        title: Segment
+        description: The ZPA application segment details
+        type: applicationSegment
+        required: false
+        example: {"id": "123456", "name": "Internal App", "enabled": true, "domainNames": ["app.internal.com"], "serverGroups": [{"id": "789"}]}
+  list_server_groups:
+    title: List Server Groups
+    description: List ZPA server groups with pagination support
+    input:
+      next_link:
+        title: Next Link
+        description: Pagination token from a previous response to retrieve the next page of results
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+    output:
+      groups:
+        title: Groups
+        description: List of ZPA server groups
+        type: "[]serverGroup"
+        required: false
+        example: [{"id": "789", "name": "App Server Group", "enabled": true, "servers": [{"address": "10.0.0.1"}]}]
+      next_link:
+        title: Next Link
+        description: Pagination token to retrieve the next page of results. Empty if no more pages
+        type: string
+        required: false
+        example: "eyJwYWdlIjogMn0="
+  get_server_group:
+    title: Get Server Group
+    description: Get a specific ZPA server group by its ID
+    input:
+      group_id:
+        title: Group ID
+        description: The unique identifier of the ZPA server group to retrieve
+        type: string
+        required: true
+        example: "789"
+    output:
+      group:
+        title: Group
+        description: The ZPA server group details
+        type: serverGroup
+        required: false
+        example: {"id": "789", "name": "App Server Group", "enabled": true, "servers": [{"address": "10.0.0.1"}], "applications": [{"id": "123456"}]}
+  get_vpn_gateway_bypasses:
+    title: Get VPN Gateway Bypasses
+    description: Retrieve VPN gateway bypass entries from ZCC application profiles for auditing shared-hosting/CDN IP conflicts
+    output:
+      profiles:
+        title: Profiles
+        description: List of application profiles with VPN gateway bypass entries
+        type: "[]vpn_gateway_profile"
+        required: true
+        example: [{"profile_id": "12345", "profile_name": "Default Profile", "vpn_gateways": [{"hostname": "gateway.example.com", "type": "hostname"}]}]
+  remove_vpn_gateway_bypass:
+    title: Remove VPN Gateway Bypass
+    description: Remove a VPN gateway bypass entry from a ZCC application profile
+    input:
+      profile_id:
+        title: Profile ID
+        description: The profile ID to update
+        type: string
+        required: true
+        example: "12345"
+      entry:
+        title: Entry
+        description: The hostname or IP address to remove from VPN gateway bypasses
+        type: string
+        required: true
+        example: "gateway.example.com"
+    output:
+      success:
+        title: Success
+        description: Whether the removal was successful
+        type: boolean
+        required: true
+        example: true
+      vpn_gateways:
+        title: VPN Gateways
+        description: Updated list of VPN gateway bypass entries
+        type: "[]vpn_gateway_entry"
+        required: true
+        example: [{"hostname": "other-gateway.example.com", "type": "hostname"}]

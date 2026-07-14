@@ -1,0 +1,55 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "data": [
+        {
+          "policyid": 1,
+          "name": "Allow-Internal",
+          "srcintf": ["port1"],
+          "dstintf": ["port2"],
+          "srcaddr": ["internal-net"],
+          "dstaddr": ["all"],
+          "service": ["ALL"],
+          "action": "accept",
+          "status": "enable",
+          "schedule": "always",
+          "logtraffic": "all",
+          "comments": "Allow internal traffic"
+        },
+        {
+          "policyid": 2,
+          "name": "Block-Malicious",
+          "srcintf": ["any"],
+          "dstintf": ["any"],
+          "srcaddr": ["blocked-hosts"],
+          "dstaddr": ["all"],
+          "service": ["ALL"],
+          "action": "deny",
+          "status": "enable",
+          "schedule": "always",
+          "logtraffic": "utm",
+          "comments": "Block malicious hosts"
+        },
+        {
+          "policyid": 3,
+          "name": "Web-Access",
+          "srcintf": ["port1"],
+          "dstintf": ["port3"],
+          "srcaddr": ["internal-net"],
+          "dstaddr": ["web-servers"],
+          "service": ["HTTP", "HTTPS"],
+          "action": "accept",
+          "status": "enable",
+          "schedule": "business-hours",
+          "logtraffic": "all",
+          "comments": "Web server access"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": -6,
+        "message": "Object already exists (naming conflict)"
+      }
+    }
+  ]
+}

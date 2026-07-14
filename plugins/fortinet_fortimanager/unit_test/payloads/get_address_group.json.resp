@@ -1,0 +1,16 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "data": {
+        "name": "blocked-addresses",
+        "member": ["google-dns", "cloudflare-dns"],
+        "comment": "Blocked address group"
+      }
+    }
+  ]
+}

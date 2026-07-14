@@ -1,0 +1,31 @@
+{
+	"spec": "a16368355e56e8a710f4a80d6d47a106",
+	"manifest": "6ad562157e732051bed086c65f200611",
+	"setup": "c58e30f470a50a20419f5978525b7f7e",
+	"schemas": [
+		{
+			"identifier": "analyze_indicator/schema.py",
+			"hash": "f4f097d1d6bbaf5461bb689a96e8b714"
+		},
+		{
+			"identifier": "ask_chatgpt/schema.py",
+			"hash": "19a5577f730b3abd617487e7a64ece21"
+		},
+		{
+			"identifier": "explain_script/schema.py",
+			"hash": "242ce7ce60a7b7f0bad4adfd3c2c1fb4"
+		},
+		{
+			"identifier": "suggest_response_actions/schema.py",
+			"hash": "922600f8314f83beb57cc769cdeb2f2f"
+		},
+		{
+			"identifier": "summarize_incident/schema.py",
+			"hash": "b8e9bba0a96fef4fc60008b613a35c18"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "452bf3327ad8dae4254545985eb21df6"
+		}
+	]
+}

@@ -1,0 +1,37 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "data": [
+        {
+          "name": "google-dns",
+          "type": "ipmask",
+          "subnet": "8.8.8.8/32",
+          "comment": "Google DNS"
+        },
+        {
+          "name": "internal-net",
+          "type": "ipmask",
+          "subnet": "192.168.1.0/24",
+          "comment": "Internal network"
+        },
+        {
+          "name": "example-fqdn",
+          "type": "fqdn",
+          "fqdn": "example.com",
+          "comment": "Example FQDN"
+        },
+        {
+          "name": "cloudflare-dns",
+          "type": "ipmask",
+          "subnet": "1.1.1.1/32",
+          "comment": "Cloudflare DNS"
+        }
+      ]
+    }
+  ]
+}

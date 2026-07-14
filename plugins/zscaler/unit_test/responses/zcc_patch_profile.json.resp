@@ -1,0 +1,9 @@
+{
+  "profileId": "profile-001",
+  "profileName": "Default Profile",
+  "policyExtension": {
+    "vpnGateways": [
+      {"hostname": "vpn2.example.com", "ip": "10.0.0.2", "type": "ip"}
+    ]
+  }
+}

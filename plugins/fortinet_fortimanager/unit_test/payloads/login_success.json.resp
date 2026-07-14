@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "session": "abc123session",
+  "result": [
+    {
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "url": "/sys/login/user"
+    }
+  ]
+}

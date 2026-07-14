@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "session": null,
+  "result": [
+    {
+      "status": {
+        "code": -1,
+        "message": "Invalid username or password"
+      },
+      "url": "/sys/login/user"
+    }
+  ]
+}

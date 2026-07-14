@@ -1,0 +1,44 @@
+rules:
+  - capability: shell
+    match:
+      - insight-plugin *
+      - python *
+      - find *
+      - grep *
+      - python3 *
+      - ~/.pyenv/versions/3.11.12/bin/python *
+      - which *
+      - cat *
+      - sleep *
+      - rm -rf .pytest_cache
+      - git log *
+      - git show *
+      - /Users/ewilson/Documents/GitHub/insightconnect-plugins/.venv/bin/python *
+      - make *
+      - git fetch origin
+      - cd unit_test *
+      - git *
+      - mkdir *
+      - pyenv *
+      - prospector *
+      - black *
+      - docker *
+      - ls *
+      - echo *
+      - head *
+      - cp *
+      - cd *
+      - PYENV_VERSION=3.13.3 *
+      - sort *
+      - tail *
+      - wc *
+      - cut *
+    effect: allow
+  - capability: web_fetch
+    effect: allow
+  - capability: web_search
+    effect: allow
+  - capability: skill
+    effect: allow
+    match:
+      - create-new-plugin

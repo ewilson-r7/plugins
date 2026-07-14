@@ -1,0 +1,5 @@
+{
+  "action": "Remove from the list",
+  "urlCategoryName": "Category Example",
+  "urlList": ["example.com"]
+}

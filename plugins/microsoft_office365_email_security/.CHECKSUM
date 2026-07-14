@@ -1,0 +1,51 @@
+{
+	"spec": "2c967314bf0db1d6314c05b7f34c867e",
+	"manifest": "b9ddd499cde06898cda266c83b344f8f",
+	"setup": "1f7fad4834a46bc5afbb259b4d652165",
+	"schemas": [
+		{
+			"identifier": "block_sender_transport_rule/schema.py",
+			"hash": "5971481bd249ff2a7d7cf9630636d27f"
+		},
+		{
+			"identifier": "create_tenant_allow_block_list_entry/schema.py",
+			"hash": "68a6c48529be57caa5588ad83a64f45f"
+		},
+		{
+			"identifier": "email_compliance_search/schema.py",
+			"hash": "2c6eab465269e32b0066929aecf529fc"
+		},
+		{
+			"identifier": "get_list_of_blocked_domains/schema.py",
+			"hash": "657b3464da6234c908a40a7679462ba9"
+		},
+		{
+			"identifier": "get_tenant_allow_block_list_items/schema.py",
+			"hash": "33a5b9c34df08962b73522c7e4a02924"
+		},
+		{
+			"identifier": "mass_purge/schema.py",
+			"hash": "eab9bab7c1cee292a704abda7f41d92a"
+		},
+		{
+			"identifier": "mass_search_and_purge/schema.py",
+			"hash": "863c26665007fa260be90c4373d6147e"
+		},
+		{
+			"identifier": "message_trace/schema.py",
+			"hash": "a600b2eb5b187b10d2d306ef2dbf836b"
+		},
+		{
+			"identifier": "remove_tenant_allow_block_list_entry/schema.py",
+			"hash": "f4ab0cbb9bbd454477828820e53d1bf7"
+		},
+		{
+			"identifier": "update_list_of_blocked_domains/schema.py",
+			"hash": "806f1d2e0974cf62d888790a779da22a"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "b5dac2ab6ab2315b69f477730d47b95e"
+		}
+	]
+}

@@ -1,0 +1,24 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "data": {
+        "Admin Domain Configuration": "Enabled",
+        "BIOS version": "04000002",
+        "Branch Point": "2573",
+        "Build": "2573",
+        "Current Time": "Wed Jun 12 10:30:00 UTC 2024",
+        "Hostname": "FortiManager-VM64",
+        "Max Number of Admin Domains": 105,
+        "Max Number of Device Groups": 10,
+        "Platform Type": "FortiManager-VM64",
+        "Serial Number": "FMG-VM0000000001",
+        "Version": "v7.4.3"
+      }
+    }
+  ]
+}

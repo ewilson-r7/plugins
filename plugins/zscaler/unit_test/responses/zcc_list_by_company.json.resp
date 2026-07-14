@@ -1,0 +1,25 @@
+{
+  "profiles": [
+    {
+      "profileId": "profile-001",
+      "profileName": "Default Profile",
+      "policyExtension": {
+        "vpnGateways": [
+          {"hostname": "vpn1.example.com", "ip": "10.0.0.1", "type": "hostname"},
+          {"hostname": "vpn2.example.com", "ip": "10.0.0.2", "type": "ip"}
+        ]
+      }
+    },
+    {
+      "profileId": "profile-002",
+      "profileName": "Empty VPN Profile",
+      "policyExtension": {
+        "vpnGateways": []
+      }
+    },
+    {
+      "profileId": "profile-003",
+      "profileName": "No Extension Profile"
+    }
+  ]
+}

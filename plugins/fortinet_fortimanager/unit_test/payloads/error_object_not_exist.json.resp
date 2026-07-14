@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": -3,
+        "message": "Object does not exist"
+      }
+    }
+  ]
+}

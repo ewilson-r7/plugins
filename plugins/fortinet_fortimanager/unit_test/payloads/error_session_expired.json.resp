@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": -10,
+        "message": "Session expired"
+      }
+    }
+  ]
+}

@@ -1,0 +1,533 @@
+plugin_spec_version: v2
+extension: plugin
+products: [insightconnect]
+name: fortinet_fortimanager
+title: Fortinet FortiManager
+description: "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
+version: 1.0.0
+connection_version: 1
+supported_versions: ["7.0.x", "7.2.x", "7.4.x"]
+vendor: rapid7
+support: rapid7
+status: []
+sdk:
+  type: slim
+  version: 6.6.0
+  user: nobody
+key_features:
+  - "Create, delete, and list address objects"
+  - "Add and remove address objects from address groups"
+  - "Check if an address exists in an address group"
+  - "Retrieve firewall policies from policy packages"
+  - "Install policy packages to managed FortiGate devices"
+requirements:
+  - "Fortinet FortiManager 7.0 or later"
+  - "An API token (FortiManager 7.2.2+ recommended) or admin username and password"
+  - "Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)"
+version_history:
+  - "1.0.0 - Initial plugin release"
+links:
+  - "[Fortinet FortiManager](https://www.fortinet.com/products/management/fortimanager)"
+references:
+  - "[FortiManager JSON-RPC API](https://fndn.fortinet.net/)"
+resources:
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/fortinet_fortimanager
+  license_url: https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE
+tags:
+  - fortinet
+  - fortimanager
+  - firewall
+  - policy
+hub_tags:
+  use_cases: [threat_detection_and_response, application_management]
+  keywords: [fortinet, fortimanager, firewall, policy]
+  features: []
+
+types:
+  address_object:
+    name:
+      title: Name
+      type: string
+      description: Address object name
+      required: true
+    type:
+      title: Type
+      type: string
+      description: "Address type: ipmask, FQDN, iprange"
+      required: true
+    subnet:
+      title: Subnet
+      type: string
+      description: Subnet in CIDR notation (for ipmask type)
+      required: false
+    fqdn:
+      title: FQDN
+      type: string
+      description: Fully qualified domain name (for FQDN type)
+      required: false
+    start_ip:
+      title: Start IP
+      type: string
+      description: Range start IP (for iprange type)
+      required: false
+    end_ip:
+      title: End IP
+      type: string
+      description: Range end IP (for iprange type)
+      required: false
+    comment:
+      title: Comment
+      type: string
+      description: Optional comment
+      required: false
+    associated_interface:
+      title: Associated Interface
+      type: string
+      description: Associated network interface
+      required: false
+  address_group:
+    name:
+      title: Name
+      type: string
+      description: Address group name
+      required: true
+    member:
+      title: Member
+      type: "[]string"
+      description: List of member address object names
+      required: true
+    comment:
+      title: Comment
+      type: string
+      description: Optional comment
+      required: false
+  policy:
+    policyid:
+      title: Policy ID
+      type: integer
+      description: Firewall policy ID
+      required: true
+    name:
+      title: Name
+      type: string
+      description: Policy name
+      required: true
+    srcintf:
+      title: Source Interface
+      type: "[]string"
+      description: Source interfaces
+      required: false
+    dstintf:
+      title: Destination Interface
+      type: "[]string"
+      description: Destination interfaces
+      required: false
+    srcaddr:
+      title: Source Address
+      type: "[]string"
+      description: Source address objects or groups
+      required: false
+    dstaddr:
+      title: Destination Address
+      type: "[]string"
+      description: Destination address objects or groups
+      required: false
+    service:
+      title: Service
+      type: "[]string"
+      description: Service objects
+      required: false
+    action:
+      title: Action
+      type: string
+      description: "Policy action: accept, deny, ipsec"
+      required: false
+    status:
+      title: Status
+      type: string
+      description: "Policy status: enable, disable"
+      required: false
+    schedule:
+      title: Schedule
+      type: string
+      description: Schedule name
+      required: false
+    logtraffic:
+      title: Log Traffic
+      type: string
+      description: "Logging mode: disable, all, utm"
+      required: false
+    comments:
+      title: Comments
+      type: string
+      description: Policy comments
+      required: false
+
+connection:
+  hostname:
+    title: Hostname
+    type: string
+    description: "FortiManager hostname or IP address (e.g. fortimanager.example.com, 192.168.1.1, fortimanager.example.com:8443)"
+    required: true
+    example: fortimanager.example.com
+    order: 1
+  authentication_type:
+    title: Authentication Type
+    type: string
+    description: "Authentication method to use when connecting to FortiManager"
+    required: true
+    enum:
+      - API Token
+      - Session-Based
+    default: API Token
+    example: API Token
+    order: 2
+  api_key:
+    title: API Key
+    type: credential_secret_key
+    description: "API token for Bearer authentication (required when authentication type is API Token)"
+    required: false
+    example: 2Fty5834tFpBdidePJnt9075MMdkUb
+    order: 3
+  username:
+    title: Username
+    type: string
+    description: "Admin username for session-based authentication (required when authentication type is Session-Based)"
+    required: false
+    example: admin
+    order: 4
+  password:
+    title: Password
+    type: credential_secret_key
+    description: "Admin password for session-based authentication (required when authentication type is Session-Based)"
+    required: false
+    example: password123
+    order: 5
+  ssl_verify:
+    title: SSL Verify
+    type: boolean
+    description: Validate TLS certificate when connecting to FortiManager
+    required: true
+    default: false
+    example: false
+    order: 6
+  adom:
+    title: ADOM
+    type: string
+    description: "Default Administrative Domain (ADOM) name"
+    required: true
+    default: root
+    example: root
+    order: 7
+
+actions:
+  get_address_objects:
+    title: Get Address Objects
+    description: Retrieve address objects from a FortiManager ADOM with optional filtering
+    input:
+      name_filter:
+        title: Name Filter
+        description: Optional name to filter address objects (case-insensitive exact match)
+        type: string
+        required: false
+        example: MaliciousHost
+        order: 1
+      subnet_filter:
+        title: Subnet Filter
+        description: Optional subnet value to filter address objects (case-insensitive exact match)
+        type: string
+        required: false
+        example: "198.51.100.100/32"
+        order: 2
+      fqdn_filter:
+        title: FQDN Filter
+        description: Optional FQDN value to filter address objects (case-insensitive exact match)
+        type: string
+        required: false
+        example: example.com
+        order: 3
+      adom:
+        title: ADOM
+        description: "Administrative Domain to query. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 4
+    output:
+      address_objects:
+        title: Address Objects
+        description: List of address objects matching the specified filters
+        type: "[]address_object"
+        required: true
+        example: '[{"name": "MaliciousHost", "type": "ipmask", "subnet": "198.51.100.100/32"}]'
+  create_address_object:
+    title: Create Address Object
+    description: Create a new address object in a FortiManager ADOM
+    input:
+      address:
+        title: Address
+        description: "The address to assign to the address object. Accepts an IP address, CIDR notation, or fully qualified domain name"
+        type: string
+        required: true
+        example: "198.51.100.100"
+        order: 1
+      address_object_name:
+        title: Address Object Name
+        description: "Optional name for the address object. If not provided, the address value will be used as the name"
+        type: string
+        required: false
+        example: MaliciousHost
+        order: 2
+      whitelist:
+        title: Whitelist
+        description: "List of addresses that should not be blocked. Supports IP addresses, CIDR ranges, and domain names"
+        type: "[]string"
+        required: false
+        example: ["198.51.100.100", "example.com", "192.0.2.0/24"]
+        order: 3
+      skip_rfc1918:
+        title: Skip RFC 1918 (Private) IP Addresses
+        description: Skip creation for private IP addresses as defined in RFC 1918
+        type: boolean
+        required: true
+        default: true
+        example: true
+        order: 4
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 5
+    output:
+      success:
+        title: Success
+        description: Boolean value indicating whether the address object was created. Returns false if the address was skipped due to whitelist or RFC 1918 filtering
+        type: boolean
+        required: true
+        example: true
+      address_object:
+        title: Address Object
+        description: Details of the created address object
+        type: address_object
+        required: false
+        example: '{"name": "MaliciousHost", "type": "ipmask", "subnet": "198.51.100.100/32"}'
+  delete_address_object:
+    title: Delete Address Object
+    description: Delete an address object from a FortiManager ADOM
+    input:
+      address_object:
+        title: Address Object
+        description: Name of the address object to delete
+        type: string
+        required: true
+        example: MaliciousHost
+        order: 1
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 2
+    output:
+      success:
+        title: Success
+        description: Boolean value indicating the success of the deletion
+        type: boolean
+        required: true
+        example: true
+  add_address_object_to_group:
+    title: Add Address Object to Group
+    description: Add an address object to an address group in a FortiManager ADOM
+    input:
+      address_object:
+        title: Address Object
+        description: Name of the address object to add to the group
+        type: string
+        required: true
+        example: MaliciousHost
+        order: 1
+      group:
+        title: Group
+        description: Name of the address group
+        type: string
+        required: true
+        example: InsightConnect Block List
+        order: 2
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 3
+    output:
+      success:
+        title: Success
+        description: Boolean value indicating the success of the operation
+        type: boolean
+        required: true
+        example: true
+      address_objects:
+        title: Address Objects
+        description: Updated list of address object names in the group
+        type: "[]string"
+        required: true
+        example: ["MaliciousHost", "AnotherHost"]
+  remove_address_object_from_group:
+    title: Remove Address Object from Group
+    description: Remove an address object from an address group in a FortiManager ADOM
+    input:
+      address_object:
+        title: Address Object
+        description: Name of the address object to remove from the group
+        type: string
+        required: true
+        example: MaliciousHost
+        order: 1
+      group:
+        title: Group
+        description: Name of the address group
+        type: string
+        required: true
+        example: InsightConnect Block List
+        order: 2
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 3
+    output:
+      success:
+        title: Success
+        description: Boolean value indicating the success of the operation
+        type: boolean
+        required: true
+        example: true
+      address_objects:
+        title: Address Objects
+        description: Updated list of remaining address object names in the group
+        type: "[]string"
+        required: true
+        example: ["AnotherHost"]
+  check_if_address_in_group:
+    title: Check if Address in Group
+    description: Check if an address exists in an address group
+    input:
+      address:
+        title: Address
+        description: "The address to check. When Enable Search is false, this is matched against address object names. When Enable Search is true, this is matched against the stored subnet or FQDN value of each member object"
+        type: string
+        required: true
+        example: "198.51.100.100"
+        order: 1
+      group:
+        title: Group
+        description: Name of the address group to check
+        type: string
+        required: true
+        example: InsightConnect Block List
+        order: 2
+      enable_search:
+        title: Enable Search
+        description: "When enabled, the address input is compared against the stored value (subnet/FQDN) of each member object rather than matching by name"
+        type: boolean
+        required: true
+        default: false
+        example: false
+        order: 3
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 4
+    output:
+      found:
+        title: Found
+        description: Whether at least one matching address object was found in the group
+        type: boolean
+        required: true
+        example: true
+      address_objects:
+        title: Address Objects
+        description: List of matching address object names found in the group
+        type: "[]string"
+        required: true
+        example: ["198.51.100.100/32"]
+  get_policies:
+    title: Get Policies
+    description: Retrieve firewall policies from a FortiManager policy package
+    input:
+      policy_package:
+        title: Policy Package
+        description: Name of the policy package to retrieve policies from
+        type: string
+        required: true
+        example: default
+        order: 1
+      name_filter:
+        title: Name Filter
+        description: Optional policy name to filter on (case-insensitive exact match)
+        type: string
+        required: false
+        example: Allow Outbound
+        order: 2
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 3
+    output:
+      policies:
+        title: Policies
+        description: List of firewall policies matching the specified filters
+        type: "[]policy"
+        required: true
+        example: '[{"policyid": 1, "name": "Allow Outbound", "srcintf": ["port1"], "dstintf": ["port2"], "srcaddr": ["all"], "dstaddr": ["all"], "service": ["ALL"], "action": "accept", "status": "enable", "schedule": "always", "logtraffic": "all"}]'
+  install_policy_package:
+    title: Install Policy Package
+    description: Install a policy package to managed FortiGate devices or device groups
+    input:
+      policy_package:
+        title: Policy Package
+        description: Name of the policy package to install
+        type: string
+        required: true
+        example: default
+        order: 1
+      target_devices:
+        title: Target Devices
+        description: "List of target device names to install the policy package to. At least one target device or target device group must be provided"
+        type: "[]string"
+        required: false
+        example: ["FortiGate-Edge"]
+        order: 2
+      target_device_groups:
+        title: Target Device Groups
+        description: "List of target device group names to install the policy package to. At least one target device or target device group must be provided"
+        type: "[]string"
+        required: false
+        example: ["Branch Offices"]
+        order: 3
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 4
+    output:
+      task_id:
+        title: Task ID
+        description: Task identifier for the initiated install operation
+        type: integer
+        required: true
+        example: 512

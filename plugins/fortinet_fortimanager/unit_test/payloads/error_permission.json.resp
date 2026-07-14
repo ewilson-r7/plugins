@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": -1,
+        "message": "No permission to perform this operation"
+      }
+    }
+  ]
+}

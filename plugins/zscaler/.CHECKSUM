@@ -1,0 +1,103 @@
+{
+	"spec": "6f8167519c03551d87d2ed1cb82bcaaf",
+	"manifest": "cca568a3d3087ee6c0a02c2b13068706",
+	"setup": "885c6d61e71db06591b6140bec7ea0ce",
+	"schemas": [
+		{
+			"identifier": "blacklist_url/schema.py",
+			"hash": "b1fae5d28ff6e9d4da17673704a58b97"
+		},
+		{
+			"identifier": "create_firewall_rule/schema.py",
+			"hash": "a114015f9d6437aeb830cecb1e12306a"
+		},
+		{
+			"identifier": "create_user/schema.py",
+			"hash": "d3694fce2aee823eca6f6c8e2f7a69b0"
+		},
+		{
+			"identifier": "delete_user/schema.py",
+			"hash": "b81f18a99be7daba65d7f63a47261c27"
+		},
+		{
+			"identifier": "get_application_segment/schema.py",
+			"hash": "7ff168362447e7328a11917ad7eb877f"
+		},
+		{
+			"identifier": "get_blacklist_url/schema.py",
+			"hash": "8e2260794d16f0399b85d921dd301d5d"
+		},
+		{
+			"identifier": "get_dlp_incidents/schema.py",
+			"hash": "75bbbc152d2193d8d8b7483b82c7ee6a"
+		},
+		{
+			"identifier": "get_firewall_logs/schema.py",
+			"hash": "f3c0c8a576ce90478d3496284652d895"
+		},
+		{
+			"identifier": "get_firewall_rule/schema.py",
+			"hash": "0d7a1aa9dea5c5ccbc6ce2879635812c"
+		},
+		{
+			"identifier": "get_sandbox_report_for_hash/schema.py",
+			"hash": "7a14034b1308bcea53daccacd39eed41"
+		},
+		{
+			"identifier": "get_server_group/schema.py",
+			"hash": "f5450b361c67fcabb8c3945f73c7661f"
+		},
+		{
+			"identifier": "get_url_category_by_name/schema.py",
+			"hash": "3c37872eb1c759a3326166da8b3eccda"
+		},
+		{
+			"identifier": "get_users/schema.py",
+			"hash": "3e1d439affff4f95092130039f2ad582"
+		},
+		{
+			"identifier": "get_vpn_gateway_bypasses/schema.py",
+			"hash": "c9c675f3754ba4e94d2f1803506334fc"
+		},
+		{
+			"identifier": "get_web_logs/schema.py",
+			"hash": "0daafc34a6a46c0f4446dac4e54b2c5d"
+		},
+		{
+			"identifier": "list_application_segments/schema.py",
+			"hash": "6301745622ed6a1d79e6328e21774fcc"
+		},
+		{
+			"identifier": "list_firewall_rules/schema.py",
+			"hash": "78b8d7d5aa8137009e5e723f02077fcd"
+		},
+		{
+			"identifier": "list_server_groups/schema.py",
+			"hash": "e2ce63b0fd82fd6d34d8bd855c92981b"
+		},
+		{
+			"identifier": "lookup_url/schema.py",
+			"hash": "230e9f76def965d870945b64244a77f3"
+		},
+		{
+			"identifier": "remove_vpn_gateway_bypass/schema.py",
+			"hash": "3d427af2d37c1bedc469ae4ceba3261d"
+		},
+		{
+			"identifier": "submit_threat_feed/schema.py",
+			"hash": "ab76463f5718dbe9be740fd2638752f3"
+		},
+		{
+			"identifier": "update_firewall_rule/schema.py",
+			"hash": "15b01b891a0234611f847836b566dc91"
+		},
+		{
+			"identifier": "update_urls_of_url_category/schema.py",
+			"hash": "5c1b5b4303307323505236b1616822fa"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "03dbd6f68e95c7008cc4fb3070f38ee7"
+		}
+	]
+}

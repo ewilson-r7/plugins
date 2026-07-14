@@ -1,0 +1,12 @@
+{
+  "name": "Update Steering from Learnings",
+  "version": "1.0.0",
+  "description": "After a session where code was fixed or PR feedback addressed, reviews learnings and updates steering files to prevent the same mistakes in the future.",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the conversation history for this session. If code was fixed, PR feedback was addressed, or anti-patterns were corrected, check whether the learnings are already captured in the steering files at ~/.kiro/steering/. If not, update the relevant steering file(s) to prevent the same mistake in the future. Only update if there's a genuine new pattern or rule — don't add noise. Focus on: common-mistakes.md, exceptions.md, implementation.md, testing.md, and prospector.md."
+  }
+}

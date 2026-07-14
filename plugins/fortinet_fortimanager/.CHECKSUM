@@ -1,0 +1,43 @@
+{
+	"spec": "93e500bef7c2603c52a90d4a5bf02bd5",
+	"manifest": "425851eaf50c460c64238cf759aa8cff",
+	"setup": "5b6e935a1f67b8bf0ec4f0cf31301255",
+	"schemas": [
+		{
+			"identifier": "add_address_object_to_group/schema.py",
+			"hash": "f68d0297786e9147fc76f807e672ed2e"
+		},
+		{
+			"identifier": "check_if_address_in_group/schema.py",
+			"hash": "60ce648e32d11994d4137c91f32d9e1b"
+		},
+		{
+			"identifier": "create_address_object/schema.py",
+			"hash": "8c2a296e1318a7d78d43908b8ea3d76f"
+		},
+		{
+			"identifier": "delete_address_object/schema.py",
+			"hash": "b3dceb80f65f55b17c99b4e050faf26d"
+		},
+		{
+			"identifier": "get_address_objects/schema.py",
+			"hash": "c2802d44ffe51b06c011698e5bab383c"
+		},
+		{
+			"identifier": "get_policies/schema.py",
+			"hash": "e2dee9a2670eff1b40acbd7726d4756c"
+		},
+		{
+			"identifier": "install_policy_package/schema.py",
+			"hash": "20e3a4f07ce3e8a6e015f222e404e247"
+		},
+		{
+			"identifier": "remove_address_object_from_group/schema.py",
+			"hash": "e37c608838e9900d5f2ee3903413ac42"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "c5a70e615f1b90fde75f017e7a1ae66b"
+		}
+	]
+}
