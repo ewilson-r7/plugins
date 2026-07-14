@@ -11,6 +11,8 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 | [halo_itsm](plugins/halo_itsm/) | 1.1.0 | Create, update, delete, and list tickets in Halo ITSM for automated IT service workflows |
 | [ip_api](plugins/ip_api/) | 1.0.0 | Geolocate IPv4/IPv6 addresses and domain names using ip-api.com |
 | [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.0 | Office 365 email security with Tenant Allow/Block List management, message trace, compliance search, and mass purge |
+| [active_directory_ldap](plugins/active_directory_ldap/) | 11.0.0 | Active Directory LDAP with Kerberos (SASL GSSAPI) authentication support |
+| [microsoft_teams](plugins/microsoft_teams/) | 8.0.0 | Microsoft Teams with installed_apps support for create_teams_chat action |
 | [teamdynamix](plugins/teamdynamix/) | 1.0.0 | Create, read, update, and search tickets in TeamDynamix ITSM |
 | [zscaler](plugins/zscaler/) | 2.0.0 | Zscaler SaaS security platform integration rewritten for OneAPI with OAuth 2.0, including ZCC VPN gateway bypass actions |
 
@@ -55,6 +57,9 @@ The `.kiro/` directory contains development environment configuration:
 ## Changelog
 
 ### 2026-07-14
+- Added `active_directory_ldap` (v11.0.0) - Kerberos SASL GSSAPI authentication ([upstream PR #3987](https://github.com/rapid7/insightconnect-plugins/pull/3987))
+- Added `microsoft_teams` (v8.0.0) - installed_apps support for create_teams_chat ([upstream PR #3931](https://github.com/rapid7/insightconnect-plugins/pull/3931))
+- Updated `teamdynamix` (v1.0.0) with upstream PR version ([upstream PR #3874](https://github.com/rapid7/insightconnect-plugins/pull/3874))
 - Reorganized repository: consolidated all plugins from feature branches onto `main`
 - Moved `ip_api` and `teamdynamix` into `plugins/` directory for consistency
 - Added `chatgpt` plugin (v1.0.0) - SOC analyst AI assistant actions
