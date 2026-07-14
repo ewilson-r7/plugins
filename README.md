@@ -4,17 +4,17 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 
 ## Plugins
 
-| Plugin | Version | Description |
-|--------|---------|-------------|
-| [chatgpt](plugins/chatgpt/) | 1.0.0 | Interact with OpenAI ChatGPT to assist SOC analysts with threat analysis, incident summarization, script explanation, and response recommendations |
-| [fortinet_fortimanager](plugins/fortinet_fortimanager/) | 1.0.0 | Manage FortiGate address objects, address groups, and firewall policies through FortiManager's JSON-RPC API |
-| [halo_itsm](plugins/halo_itsm/) | 1.1.0 | Create, update, delete, and list tickets in Halo ITSM for automated IT service workflows |
-| [ip_api](plugins/ip_api/) | 1.0.0 | Geolocate IPv4/IPv6 addresses and domain names using ip-api.com |
-| [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.0 | Office 365 email security with Tenant Allow/Block List management, message trace, compliance search, and mass purge |
-| [active_directory_ldap](plugins/active_directory_ldap/) | 11.0.0 | Active Directory LDAP with Kerberos (SASL GSSAPI) authentication support |
-| [microsoft_teams](plugins/microsoft_teams/) | 8.0.0 | Microsoft Teams with installed_apps support for create_teams_chat action |
-| [teamdynamix](plugins/teamdynamix/) | 1.0.0 | Create, read, update, and search tickets in TeamDynamix ITSM |
-| [zscaler](plugins/zscaler/) | 2.0.0 | Zscaler SaaS security platform integration rewritten for OneAPI with OAuth 2.0, including ZCC VPN gateway bypass actions |
+| Plugin | Version | Latest Change |
+|--------|---------|---------------|
+| [active_directory_ldap](plugins/active_directory_ldap/) | 11.0.0 | Add Kerberos (SASL GSSAPI) authentication support, changed user to root for Kerberos credential management, updated SDK to 6.6.0 |
+| [chatgpt](plugins/chatgpt/) | 1.0.0 | Initial release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions for SOC analysts |
+| [fortinet_fortimanager](plugins/fortinet_fortimanager/) | 1.0.0 | Initial release — manage FortiGate address objects, address groups, and firewall policies through FortiManager's JSON-RPC API |
+| [halo_itsm](plugins/halo_itsm/) | 1.1.0 | Added Attach File to Ticket action |
+| [ip_api](plugins/ip_api/) | 1.0.0 | Initial release — geolocate IPv4/IPv6 addresses and domain names using ip-api.com |
+| [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.0 | Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry. Updated SDK to 6.6.0 |
+| [microsoft_teams](plugins/microsoft_teams/) | 8.0.0 | Major refactor to app-only OAuth2 (client_credentials), added Bot Framework messaging, migrated endpoints to /v1.0, added installed_apps support for create_teams_chat |
+| [teamdynamix](plugins/teamdynamix/) | 1.0.0 | Initial release — create, get, update, and search tickets in TeamDynamix ITSM |
+| [zscaler](plugins/zscaler/) | 2.0.0 | Migrate to Zscaler OneAPI with OAuth 2.0 Private Key auth, add DLP/firewall/logs/threat feed/ZPA/ZCC VPN gateway bypass actions |
 
 ## Project Structure
 
