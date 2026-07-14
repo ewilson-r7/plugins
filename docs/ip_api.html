@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP API Plugin Documentation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1e293b; background: #ffffff; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 0; z-index: 100; }
+.sidebar .brand { padding: 24px 20px 16px; border-bottom: 1px solid #2d2d4e; }
+.sidebar .brand h1 { color: #ffffff; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.sidebar .brand .version { color: #6c6c8c; font-size: 12px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; display: block; }
+.sidebar a { display: block; color: #b0b0d0; padding: 8px 20px; text-decoration: none; font-size: 13px; transition: background 0.15s, color 0.15s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h2 { font-size: 22px; font-weight: 700; margin: 40px 0 16px; padding-top: 20px; border-top: 1px solid #e0e0e8; }
+h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: #334155; }
+p { margin: 8px 0 16px; font-size: 14px; color: #475569; }
+ul { margin: 8px 0 16px 20px; font-size: 14px; color: #475569; }
+li { margin-bottom: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; color: #334155; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Menlo, Monaco, monospace; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; color: #1e40af; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; color: #92400e; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.product-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+@media (max-width: 768px) {
+  .sidebar { position: relative; width: 100%; height: auto; }
+  .main { margin-left: 0; padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="brand">
+    <h1>IP API</h1>
+    <span class="version">v1.0.0</span>
+  </div>
+
+  <span class="section-label">Overview</span>
+  <a href="#description">Description</a>
+  <a href="#key-features">Key Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#setup">Setup</a>
+  <a href="#permissions">Permissions</a>
+
+  <span class="section-label">Actions</span>
+  <a href="#geolocate-ip">Geolocate IP</a>
+  <a href="#geolocate-bulk">Geolocate Bulk</a>
+
+  <span class="section-label">Reference</span>
+  <a href="#custom-types">Custom Types</a>
+  <a href="#version-history">Version History</a>
+  <a href="#links">Links</a>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Description -->
+  <h2 id="description">Description</h2>
+  <p>Geolocate IPv4 addresses, IPv6 addresses, and domain names using the ip-api.com service. This plugin leverages the ip-api.com REST API to return detailed geolocation and network metadata for any public IP or domain, including country, city, ISP, AS information, and proxy/VPN detection flags.</p>
+
+  <!-- Key Features -->
+  <h2 id="key-features">Key Features</h2>
+  <ul>
+    <li>Geolocate a single IP address or domain name</li>
+    <li>Geolocate up to 100 IPs or domains in a single batch request</li>
+    <li>Detect proxy, VPN, Tor exit nodes, and hosting/data-center IPs</li>
+    <li>Retrieve AS number, ISP, and organization information</li>
+    <li>Localized city and country names in 8 languages</li>
+  </ul>
+
+  <!-- Requirements -->
+  <h2 id="requirements">Requirements</h2>
+  <ul>
+    <li>No API key required for the free tier</li>
+    <li>Rate limit of 45 requests/minute for single lookups (free tier)</li>
+    <li>Rate limit of 15 requests/minute for batch lookups (free tier)</li>
+    <li>Free tier requests must use HTTP (not HTTPS) — the API enforces this</li>
+    <li>Pro tier requires a purchased API key and supports HTTPS</li>
+  </ul>
+
+  <!-- Setup -->
+  <h2 id="setup">Setup</h2>
+
+  <h3>Vendor Side Setup (ip-api.com)</h3>
+  <p>The ip-api.com service offers two tiers:</p>
+
+  <h3>Free Tier</h3>
+  <ul>
+    <li>No registration or API key required</li>
+    <li>Requests are made over <strong>HTTP only</strong> (HTTPS is not supported on the free tier)</li>
+    <li>Rate limited to 45 requests/minute for single lookups and 15 requests/minute for batch lookups</li>
+    <li>Exceeding the rate limit returns a <code>429</code> status and the IP is temporarily banned</li>
+    <li>Intended for non-commercial use</li>
+  </ul>
+
+  <div class="info-box">
+    <strong>Tip:</strong> The free tier is sufficient for low-volume enrichment workflows (e.g., on-demand IP lookups from alerts). For production-scale automation, consider the Pro tier.
+  </div>
+
+  <h3>Pro Tier</h3>
+  <ul>
+    <li>Navigate to <a href="https://members.ip-api.com/signup" target="_blank">https://members.ip-api.com/signup</a> to create an account</li>
+    <li>After registration, your API key is displayed on the dashboard</li>
+    <li>Pro requests use HTTPS: <code>https://pro.ip-api.com/json/{query}?key=YOUR_KEY</code></li>
+    <li>Higher rate limits and no usage restrictions</li>
+    <li>Supports additional response fields (mobile, proxy, hosting detection)</li>
+  </ul>
+
+  <div class="warning-box">
+    <strong>Security:</strong> If using the Pro tier, store your API key securely. Never commit it to source control or share it in plaintext.
+  </div>
+
+  <h3>InsightConnect Side Setup</h3>
+  <p>This plugin does not require a connection configuration. It calls the ip-api.com free-tier endpoint directly with no authentication.</p>
+
+  <div class="info-box">
+    <strong>Note:</strong> Because no connection is needed, you can use this plugin immediately after installation — no credential setup required.
+  </div>
+
+  <h3>Network Requirements</h3>
+  <table>
+    <tr><th>Endpoint</th><th>Port</th><th>Protocol</th><th>Notes</th></tr>
+    <tr><td><code>ip-api.com</code></td><td>80</td><td>HTTP</td><td>Free tier — single lookups</td></tr>
+    <tr><td><code>ip-api.com/batch</code></td><td>80</td><td>HTTP</td><td>Free tier — batch lookups</td></tr>
+    <tr><td><code>pro.ip-api.com</code></td><td>443</td><td>HTTPS</td><td>Pro tier (requires API key)</td></tr>
+  </table>
+  <p>Ensure the orchestrator host can reach these endpoints. If operating behind a corporate proxy, whitelist <code>ip-api.com</code> and <code>pro.ip-api.com</code>.</p>
+
+  <!-- Permissions -->
+  <h2 id="permissions">Permissions</h2>
+  <p>The ip-api.com service does not use role-based access control or API scopes. Access is governed by tier:</p>
+
+  <table class="perm-table">
+    <tr><th>Tier</th><th>Authentication</th><th>Rate Limit</th><th>Capabilities</th></tr>
+    <tr>
+      <td>Free</td>
+      <td>None (IP-based tracking)</td>
+      <td>45 req/min (single), 15 req/min (batch)</td>
+      <td>Full geolocation fields, proxy/VPN detection, AS info</td>
+    </tr>
+    <tr>
+      <td>Pro</td>
+      <td>API Key (query parameter)</td>
+      <td>Unlimited (fair use)</td>
+      <td>All free tier fields + HTTPS + higher limits + commercial use</td>
+    </tr>
+  </table>
+
+  <div class="info-box">
+    <strong>Least-Privilege Guidance:</strong> For non-production enrichment and testing, the free tier with no API key is appropriate. For production workflows processing alert volumes, use a dedicated Pro API key so you are not subject to the shared free-tier rate limit.
+  </div>
+
+  <div class="warning-box">
+    <strong>Note:</strong> The free tier tracks usage by source IP. If multiple integrations share the same egress IP, they share the rate limit. Consider the Pro tier if this is a concern.
+  </div>
+
+  <!-- Actions -->
+  <h2 id="geolocate-ip">Geolocate IP</h2>
+  <p>Look up geolocation data for a single IPv4 address, IPv6 address, or domain name.</p>
+
+  <h3>Input</h3>
+  <table>
+    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    <tr>
+      <td><code>query</code></td>
+      <td><code>string</code></td>
+      <td><span class="badge badge-required">Required</span></td>
+      <td>IPv4 address, IPv6 address, or domain name to look up (e.g. <code>8.8.8.8</code>)</td>
+    </tr>
+    <tr>
+      <td><code>lang</code></td>
+      <td><code>string</code></td>
+      <td><span class="badge badge-optional">Optional</span></td>
+      <td>Language for localized city and country names. Default: <code>en</code>. Options: en, de, es, pt-BR, fr, ja, zh-CN, ru</td>
+    </tr>
+  </table>
+
+  <h3>Output</h3>
+  <p>Returns a single <code>geolocation_result</code> object with location, network, and proxy-detection fields.</p>
+
+  <h3>Example Output</h3>
+<pre><code>{
+  "result": {
+    "status": "success",
+    "country": "United States",
+    "countryCode": "US",
+    "region": "VA",
+    "regionName": "Virginia",
+    "city": "Ashburn",
+    "zip": "20149",
+    "lat": 39.03,
+    "lon": -77.5,
+    "timezone": "America/New_York",
+    "isp": "Google LLC",
+    "org": "Google Public DNS",
+    "as_number": "AS15169 Google LLC",
+    "query": "8.8.8.8",
+    "mobile": false,
+    "proxy": false,
+    "hosting": true
+  }
+}</code></pre>
+
+  <!-- Geolocate Bulk -->
+  <h2 id="geolocate-bulk">Geolocate Bulk</h2>
+  <p>Look up geolocation data for up to 100 IPv4 addresses, IPv6 addresses, or domain names in a single request.</p>
+
+  <h3>Input</h3>
+  <table>
+    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    <tr>
+      <td><code>queries</code></td>
+      <td><code>[]string</code></td>
+      <td><span class="badge badge-required">Required</span></td>
+      <td>List of IPv4 addresses, IPv6 addresses, or domain names to look up (maximum 100)</td>
+    </tr>
+    <tr>
+      <td><code>lang</code></td>
+      <td><code>string</code></td>
+      <td><span class="badge badge-optional">Optional</span></td>
+      <td>Language for localized city and country names. Default: <code>en</code>. Options: en, de, es, pt-BR, fr, ja, zh-CN, ru</td>
+    </tr>
+  </table>
+
+  <h3>Output</h3>
+  <p>Returns a list of <code>geolocation_result</code> objects, one per queried IP/domain.</p>
+
+  <h3>Example Output</h3>
+<pre><code>{
+  "results": [
+    {
+      "status": "success",
+      "country": "United States",
+      "city": "Ashburn",
+      "isp": "Google LLC",
+      "query": "8.8.8.8",
+      "proxy": false,
+      "hosting": true
+    },
+    {
+      "status": "success",
+      "country": "Australia",
+      "city": "Sydney",
+      "isp": "Cloudflare, Inc.",
+      "query": "1.1.1.1",
+      "proxy": false,
+      "hosting": true
+    }
+  ]
+}</code></pre>
+
+  <div class="info-box">
+    <strong>Tip:</strong> Batch lookups are more efficient when enriching multiple IPs from a single event. They use a separate rate limit (15 req/min) but each request can contain up to 100 queries.
+  </div>
+
+  <!-- Custom Types -->
+  <h2 id="custom-types">Custom Types</h2>
+
+  <h3>geolocation_result</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>status</code></td><td><code>string</code></td><td>Query status, either success or fail</td></tr>
+    <tr><td><code>message</code></td><td><code>string</code></td><td>Failure reason when status is fail</td></tr>
+    <tr><td><code>continent</code></td><td><code>string</code></td><td>Continent name</td></tr>
+    <tr><td><code>continentCode</code></td><td><code>string</code></td><td>Two-letter continent code</td></tr>
+    <tr><td><code>country</code></td><td><code>string</code></td><td>Country name</td></tr>
+    <tr><td><code>countryCode</code></td><td><code>string</code></td><td>Two-letter country code (ISO 3166-1 alpha-2)</td></tr>
+    <tr><td><code>region</code></td><td><code>string</code></td><td>Region or state code</td></tr>
+    <tr><td><code>regionName</code></td><td><code>string</code></td><td>Region or state name</td></tr>
+    <tr><td><code>city</code></td><td><code>string</code></td><td>City name</td></tr>
+    <tr><td><code>district</code></td><td><code>string</code></td><td>District name</td></tr>
+    <tr><td><code>zip</code></td><td><code>string</code></td><td>ZIP or postal code</td></tr>
+    <tr><td><code>lat</code></td><td><code>float</code></td><td>Latitude</td></tr>
+    <tr><td><code>lon</code></td><td><code>float</code></td><td>Longitude</td></tr>
+    <tr><td><code>timezone</code></td><td><code>string</code></td><td>City timezone (tz database format)</td></tr>
+    <tr><td><code>offset</code></td><td><code>integer</code></td><td>Timezone UTC DST offset in seconds</td></tr>
+    <tr><td><code>currency</code></td><td><code>string</code></td><td>National currency</td></tr>
+    <tr><td><code>isp</code></td><td><code>string</code></td><td>Internet Service Provider name</td></tr>
+    <tr><td><code>org</code></td><td><code>string</code></td><td>Organization name</td></tr>
+    <tr><td><code>as_number</code></td><td><code>string</code></td><td>AS number and name (e.g. AS15169 Google LLC)</td></tr>
+    <tr><td><code>asname</code></td><td><code>string</code></td><td>AS name (RIR)</td></tr>
+    <tr><td><code>reverse</code></td><td><code>string</code></td><td>Reverse DNS of the IP</td></tr>
+    <tr><td><code>mobile</code></td><td><code>boolean</code></td><td>Mobile (cellular) connection</td></tr>
+    <tr><td><code>proxy</code></td><td><code>boolean</code></td><td>Proxy, VPN, or Tor exit address</td></tr>
+    <tr><td><code>hosting</code></td><td><code>boolean</code></td><td>Hosting, colocated, or data center</td></tr>
+    <tr><td><code>query</code></td><td><code>string</code></td><td>IP address or domain used in the query</td></tr>
+  </table>
+
+  <!-- Version History -->
+  <h2 id="version-history">Version History</h2>
+  <table>
+    <tr><th>Version</th><th>Changes</th></tr>
+    <tr><td>1.0.0</td><td>Initial plugin release</td></tr>
+  </table>
+
+  <!-- Links -->
+  <h2 id="links">Links</h2>
+  <ul>
+    <li><a href="https://ip-api.com" target="_blank">ip-api.com — Service Homepage</a></li>
+    <li><a href="https://ip-api.com/docs/api:json" target="_blank">ip-api.com — JSON API Documentation</a></li>
+    <li><a href="https://ip-api.com/docs/api:batch" target="_blank">ip-api.com — Batch API Documentation</a></li>
+    <li><a href="https://members.ip-api.com" target="_blank">ip-api.com — Pro Tier Dashboard</a></li>
+    <li><a href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/ip_api" target="_blank">Plugin Source Code (GitHub)</a></li>
+  </ul>
+
+  <!-- Footer -->
+  <div class="footer">
+    Rapid7 InsightConnect &middot; IP API Plugin v1.0.0 &middot; Supported Versions: 2026-04-15
+  </div>
+
+</div>
+
+</body>
+</html>

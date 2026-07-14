@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft Office365 Email Security - Plugin Documentation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1a1a2e; background: #fff; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 20px 0; z-index: 100; }
+.sidebar .brand { padding: 20px 20px 24px; border-bottom: 1px solid #2d2d4e; margin-bottom: 16px; }
+.sidebar .brand h2 { color: #fff; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.sidebar .brand .version { color: #6c6c8c; font-size: 12px; margin-top: 4px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 12px 20px 4px; font-weight: 600; }
+.sidebar a { display: block; color: #b0b0d0; padding: 6px 20px; text-decoration: none; font-size: 13px; transition: background 0.15s, color 0.15s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h1 { font-size: 28px; margin-bottom: 8px; color: #1a1a2e; }
+h2 { font-size: 22px; margin-top: 48px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; color: #1a1a2e; }
+h3 { font-size: 17px; margin-top: 32px; margin-bottom: 12px; color: #2d2d4e; }
+p { margin-bottom: 12px; font-size: 14px; color: #374151; }
+ul, ol { margin: 8px 0 16px 24px; font-size: 14px; color: #374151; }
+li { margin-bottom: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Menlo, Monaco, monospace; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+</style>
+<style>
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+.tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-right: 4px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<nav class="sidebar">
+<div class="brand">
+<h2>Microsoft Office365 Email Security</h2>
+<div class="version">v4.1.0</div>
+</div>
+<div class="section-label">Overview</div>
+<a href="#description">Description</a>
+<a href="#key-features">Key Features</a>
+<a href="#requirements">Requirements</a>
+<a href="#setup">Setup</a>
+<a href="#permissions">Permissions</a>
+<div class="section-label">Actions</div>
+<a href="#block-sender-transport-rule">Block Sender Transport Rule</a>
+<a href="#email-compliance-search">Email Compliance Search</a>
+<a href="#email-compliance-purge">Email Compliance Purge</a>
+<a href="#email-compliance-search-and-purge">Email Compliance Search and Purge</a>
+<a href="#message-trace">Message Trace</a>
+<a href="#get-list-of-blocked-domains">Get List of Blocked Domains</a>
+<a href="#update-list-of-blocked-domains">Update List of Blocked Domains</a>
+<a href="#get-tenant-allow-block-list-items">Get Tenant Allow/Block List Items</a>
+<a href="#create-tenant-allow-block-list-entry">Create Tenant Allow/Block List Entry</a>
+<a href="#remove-tenant-allow-block-list-entry">Remove Tenant Allow/Block List Entry</a>
+<div class="section-label">Reference</div>
+<a href="#custom-types">Custom Types</a>
+<a href="#version-history">Version History</a>
+<a href="#links">Links</a>
+</nav>
+<div class="main">
+<h1>Microsoft Office365 Email Security</h1>
+<p>Rapid7 InsightConnect Plugin &mdash; v4.1.0</p>
+<div style="margin: 8px 0 24px;">
+<span class="tag">Office365</span><span class="tag">Microsoft</span><span class="tag">Email</span><span class="tag">Phishing</span><span class="tag">Remediation</span>
+</div>
+
+<h2 id="description">Description</h2>
+<p>The Microsoft Office 365 email security plugin adds utilities to help administrators manage their Office 365 instances. This plugin will allow administrators to take remediation actions across their organization.</p>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li>Block senders by domain or email address</li>
+<li>Search for and optionally delete email across an organization</li>
+<li>Get email trace information</li>
+<li>Manage entries in the Tenant Allow/Block List</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>An administrative account with modern authentication enabled</li>
+<li>PowerShell connectivity to the Office 365 cloud servers</li>
+<li>Azure AD App Registration with Exchange Online PowerShell and Security &amp; Compliance PowerShell access</li>
+<li>A self-signed certificate for certificate-based authentication (OAuth2)</li>
+</ul>
+
+<h2 id="setup">Setup</h2>
+<h3>Azure App Registration (OAuth2 Modern Authentication)</h3>
+<p>Since version 4.0.0, this plugin uses Modern Authentication (OAuth2) exclusively. Basic Authentication for Exchange Online has been deprecated by Microsoft. You must register an application in Azure AD and configure certificate-based authentication.</p>
+
+<h3>Step 1: Register an Application in Azure AD</h3>
+<ol>
+<li>Sign in to the <a href="https://entra.microsoft.com" target="_blank">Microsoft Entra admin center</a></li>
+<li>Navigate to <strong>Identity &gt; Applications &gt; App registrations</strong></li>
+<li>Click <strong>New registration</strong></li>
+<li>Enter a name (e.g., "InsightConnect Office365 Email Security")</li>
+<li>Set Supported account types to <strong>Accounts in this organizational directory only</strong></li>
+<li>Click <strong>Register</strong></li>
+<li>Note the <strong>Application (client) ID</strong> and <strong>Directory (tenant) ID</strong></li>
+</ol>
+<h3>Step 2: Generate a Self-Signed Certificate</h3>
+<p>Exchange Online PowerShell with modern auth requires certificate-based authentication. Generate a self-signed certificate:</p>
+<pre><code># Generate a self-signed certificate (PowerShell)
+$cert = New-SelfSignedCertificate -Subject "CN=InsightConnect O365 Email Security" `
+    -CertStoreLocation "Cert:\CurrentUser\My" `
+    -KeyExportPolicy Exportable `
+    -KeySpec Signature `
+    -KeyLength 2048 `
+    -NotAfter (Get-Date).AddYears(2)
+
+# Export the public key (.cer) for uploading to Azure
+Export-Certificate -Cert $cert -FilePath ".\InsightConnectO365.cer"
+
+# Export the private key (.pfx) for the plugin connection
+Export-PfxCertificate -Cert $cert -FilePath ".\InsightConnectO365.pfx" -Password (ConvertTo-SecureString -String "YourPassword" -Force -AsPlainText)</code></pre>
+
+<div class="warning-box">
+<strong>Security Warning:</strong> Store the private key (.pfx) securely. Do not share it or commit it to source control. The certificate grants access to Exchange Online and Security &amp; Compliance PowerShell on behalf of your organization.
+</div>
+
+<h3>Step 3: Upload the Certificate to Azure AD</h3>
+<ol>
+<li>In the Azure portal, navigate to your App Registration</li>
+<li>Go to <strong>Certificates &amp; secrets &gt; Certificates</strong></li>
+<li>Click <strong>Upload certificate</strong></li>
+<li>Upload the <code>.cer</code> file (public key only)</li>
+<li>Note the <strong>Thumbprint</strong> value displayed after upload</li>
+</ol>
+
+<h3>Step 4: Assign API Permissions</h3>
+<ol>
+<li>In your App Registration, go to <strong>API permissions</strong></li>
+<li>Click <strong>Add a permission &gt; APIs my organization uses</strong></li>
+<li>Search for and add <strong>Office 365 Exchange Online</strong></li>
+<li>Select <strong>Application permissions</strong></li>
+<li>Add <code>Exchange.ManageAsApp</code></li>
+<li>Click <strong>Grant admin consent</strong></li>
+</ol>
+
+<h3>Step 5: Assign Exchange Online Admin Roles</h3>
+<ol>
+<li>In Microsoft Entra admin center, navigate to <strong>Roles and administrators</strong></li>
+<li>Assign the <strong>Exchange Administrator</strong> role (or a more scoped role) to the service principal</li>
+<li>For Security &amp; Compliance operations, also assign <strong>Compliance Administrator</strong></li>
+</ol>
+
+<div class="info-box">
+<strong>Tip:</strong> The plugin uses the account credentials (username/password) with modern authentication to connect to both Exchange Online PowerShell and Security &amp; Compliance PowerShell. The account must have the appropriate Exchange Online roles assigned.
+</div>
+
+<h3>InsightConnect Connection Configuration</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>credentials</code></td>
+<td><code>credential_username_password</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Username and password for an account with modern authentication enabled. The username should be in UPN format (e.g., admin@yourdomain.com).</td>
+</tr>
+</table>
+
+<h3>Network Requirements</h3>
+<ul>
+<li>Outbound HTTPS (port 443) to <code>outlook.office365.com</code></li>
+<li>Outbound HTTPS (port 443) to <code>ps.compliance.protection.outlook.com</code></li>
+<li>Outbound HTTPS (port 443) to <code>login.microsoftonline.com</code> (Azure AD authentication)</li>
+<li>PowerShell remoting uses WinRM over HTTPS — ensure no proxy or firewall blocks these endpoints</li>
+</ul>
+<h2 id="permissions">Permissions</h2>
+<p>This plugin requires specific Exchange Online and Security &amp; Compliance roles depending on which actions you intend to use. Follow the principle of least privilege and assign only the roles needed for your workflows.</p>
+
+<h3>Role Assignments by Action</h3>
+<table class="perm-table">
+<tr><th>Action</th><th>Required Role</th><th>Role Group</th><th>Rationale</th></tr>
+<tr>
+<td>Block Sender Transport Rule</td>
+<td>Transport Rules</td>
+<td>Organization Management</td>
+<td>Create and modify mail flow rules in Exchange Admin Center</td>
+</tr>
+<tr>
+<td>Email Compliance Search</td>
+<td>Mailbox Search</td>
+<td>Compliance Management / eDiscovery Manager</td>
+<td>Run content searches across mailboxes</td>
+</tr>
+<tr>
+<td>Email Compliance Purge</td>
+<td>Mailbox Import Export</td>
+<td>Organization Management</td>
+<td>Delete messages found by compliance search</td>
+</tr>
+<tr>
+<td>Email Compliance Search and Purge</td>
+<td>Mailbox Search + Mailbox Import Export</td>
+<td>Organization Management</td>
+<td>Combined search and delete operations</td>
+</tr>
+<tr>
+<td>Message Trace</td>
+<td>Message Tracking</td>
+<td>Organization Management / Compliance Management</td>
+<td>Trace email delivery paths and status</td>
+</tr>
+<tr>
+<td>Get/Update List of Blocked Domains</td>
+<td>Anti-Spam (Hosted Content Filter)</td>
+<td>Organization Management / Security Administrator</td>
+<td>View and modify spam filter policies</td>
+</tr>
+<tr>
+<td>Tenant Allow/Block List (Get/Create/Remove)</td>
+<td>Tenant AllowBlockList Manager</td>
+<td>Security Administrator</td>
+<td>Manage allow/block entries for senders, URLs, files, IPs</td>
+</tr>
+</table>
+
+<h3>Recommended Permission Profiles</h3>
+<table class="perm-table">
+<tr><th>Profile</th><th>Roles</th><th>Use Case</th></tr>
+<tr>
+<td>Read-Only / Investigation</td>
+<td>Message Tracking, Mailbox Search</td>
+<td>Message tracing, compliance search (view only, no purge)</td>
+</tr>
+<tr>
+<td>Threat Response</td>
+<td>Transport Rules, Mailbox Search, Mailbox Import Export, Tenant AllowBlockList Manager</td>
+<td>Full remediation: block senders, search &amp; purge emails, manage allow/block lists</td>
+</tr>
+<tr>
+<td>Domain Management</td>
+<td>Anti-Spam (Hosted Content Filter)</td>
+<td>Manage blocked sender domains in spam filter policies</td>
+</tr>
+</table>
+
+<div class="info-box">
+<strong>Least Privilege Guidance:</strong> Create separate service accounts for different privilege levels. Use a read-only account for investigation workflows and a separate, more privileged account for remediation actions. This limits blast radius if credentials are compromised.
+</div>
+
+<div class="warning-box">
+<strong>Important:</strong> The Mailbox Import Export role is not assigned to any role group by default. You must explicitly add it to Organization Management or create a custom role group. In Exchange Admin Center: <strong>Roles &gt; Admin Roles &gt; Organization Management &gt; Assigned Roles &gt; Add Mailbox Import Export</strong>.
+</div>
+
+<h2 id="block-sender-transport-rule">Block Sender Transport Rule</h2>
+<p>Add a domain or email address to a blocking transport rule in Exchange Admin Center. In Office 365 cloud, transport rules are limited to 8k of data or roughly 8100 characters (approximately 400 email addresses). If a new email address would break that limit, existing emails must be manually deleted to make room.</p>
+<div class="warning-box"><strong>Note:</strong> Transport rules have a per-rule limit of 8192 characters and an overall limit of 20480 bytes for all rules combined. Monitor rule size to avoid failures.</div>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>domain_or_email_to_block</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Domain or email address to block (e.g., <code>example.com</code>)</td>
+</tr>
+<tr>
+<td><code>transport_rule_name</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Name of transport rule (default: <code>InsightConnect Block List</code>)</td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>result</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Result of the operation</td>
+</tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "result": "Success"
+}</code></pre>
+
+<h2 id="email-compliance-search">Email Compliance Search</h2>
+<p>Create a compliance search for provided email using the Security &amp; Compliance Center. Supports Keyword Query Language (KQL) for building complex search queries.</p>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>compliance_search_name</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Name of compliance search</td>
+</tr>
+<tr>
+<td><code>content_match_query</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Text search string or KQL query (e.g., <code>from:example AND subject:"Click Me!"</code>)</td>
+</tr>
+<tr>
+<td><code>exchange_location</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Exchange location (mailbox, group mailbox, or "All"). Default: <code>All</code></td>
+</tr>
+<tr>
+<td><code>query_timeout</code></td>
+<td><code>integer</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Query timeout in minutes. Default: <code>60</code></td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>affected_users</code></td><td><code>integer</code></td><td><span class="badge badge-required">Required</span></td><td>Number of affected users</td></tr>
+<tr><td><code>emails_found</code></td><td><code>integer</code></td><td><span class="badge badge-required">Required</span></td><td>Emails found that matched the query</td></tr>
+<tr><td><code>users</code></td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>Email addresses of all affected users</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "affected_users": 1,
+  "emails_found": 4,
+  "users": ["user1@example.com", "user2@example.com"]
+}</code></pre>
+
+<h2 id="email-compliance-purge">Email Compliance Purge</h2>
+<p>Purge emails found by a previously-run compliance search. The compliance search must already exist before running this action.</p>
+<div class="warning-box"><strong>Destructive Action:</strong> This permanently deletes emails matching the compliance search. Ensure the search results are correct before purging. Deleted emails cannot be recovered.</div>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>compliance_search_name</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Name of the compliance search to purge results from</td>
+</tr>
+<tr>
+<td><code>query_timeout</code></td>
+<td><code>integer</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Query timeout in minutes. Default: <code>60</code></td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>success</code></td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Whether the purge completed successfully</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "success": true
+}</code></pre>
+
+<h2 id="email-compliance-search-and-purge">Email Compliance Search and Purge</h2>
+<p>Combined action that searches for emails matching a KQL query and optionally deletes them. Set <code>delete_items</code> to <code>true</code> to execute the purge.</p>
+<div class="warning-box"><strong>Destructive Action:</strong> When <code>delete_items</code> is true, matched emails are permanently deleted. Test with <code>delete_items: false</code> first to review results before purging.</div>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>compliance_search_name</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Name of compliance search</td>
+</tr>
+<tr>
+<td><code>content_match_query</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Text search string or KQL query</td>
+</tr>
+<tr>
+<td><code>delete_items</code></td>
+<td><code>boolean</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Execute the delete action only if true. Default: <code>false</code></td>
+</tr>
+<tr>
+<td><code>query_timeout</code></td>
+<td><code>integer</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Query timeout in minutes. Default: <code>60</code></td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>success</code></td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Whether the operation completed successfully</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "success": true
+}</code></pre>
+
+<h2 id="message-trace">Message Trace</h2>
+<p>Run a message trace to track email delivery across your organization. Returns detailed information about messages sent by a specific sender within a date range.</p>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>Sender_address</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Sender email address (e.g., <code>user@example.com</code>)</td>
+</tr>
+<tr>
+<td><code>start_date</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Start date in MM/DD/YYYY format</td>
+</tr>
+<tr>
+<td><code>end_date</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>End date in MM/DD/YYYY format</td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>message_traces</code></td><td><code>[]message_trace</code></td><td><span class="badge badge-required">Required</span></td><td>Message Trace results</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "message_traces": [
+    {
+      "Organization": "things.com",
+      "MessageId": "&lt;example.namprd12.prod.outlook.com&gt;",
+      "Received": "2019-09-24T14:18:57.4237718",
+      "SenderAddress": "user@example.com",
+      "RecipientAddress": "user@example.com",
+      "Subject": "Android Update 5.2.1"
+    }
+  ]
+}</code></pre>
+
+<h2 id="get-list-of-blocked-domains">Get List of Blocked Domains</h2>
+<p>Return spam filter policies in your cloud-based organization, including all blocked sender domains configured in each policy.</p>
+<h3>Input</h3>
+<p><em>This action does not require any inputs.</em></p>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>spam_policy</code></td><td><code>[]spam_policy</code></td><td><span class="badge badge-required">Required</span></td><td>Information about blocked sender domains</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "spam_policy": [
+    {
+      "BlockedSenderDomains": ["example.com"],
+      "Name": "Default",
+      "Guid": "9a5bb292-d659-4ac2-ac72-f6127c82189b"
+    },
+    {
+      "BlockedSenderDomains": ["hacky.com"],
+      "Name": "Domain Block List",
+      "Guid": "fe557a1b-e0fa-4c13-8674-c4da30a8e884"
+    }
+  ]
+}</code></pre>
+
+<h2 id="update-list-of-blocked-domains">Update List of Blocked Domains</h2>
+<p>Add or remove domains from the blocked domain list in a specified spam filter policy.</p>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>identity</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>The Identity parameter specifies the spam filter policy (Name, DN, or GUID)</td>
+</tr>
+<tr>
+<td><code>domains</code></td>
+<td><code>[]string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Domains to add or remove from the blocked list</td>
+</tr>
+<tr>
+<td><code>operation</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Operation to apply. Enum: <code>Add</code>, <code>Remove</code></td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>success</code></td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Whether the operation succeeded</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "success": true
+}</code></pre>
+
+<h2 id="get-tenant-allow-block-list-items">Get Tenant Allow/Block List Items</h2>
+<p>Retrieve entries from the Tenant Allow/Block List filtered by list type and optionally by action (Allow or Block).</p>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>list_type</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Type of entries to retrieve. Enum: <code>Sender</code>, <code>Url</code>, <code>FileHash</code>, <code>IP</code></td>
+</tr>
+<tr>
+<td><code>action_type</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Filter by Allow or Block. Leave empty to return both. Enum: <code>Allow</code>, <code>Block</code>, <code>""</code></td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>entries</code></td><td><code>[]tenant_allow_block_list_entry</code></td><td><span class="badge badge-required">Required</span></td><td>List of Tenant Allow/Block List entries</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "entries": [
+    {
+      "Identity": "RgAAAAAI8gSyOVN1GYaKkFe7hRJnBwA87CsZ-sample",
+      "Value": "evil@example.com",
+      "Action": "Block",
+      "ListType": "Sender",
+      "ExpirationDate": "2026-08-14T00:00:00Z",
+      "Notes": "Phishing sender",
+      "LastModifiedDateTime": "2026-07-14T12:00:00Z",
+      "CreatedDateTime": "2026-07-14T12:00:00Z"
+    }
+  ]
+}</code></pre>
+
+<h2 id="create-tenant-allow-block-list-entry">Create Tenant Allow/Block List Entry</h2>
+<p>Add a new entry to the Tenant Allow/Block List to block or allow senders, URLs, file hashes, or IPs. Entries can be configured with an expiration or set to never expire (block entries only).</p>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>list_type</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Type of entry to create. Enum: <code>Sender</code>, <code>Url</code>, <code>FileHash</code>, <code>IP</code></td>
+</tr>
+<tr>
+<td><code>entries</code></td>
+<td><code>[]string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Values to add. For Sender: email or domain. For URL: URL value. For FileHash: SHA256 hashes. For IP: IPv6 or CIDR ranges</td>
+</tr>
+<tr>
+<td><code>action_type</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Whether to create an Allow or Block entry. Enum: <code>Allow</code>, <code>Block</code></td>
+</tr>
+<tr>
+<td><code>no_expiration</code></td>
+<td><code>boolean</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>If true, entry never expires (block entries only). Default: <code>false</code></td>
+</tr>
+<tr>
+<td><code>expiration_days</code></td>
+<td><code>integer</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Days until expiration (ignored if no_expiration is true). Default: <code>30</code></td>
+</tr>
+<tr>
+<td><code>notes</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-optional">Optional</span></td>
+<td>Optional notes to associate with the entry</td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>success</code></td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Whether the entries were created successfully</td></tr>
+<tr><td><code>entries</code></td><td><code>[]tenant_allow_block_list_entry</code></td><td><span class="badge badge-required">Required</span></td><td>The created Tenant Allow/Block List entries</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "success": true,
+  "entries": [
+    {
+      "Identity": "RgAAAAAI8gSyOVN1GYaKkFe7hRJnBwA87CsZ-sample",
+      "Value": "evil@example.com",
+      "Action": "Block",
+      "ListType": "Sender",
+      "ExpirationDate": "2026-08-14T00:00:00Z",
+      "Notes": "Blocked due to phishing campaign",
+      "LastModifiedDateTime": "2026-07-14T12:00:00Z",
+      "CreatedDateTime": "2026-07-14T12:00:00Z"
+    }
+  ]
+}</code></pre>
+
+<h2 id="remove-tenant-allow-block-list-entry">Remove Tenant Allow/Block List Entry</h2>
+<p>Remove entries from the Tenant Allow/Block List by specifying the list type and values to remove. Values must match existing entries exactly.</p>
+<div class="warning-box"><strong>Note:</strong> Removed entries take effect immediately. Ensure you are removing the correct entries as this action cannot be undone — you would need to re-create the entry.</div>
+<h3>Input</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr>
+<td><code>list_type</code></td>
+<td><code>string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Type of entries to remove. Enum: <code>Sender</code>, <code>Url</code>, <code>FileHash</code>, <code>IP</code></td>
+</tr>
+<tr>
+<td><code>entries</code></td>
+<td><code>[]string</code></td>
+<td><span class="badge badge-required">Required</span></td>
+<td>Values to remove (must match existing entry values exactly)</td>
+</tr>
+</table>
+<h3>Output</h3>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>success</code></td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Whether the entries were removed successfully</td></tr>
+</table>
+<h3>Example Output</h3>
+<pre><code>{
+  "success": true
+}</code></pre>
+
+<h2 id="custom-types">Custom Types</h2>
+
+<h3>message_trace</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>Organization</code></td><td><code>string</code></td><td>Yes</td><td>Organization that message trace was run on</td></tr>
+<tr><td><code>MessageId</code></td><td><code>string</code></td><td>Yes</td><td>ID of found email</td></tr>
+<tr><td><code>Received</code></td><td><code>string</code></td><td>Yes</td><td>Date email was received</td></tr>
+<tr><td><code>RecipientAddress</code></td><td><code>string</code></td><td>Yes</td><td>Recipient address</td></tr>
+<tr><td><code>SenderAddress</code></td><td><code>string</code></td><td>Yes</td><td>Sender address</td></tr>
+<tr><td><code>Subject</code></td><td><code>string</code></td><td>Yes</td><td>Subject of the email</td></tr>
+</table>
+
+<h3>spam_policy</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>Name</code></td><td><code>string</code></td><td>No</td><td>Name of policy</td></tr>
+<tr><td><code>DistinguishedName</code></td><td><code>string</code></td><td>No</td><td>Distinguished name (DN)</td></tr>
+<tr><td><code>Guid</code></td><td><code>string</code></td><td>No</td><td>GUID attribute</td></tr>
+<tr><td><code>BlockedSenderDomains</code></td><td><code>[]string</code></td><td>No</td><td>List of blocked sender domains</td></tr>
+</table>
+
+<h3>tenant_allow_block_list_entry</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>Identity</code></td><td><code>string</code></td><td>No</td><td>Unique identifier of the entry</td></tr>
+<tr><td><code>Value</code></td><td><code>string</code></td><td>No</td><td>The blocked or allowed value (URL, sender, file hash, or IP)</td></tr>
+<tr><td><code>Action</code></td><td><code>string</code></td><td>No</td><td>Whether this is an Allow or Block entry</td></tr>
+<tr><td><code>ListType</code></td><td><code>string</code></td><td>No</td><td>The type of entry (Sender, URL, FileHash, or IP)</td></tr>
+<tr><td><code>ExpirationDate</code></td><td><code>string</code></td><td>No</td><td>The expiration date of the entry in UTC</td></tr>
+<tr><td><code>Notes</code></td><td><code>string</code></td><td>No</td><td>Notes associated with the entry</td></tr>
+<tr><td><code>LastModifiedDateTime</code></td><td><code>string</code></td><td>No</td><td>When the entry was last modified</td></tr>
+<tr><td><code>CreatedDateTime</code></td><td><code>string</code></td><td>No</td><td>When the entry was created</td></tr>
+</table>
+
+<h2 id="version-history">Version History</h2>
+<table>
+<tr><th>Version</th><th>Changes</th></tr>
+<tr><td>4.1.0</td><td>Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0</td></tr>
+<tr><td>4.0.8</td><td>Fixed mass_purge action timing out due to backslash escape characters being injected into content_match_query | Improved error handling | Updated SDK to 6.5.0</td></tr>
+<tr><td>4.0.7</td><td>Updated Exchange Online module version to 3.9.2 | Updated SDK to 6.4.2</td></tr>
+<tr><td>4.0.6</td><td>Script update to address Block Sender Transport Rules issues</td></tr>
+<tr><td>4.0.5</td><td>Updated block_sender_transport_rule action to handle additional domain or email to be blocked | Updated SDK to 6.3.10</td></tr>
+<tr><td>4.0.4</td><td>Adding Powershell package back in Dockerfile</td></tr>
+<tr><td>4.0.3</td><td>Updating documentation regarding block_sender_transport_rule action | SDK Bump to 6.2.0 | Bumping requirements.txt</td></tr>
+<tr><td>4.0.2</td><td>Updated the SDK to latest version | Updated Exchange Online module to 3.4.0 | Email Compliance Search: Invalid characters stripped from Compliance Search Name</td></tr>
+<tr><td>4.0.1</td><td>Updated the SDK version | Updated the Exchange Online module version</td></tr>
+<tr><td>4.0.0</td><td>Remove Basic Authentication connection. Added Modern Authentication (OAuth) for ExchangeOnline PowerShell and Security &amp; Compliance PowerShell. Connection Input Office365 URL no longer required. Basic Authentication for Exchange Online has been deprecated.</td></tr>
+<tr><td>3.0.3</td><td>Fixing the release issues related to 3.0.2</td></tr>
+<tr><td>3.0.2</td><td>Fix the bug related to JSON marshalling</td></tr>
+<tr><td>3.0.1</td><td>Search through multiple mailboxes in Email Compliance Search</td></tr>
+<tr><td>3.0.0</td><td>Create new actions Update List of Blocked Domains and Get List of Blocked Domains | Create one class to communicate with Microsoft Outlook | Update SDK to version 4 | Fix Email Compliance Purge action bug with bytes in output</td></tr>
+<tr><td>2.3.5</td><td>Add logger in Transport-Rules.ps1 | Change silent 'stop' to 'SilentlyContinue'</td></tr>
+<tr><td>2.3.4</td><td>Fixed bugs impacting searches where the name contained a space, impacting Block Sender Transport Rule action, and empty message traces errors</td></tr>
+<tr><td>2.3.3</td><td>Updated all actions to automatically monitor and reconnect when needed. Fixed several other minor bugs.</td></tr>
+<tr><td>2.3.2</td><td>Added try/catch handling for remote powershell commands (all actions)</td></tr>
+<tr><td>2.3.1</td><td>Update error handling for cleaner and clearer logs on errors</td></tr>
+<tr><td>2.3.0</td><td>Add Exchange Location to Email Compliance Search action | Update to make Email Compliance Search action overwrite existing searches instead of just rerunning them</td></tr>
+<tr><td>2.2.7</td><td>Fix issue where connection test could use the wrong URI to authenticate</td></tr>
+<tr><td>2.2.6</td><td>Update to make error logging more visible in the Email Compliance Search action</td></tr>
+<tr><td>2.2.5</td><td>Fix issue where creating a new compliance search could fail by prompting the user for confirmation</td></tr>
+<tr><td>2.2.4</td><td>Add example inputs in all actions | Move connection to new ps script | Fix method name in Message Trace action</td></tr>
+<tr><td>2.2.3</td><td>Update to add logging to warn of dollar sign in password Microsoft bug</td></tr>
+<tr><td>2.2.2</td><td>Updated out of date Powershell module in Email Security Compliance Search</td></tr>
+<tr><td>2.2.1</td><td>New spec and help.md format for the Extension Library</td></tr>
+<tr><td>2.2.0</td><td>New action Message Trace</td></tr>
+<tr><td>2.1.0</td><td>Add user email address array to Search action</td></tr>
+<tr><td>2.0.0</td><td>New actions Mass Search, Purge and combined Search and Purge</td></tr>
+<tr><td>1.0.1</td><td>Fix issue where plugin would fail when creating transport rule on first run</td></tr>
+<tr><td>1.0.0</td><td>Initial plugin</td></tr>
+</table>
+
+<h2 id="links">Links &amp; References</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/powershell/exchange/connect-to-scc-powershell?view=exchange-ps" target="_blank">Connect to Security &amp; Compliance PowerShell</a></li>
+<li><a href="https://www.office.com/" target="_blank">Microsoft Office365</a></li>
+<li><a href="https://docs.microsoft.com/en-us/office365/servicedescriptions/exchange-online-service-description/exchange-online-limits#journal-transport-and-inbox-rule-limits" target="_blank">Transport Rule Limits</a></li>
+<li><a href="https://docs.microsoft.com/en-us/powershell/module/exchange/policy-and-compliance/new-transportrule?view=exchange-ps" target="_blank">New-TransportRule (PowerShell Reference)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/powershell/module/exchange/policy-and-compliance/set-transportrule?view=exchange-ps" target="_blank">Set-TransportRule (PowerShell Reference)</a></li>
+<li><a href="https://learn.microsoft.com/en-us/powershell/exchange/connect-to-exchange-online-powershell?view=exchange-ps" target="_blank">Connect to Exchange Online PowerShell</a></li>
+<li><a href="https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps" target="_blank">App-Only Authentication in Exchange Online PowerShell</a></li>
+<li><a href="https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/tenant-allow-block-list-about?view=o365-worldwide" target="_blank">Tenant Allow/Block List Documentation</a></li>
+</ul>
+
+<h3>Troubleshooting</h3>
+<ul>
+<li>Queries are expected to be wrapped in quotes, e.g., <code>subject:"a subject"</code></li>
+<li>If the 8192 character (per rule) limit is reached when adding additional conditions/emails to an existing rule, conditions/emails within that rule will need to be deleted to allow for the addition of new conditions/emails.</li>
+<li>If the 20480 bytes (overall limit for all rules combined) is reached when making a new rule, existing rules can be deleted to make space, otherwise deleting conditions/emails within existing rules will allow for the addition of a new rule.</li>
+</ul>
+
+<div class="footer">
+Rapid7 InsightConnect &middot; Microsoft Office365 Email Security Plugin v4.1.0 &middot; Supported Versions: Microsoft Office 365 2026-07-14
+</div>
+</div>
+</body>
+</html>

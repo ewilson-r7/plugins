@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Active Directory LDAP Plugin Documentation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 20px 0; z-index: 100; }
+.sidebar .brand { padding: 20px 20px 10px; border-bottom: 1px solid #2d2d4e; margin-bottom: 16px; }
+.sidebar .brand h2 { color: #fff; font-size: 15px; font-weight: 600; }
+.sidebar .brand .version { color: #6c6c8c; font-size: 12px; margin-top: 4px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; font-weight: 600; }
+.sidebar a { display: block; color: #b0b0d0; padding: 6px 20px; text-decoration: none; font-size: 13px; transition: all 0.15s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h1 { font-size: 28px; margin-bottom: 8px; color: #1a1a2e; }
+h2 { font-size: 22px; margin-top: 48px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; color: #1a1a2e; }
+h3 { font-size: 17px; margin-top: 28px; margin-bottom: 12px; color: #2d2d4e; }
+h4 { font-size: 14px; margin-top: 20px; margin-bottom: 8px; color: #4a4a6a; }
+p { margin-bottom: 12px; font-size: 14px; }
+ul, ol { margin: 8px 0 16px 24px; font-size: 14px; }
+li { margin-bottom: 6px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Menlo, Monaco, monospace; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+a { color: #3b82f6; }
+.description { font-size: 15px; color: #4a4a6a; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="brand">
+    <h2>Active Directory LDAP</h2>
+    <div class="version">v11.0.0</div>
+  </div>
+  <div class="section-label">Overview</div>
+  <a href="#description">Description</a>
+  <a href="#key-features">Key Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#setup">Setup</a>
+  <a href="#permissions">Permissions</a>
+  <div class="section-label">Actions</div>
+  <a href="#query">Query</a>
+  <a href="#query-group-membership">Query Group Membership</a>
+  <a href="#add-user">Add User</a>
+  <a href="#enable-user">Enable User</a>
+  <a href="#enable-users">Enable Users</a>
+  <a href="#disable-user">Disable User</a>
+  <a href="#disable-users">Disable Users</a>
+  <a href="#unlock-user">Unlock User</a>
+  <a href="#modify-groups">Add or Remove Object from Group</a>
+  <a href="#move-object">Move Object</a>
+  <a href="#modify-object">Modify Object</a>
+  <a href="#reset-password">Reset Password</a>
+  <a href="#force-password-reset">Force Password Reset</a>
+  <a href="#delete">Delete</a>
+  <div class="section-label">Reference</div>
+  <a href="#custom-types">Custom Types</a>
+  <a href="#version-history">Version History</a>
+  <a href="#links">Links</a>
+</nav>
+<!-- Main Content -->
+<div class="main">
+
+<h1>Active Directory LDAP</h1>
+<p class="description">AD LDAP (Active Directory Lightweight Directory Access Protocol) is an application protocol for querying and modifying items in Active Directory. This plugin queries Microsoft's Active Directory service to programmatically manage and query an Active Directory environment.</p>
+
+<!-- Description -->
+<h2 id="description">Description</h2>
+<p>The Active Directory LDAP plugin enables InsightConnect workflows to interact with on-premises or hybrid Active Directory environments using LDAP. It supports user lifecycle management (create, enable, disable, unlock, delete), group membership changes, password resets, object modifications, and flexible LDAP queries.</p>
+<p>The plugin supports both NTLM and Kerberos (SASL GSSAPI) authentication, with an Auto mode that attempts Kerberos first and falls back to NTLM. It also supports SSL/TLS and channel binding for secure communication.</p>
+
+<!-- Key Features -->
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li>Add and remove user accounts to automate provisioning/deprovisioning of users</li>
+  <li>Disable and enable user accounts to contain security risks</li>
+  <li>Reset user passwords when a user forgets their login information</li>
+  <li>Modify user groups to add or remove users from custom and built-in groups</li>
+  <li>Run a custom LDAP query to retrieve, add, modify, or delete Active Directory objects</li>
+  <li>Kerberos (SASL GSSAPI) authentication support for ticket-based auth</li>
+  <li>Channel binding support for enhanced security</li>
+  <li>Bulk enable/disable operations for multiple user accounts</li>
+</ul>
+
+<!-- Requirements -->
+<h2 id="requirements">Requirements</h2>
+<ul>
+  <li>Host name and port number (the default TCP/UDP port for LDAP is 389, and 636 for LDAP over SSL)</li>
+  <li>Administrative credentials (username and password)</li>
+  <li>To connect, you must have NTLM or Kerberos credentials</li>
+  <li>For NTLM, enter credentials with the <code>DOMAIN\username</code> format</li>
+  <li>For Kerberos, provide the domain name and KDC address. The plugin handles ticket acquisition automatically</li>
+  <li>Network connectivity from the InsightConnect orchestrator to the Active Directory domain controller</li>
+  <li>SSL is required for password reset operations</li>
+</ul>
+<!-- Setup -->
+<h2 id="setup">Setup</h2>
+
+<h3>Option A: NTLM Authentication (On-Premises AD)</h3>
+
+<h4>Step 1: Prepare a Service Account</h4>
+<ol>
+  <li>Open <strong>Active Directory Users and Computers</strong> on a domain controller</li>
+  <li>Create a new user account for InsightConnect (e.g., <code>svc_insightconnect</code>)</li>
+  <li>Set a strong password and check <strong>Password never expires</strong> (or manage rotation via your organization's policy)</li>
+  <li>Assign the account to the appropriate groups based on the actions you need (see Permissions section below)</li>
+</ol>
+
+<div class="warning-box">
+  <strong>Security:</strong> Use a dedicated service account for InsightConnect. Do not use a personal admin account. Store credentials securely and rotate them according to your security policy.
+</div>
+
+<h4>Step 2: Verify Network Connectivity</h4>
+<ul>
+  <li>Ensure the InsightConnect orchestrator can reach your domain controller on port <strong>389</strong> (LDAP) or <strong>636</strong> (LDAPS)</li>
+  <li>If using a firewall, allow TCP traffic on the appropriate port</li>
+  <li>For multi-domain environments with chase referrals enabled, ensure connectivity to all referenced domain controllers</li>
+</ul>
+
+<h4>Step 3: Configure the Connection in InsightConnect</h4>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>Host</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Server hostname, e.g. <code>example.com</code>. Do not include protocol prefix — the plugin adds <code>ldap://</code> or <code>ldaps://</code> automatically.</td></tr>
+  <tr><td><code>Port</code></td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>Port number. Default: <code>389</code>. Use <code>636</code> for LDAPS.</td></tr>
+  <tr><td><code>Use SSL</code></td><td>boolean</td><td><span class="badge badge-required">Required</span></td><td>Enable SSL/TLS. Required for password reset and add user operations.</td></tr>
+  <tr><td><code>Use Channel Binding</code></td><td>boolean</td><td><span class="badge badge-optional">Optional</span></td><td>Require a secure TLS channel before binding. Enable if your AD enforces channel binding. Default: <code>false</code>.</td></tr>
+  <tr><td><code>Authentication Type</code></td><td>string (enum)</td><td><span class="badge badge-required">Required</span></td><td>Choose <code>NTLM</code>, <code>Kerberos</code>, or <code>Auto</code>. Auto tries Kerberos first, then NTLM. Default: <code>Auto</code>.</td></tr>
+  <tr><td><code>Username and Password</code></td><td>credential</td><td><span class="badge badge-required">Required</span></td><td>For NTLM: use <code>DOMAIN\username</code> format. For Kerberos: use the account's username.</td></tr>
+  <tr><td><code>Kerberos</code></td><td>object</td><td><span class="badge badge-optional">Optional</span></td><td>Kerberos configuration: <code>kdc</code> (IP of domain controller) and <code>domain_name</code> (e.g. <code>example.com</code>). If KDC is not set, the Host value is used.</td></tr>
+  <tr><td><code>Chase Referrals</code></td><td>boolean</td><td><span class="badge badge-required">Required</span></td><td>Follow referrals to other AD servers in multi-domain environments. Default: <code>true</code>.</td></tr>
+</table>
+
+<div class="info-box">
+  <strong>Tip:</strong> The plugin uses NTLM or Kerberos authentication depending on your selection. For NTLM, the username must include the domain prefix (e.g., <code>MYDOMAIN\svc_insightconnect</code>). For Kerberos, the plugin acquires a ticket automatically from the KDC using the provided credentials.
+</div>
+<h3>Option B: Kerberos Authentication</h3>
+
+<h4>Step 1: Prepare a Service Account</h4>
+<ol>
+  <li>Create a service account in Active Directory (same as NTLM setup above)</li>
+  <li>Ensure the account has a valid SPN (Service Principal Name) or is able to authenticate against the KDC</li>
+  <li>Note the fully qualified domain name (e.g., <code>corp.example.com</code>)</li>
+  <li>Note the IP address of the KDC (typically the domain controller, e.g., <code>10.0.1.11</code>)</li>
+</ol>
+
+<h4>Step 2: Configure the Connection</h4>
+<ol>
+  <li>Set <strong>Authentication Type</strong> to <code>Kerberos</code> (or <code>Auto</code> to try Kerberos first)</li>
+  <li>In the <strong>Kerberos</strong> field, provide:
+    <ul>
+      <li><code>kdc</code>: IP address of your domain controller / KDC</li>
+      <li><code>domain_name</code>: Your AD domain (e.g., <code>example.com</code>)</li>
+    </ul>
+  </li>
+  <li>Provide the service account credentials in the Username and Password field</li>
+</ol>
+
+<div class="info-box">
+  <strong>How it works:</strong> When Kerberos is selected, the plugin configures <code>/etc/krb5.conf</code> at runtime, acquires a Kerberos ticket using <code>kinit</code>, and binds to LDAP using SASL GSSAPI. The ticket is managed automatically — no manual keytab or ticket management is needed.
+</div>
+
+<h3>Option C: Microsoft Entra ID (Azure AD) — Hybrid Setup</h3>
+<p>If your environment uses Microsoft Entra ID (formerly Azure AD) with on-premises AD synchronization, you can connect via the on-premises domain controller. For scenarios that require direct Entra ID Graph API access, consider the Microsoft Entra ID Admin plugin instead.</p>
+<p>For hybrid environments using this LDAP plugin:</p>
+<ol>
+  <li>Connect to the on-premises domain controller that syncs with Entra ID</li>
+  <li>Changes made via LDAP will sync to Entra ID through Azure AD Connect</li>
+  <li>Use NTLM or Kerberos authentication to the on-premises DC</li>
+</ol>
+
+<h3>Network Requirements</h3>
+<table>
+  <tr><th>Endpoint</th><th>Port</th><th>Protocol</th><th>Purpose</th></tr>
+  <tr><td>Domain Controller</td><td>389</td><td>TCP/UDP</td><td>LDAP communication</td></tr>
+  <tr><td>Domain Controller</td><td>636</td><td>TCP</td><td>LDAP over SSL (LDAPS)</td></tr>
+  <tr><td>Domain Controller (KDC)</td><td>88</td><td>TCP/UDP</td><td>Kerberos authentication</td></tr>
+  <tr><td>DNS Server</td><td>53</td><td>TCP/UDP</td><td>Domain name resolution</td></tr>
+</table>
+
+<h3>Troubleshooting</h3>
+<ul>
+  <li><strong>401 Unauthorized / Invalid Credentials</strong> — Verify username format. NTLM requires <code>DOMAIN\username</code>. Kerberos requires correct KDC and domain name.</li>
+  <li><strong>Connection timeout</strong> — Verify network connectivity to the domain controller on the configured port. Check firewall rules.</li>
+  <li><strong>SSL required error</strong> — Password reset and add user (with password) require SSL. Set Use SSL to true and port to 636.</li>
+  <li><strong>Chase referrals failure</strong> — In multi-domain environments, ensure all referenced DCs are reachable from the orchestrator.</li>
+  <li><strong>Channel binding errors</strong> — If your AD enforces channel binding (via LDAP Channel Binding policy), enable the Use Channel Binding option.</li>
+  <li><strong>Special characters in DN</strong> — Objects containing <code>=</code> or <code>*</code> must be escaped with backslash (e.g., <code>CN=Robert \= Bob Smith</code>).</li>
+</ul>
+<!-- Permissions -->
+<h2 id="permissions">Permissions</h2>
+<p>Active Directory uses a delegation model for permissions. The service account used by InsightConnect needs specific permissions depending on which actions you intend to use. Below are recommended permission profiles organized by use case.</p>
+
+<h3>Profile 1: Read-Only (Queries Only)</h3>
+<p>Use this profile if you only need to search and query AD objects without making changes.</p>
+<table class="perm-table">
+  <tr><th>Permission / Group</th><th>Access Level</th><th>Actions Enabled</th></tr>
+  <tr><td>Domain Users (default)</td><td>Read</td><td>Query, Query Group Membership</td></tr>
+</table>
+<div class="info-box">By default, any authenticated domain user can read most AD attributes. No additional delegation is needed for read-only queries.</div>
+
+<h3>Profile 2: User Management</h3>
+<p>Use this profile for user lifecycle automation — enabling, disabling, unlocking accounts, and resetting passwords.</p>
+<table class="perm-table">
+  <tr><th>Permission / Group</th><th>Access Level</th><th>Actions Enabled</th></tr>
+  <tr><td>Account Operators</td><td>Create/Modify/Delete users and groups</td><td>Add User, Enable User, Enable Users, Disable User, Disable Users, Unlock User, Delete, Modify Groups</td></tr>
+  <tr><td>Reset Password (delegated)</td><td>Reset password on target OUs</td><td>Reset Password, Force Password Reset</td></tr>
+  <tr><td>Write userAccountControl</td><td>Modify account flags</td><td>Enable User, Disable User</td></tr>
+  <tr><td>Write lockoutTime</td><td>Clear lockout attribute</td><td>Unlock User</td></tr>
+</table>
+<div class="warning-box"><strong>Important:</strong> SSL must be enabled for password reset operations. Without SSL, the Reset Password and Force Password Reset actions will fail. The Add User action will create the user but cannot set a password or enable the account without SSL.</div>
+
+<h3>Profile 3: Object Management</h3>
+<p>For workflows that modify AD object attributes, move objects between OUs, or manage group memberships.</p>
+<table class="perm-table">
+  <tr><th>Permission / Group</th><th>Access Level</th><th>Actions Enabled</th></tr>
+  <tr><td>Write All Properties (on target OUs)</td><td>Modify any attribute</td><td>Modify Object</td></tr>
+  <tr><td>Delete Subtree (on target OUs)</td><td>Delete objects</td><td>Delete</td></tr>
+  <tr><td>Move/Delete Child Objects</td><td>Move objects between OUs</td><td>Move Object</td></tr>
+  <tr><td>Write Member attribute (on groups)</td><td>Modify group membership</td><td>Add or Remove Object from Group</td></tr>
+</table>
+
+<h3>Profile 4: Full Automation</h3>
+<p>For comprehensive automation workflows that need all capabilities. Use the <strong>Domain Admins</strong> or <strong>Account Operators</strong> group with additional delegated permissions.</p>
+<table class="perm-table">
+  <tr><th>Permission / Group</th><th>Access Level</th><th>Actions Enabled</th></tr>
+  <tr><td>Account Operators</td><td>Full user/group management</td><td>All actions</td></tr>
+  <tr><td>Domain Admins</td><td>Full domain access</td><td>All actions (including admin accounts)</td></tr>
+</table>
+<div class="warning-box"><strong>Least Privilege:</strong> Avoid using Domain Admins unless absolutely necessary. Delegate specific permissions on target OUs to minimize blast radius. Use separate service accounts for read-only vs. write operations where possible.</div>
+
+<h3>Delegating Permissions on Specific OUs</h3>
+<p>To apply least-privilege access, delegate permissions on specific Organizational Units:</p>
+<ol>
+  <li>Open <strong>Active Directory Users and Computers</strong></li>
+  <li>Right-click the target OU → <strong>Delegate Control</strong></li>
+  <li>Add the InsightConnect service account</li>
+  <li>Select the specific tasks to delegate (e.g., "Reset user passwords and force password change at next logon")</li>
+  <li>Complete the wizard</li>
+</ol>
+<p>This limits the service account's permissions to only the OUs where automation is needed.</p>
+<!-- Actions -->
+<h2 id="query">Query</h2>
+<p>Run an LDAP query against Active Directory. Supports standard LDAP filter syntax (RFC4515) with automatic pagination for large result sets.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>search_filter</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The filter of the search request. Must conform to LDAP filter syntax (RFC4515). Example: <code>(sAMAccountName=joesmith)</code></td></tr>
+  <tr><td><code>search_base</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The base of the search request. Example: <code>DC=example,DC=com</code></td></tr>
+  <tr><td><code>attributes</code></td><td>[]string</td><td><span class="badge badge-optional">Optional</span></td><td>Attributes to search. If empty, returns all attributes.</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an array of matching objects with their DN and attributes, plus a count of results.</p>
+<pre><code>{
+  "results": [
+    {
+      "dn": "CN=Joe Smith,OU=Users,DC=example,DC=com",
+      "attributes": {
+        "sAMAccountName": "joesmith",
+        "cn": "Joe Smith",
+        "memberOf": ["CN=Domain Users,CN=Users,DC=example,DC=com"],
+        "userAccountControl": 512,
+        "whenCreated": "2021-01-14 17:48:26+00:00"
+      }
+    }
+  ],
+  "count": 1
+}</code></pre>
+
+<h2 id="query-group-membership">Query Group Membership</h2>
+<p>Return users and groups belonging to a specific group. Supports nested group expansion and automatic pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>group_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Name of the group to check membership. Example: <code>Domain Users</code></td></tr>
+  <tr><td><code>search_base</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The base of the search request. Example: <code>DC=example,DC=com</code></td></tr>
+  <tr><td><code>include_groups</code></td><td>boolean</td><td><span class="badge badge-optional">Optional</span></td><td>Include groups in results.</td></tr>
+  <tr><td><code>expand_nested_groups</code></td><td>boolean</td><td><span class="badge badge-optional">Optional</span></td><td>Expand nested groups in results.</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns matching members with full attributes and a count.</p>
+<pre><code>{
+  "results": [
+    {
+      "dn": "CN=Example User,CN=Users,DC=example,DC=com",
+      "attributes": {
+        "cn": "Example User",
+        "sAMAccountName": "Example User",
+        "memberOf": ["CN=Domain Users,CN=Users,DC=example,DC=com"],
+        "userAccountControl": 514
+      }
+    }
+  ],
+  "count": 1
+}</code></pre>
+<h2 id="add-user">Add User</h2>
+<p>Add a new user account to Active Directory. SSL is recommended — without SSL the action creates the user but cannot assign a password or enable the account.</p>
+<div class="warning-box"><strong>SSL Required:</strong> Without SSL enabled, this action will create the user in a disabled state without a password. Enable SSL and use port 636 for full functionality.</div>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>domain_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The domain name this user will belong to. Example: <code>example.com</code></td></tr>
+  <tr><td><code>logon_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The logon name for the account. Example: <code>jdoe</code></td></tr>
+  <tr><td><code>first_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>User's first name.</td></tr>
+  <tr><td><code>last_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>User's last name.</td></tr>
+  <tr><td><code>user_ou</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The OU the user account will be created in. Default: <code>Users</code></td></tr>
+  <tr><td><code>password</code></td><td>password</td><td><span class="badge badge-required">Required</span></td><td>The account's starting password.</td></tr>
+  <tr><td><code>account_disabled</code></td><td>boolean</td><td><span class="badge badge-required">Required</span></td><td>Set to true to disable the account at creation. Default: <code>true</code></td></tr>
+  <tr><td><code>user_principal_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The user principal name. Example: <code>user@example.com</code></td></tr>
+  <tr><td><code>additional_parameters</code></td><td>object</td><td><span class="badge badge-optional">Optional</span></td><td>Additional user parameters in JSON format. Example: <code>{"telephoneNumber":"(617)555-1234"}</code></td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success or failure.</p>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="enable-user">Enable User</h2>
+<p>Enable a single disabled Active Directory account.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the user to enable. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="enable-users">Enable Users</h2>
+<p>Enable multiple accounts in a single operation. Returns lists of successfully enabled and failed accounts.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_names</code></td><td>[]string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished names of the users to enable.</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "completed": ["CN=user1,OU=domain_users,DC=example,DC=com"],
+  "failed": [
+    {
+      "dn": "CN=user2,OU=domain_users,DC=example,DC=com",
+      "error": "The DN was not found"
+    }
+  ]
+}</code></pre>
+<h2 id="disable-user">Disable User</h2>
+<p>Disable a single Active Directory account.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the user to disable. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="disable-users">Disable Users</h2>
+<p>Disable multiple accounts in a single operation. Returns lists of successfully disabled and failed accounts.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_names</code></td><td>[]string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished names of the users to disable.</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "completed": ["CN=user1,OU=domain_users,DC=example,DC=com"],
+  "failed": [
+    {
+      "dn": "CN=user2,OU=domain_users,DC=example,DC=com",
+      "error": "The DN was not found"
+    }
+  ]
+}</code></pre>
+
+<h2 id="unlock-user">Unlock User</h2>
+<p>Unlock a locked Active Directory account (clear the lockout flag).</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the user to unlock. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="modify-groups">Add or Remove an Object from Group</h2>
+<p>Add or remove an object from an Active Directory group.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the object whose membership will be modified. Example: <code>CN=user,OU=domain_users,DC=mydomain,DC=com</code></td></tr>
+  <tr><td><code>group_dn</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The Distinguished Name of the group to add or remove. Example: <code>CN=group_name,OU=domain_groups,DC=example,DC=com</code></td></tr>
+  <tr><td><code>add_remove</code></td><td>string (enum)</td><td><span class="badge badge-required">Required</span></td><td>Whether to <code>add</code> or <code>remove</code> the object from the group.</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+<h2 id="move-object">Move Object</h2>
+<p>Move an Active Directory object from one organizational unit to another.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the object to move. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+  <tr><td><code>new_ou</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the OU to move the object to. Example: <code>OU=disabled_users,DC=example,DC=com</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="modify-object">Modify Object</h2>
+<p>Modify the attributes of an Active Directory object. Can change any writable attribute on the target object.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the object to modify. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+  <tr><td><code>attribute_to_modify</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The name of the attribute to modify. Example: <code>postalCode</code></td></tr>
+  <tr><td><code>attribute_value</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The value to set on the attribute. Example: <code>02114</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="reset-password">Reset Password</h2>
+<p>Reset a user's password to a new value. SSL must be enabled for this action to function.</p>
+<div class="warning-box"><strong>SSL Required:</strong> This action requires an SSL connection (port 636). It will fail if SSL is not enabled on the connection.</div>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the user whose password will be reset. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+  <tr><td><code>new_password</code></td><td>password</td><td><span class="badge badge-required">Required</span></td><td>The new password to set.</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="force-password-reset">Force Password Reset</h2>
+<p>Force a user to reset their password on next login by setting the <code>pwdLastSet</code> attribute to 0.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the user who will be forced to reset. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+
+<h2 id="delete">Delete</h2>
+<p>Delete the specified LDAP object from Active Directory.</p>
+<div class="warning-box"><strong>Destructive Action:</strong> This permanently removes the object from Active Directory. Ensure you have the correct Distinguished Name before executing. This action cannot be undone.</div>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>distinguished_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The distinguished name of the object to delete. Example: <code>CN=user,OU=domain_users,DC=example,DC=com</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{ "success": true }</code></pre>
+<!-- Custom Types -->
+<h2 id="custom-types">Custom Types</h2>
+
+<h3>kerberos</h3>
+<p>Connection details for Kerberos authentication.</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td><code>kdc</code></td><td>string</td><td>IP address of the Active Directory domain controller (Key Distribution Center). If not provided, the Host value is used.</td><td><code>10.0.1.11</code></td></tr>
+  <tr><td><code>domain_name</code></td><td>string</td><td>The fully qualified domain name of the Active Directory domain.</td><td><code>example.com</code></td></tr>
+</table>
+
+<h3>results</h3>
+<p>A query result containing a Distinguished Name and associated attributes.</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td><code>dn</code></td><td>string</td><td>Distinguished Name of the object.</td><td><code>CN=Example User,CN=Users,DC=example,DC=com</code></td></tr>
+  <tr><td><code>attributes</code></td><td>attributes</td><td>Object containing AD attributes (see below).</td><td>—</td></tr>
+</table>
+
+<h3>attributes</h3>
+<p>Standard Active Directory user/object attributes returned by queries.</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>cn</code></td><td>string</td><td>Common Name</td></tr>
+  <tr><td><code>distinguishedName</code></td><td>string</td><td>Full Distinguished Name</td></tr>
+  <tr><td><code>sAMAccountName</code></td><td>string</td><td>SAM Account Name (logon name)</td></tr>
+  <tr><td><code>objectSid</code></td><td>string</td><td>Object Security Identifier</td></tr>
+  <tr><td><code>objectGUID</code></td><td>string</td><td>Object Global Unique Identifier</td></tr>
+  <tr><td><code>memberOf</code></td><td>[]string</td><td>Group memberships</td></tr>
+  <tr><td><code>userAccountControl</code></td><td>integer</td><td>Account control flags (e.g., 512=enabled, 514=disabled)</td></tr>
+  <tr><td><code>whenCreated</code></td><td>string</td><td>Account creation timestamp</td></tr>
+  <tr><td><code>whenChanged</code></td><td>string</td><td>Last modification timestamp</td></tr>
+  <tr><td><code>lastLogon</code></td><td>string</td><td>Last logon timestamp</td></tr>
+  <tr><td><code>pwdLastSet</code></td><td>string</td><td>Last password change timestamp</td></tr>
+  <tr><td><code>accountExpires</code></td><td>string</td><td>Account expiration date</td></tr>
+  <tr><td><code>badPwdCount</code></td><td>integer</td><td>Failed password attempt count</td></tr>
+  <tr><td><code>logonCount</code></td><td>integer</td><td>Total logon count</td></tr>
+  <tr><td><code>objectClass</code></td><td>[]string</td><td>Object class hierarchy</td></tr>
+  <tr><td><code>objectCategory</code></td><td>string</td><td>Object category</td></tr>
+  <tr><td><code>primaryGroupID</code></td><td>integer</td><td>Primary group identifier</td></tr>
+  <tr><td><code>description</code></td><td>[]string</td><td>Object description</td></tr>
+</table>
+
+<h3>modified_user_error</h3>
+<p>Error details for failed bulk enable/disable operations.</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td><code>dn</code></td><td>string</td><td>Distinguished Name of the user that failed.</td><td><code>CN=user,OU=domain_users,DC=test,DC=com</code></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td>Error message describing the failure.</td><td><code>The DN was not found</code></td></tr>
+</table>
+<!-- Version History -->
+<h2 id="version-history">Version History</h2>
+<table>
+  <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td><code>11.0.0</code></td><td>Add Kerberos (SASL GSSAPI) authentication support | Changed user to root for Kerberos credential management | Updated SDK to the latest version (6.6.0)</td></tr>
+  <tr><td><code>10.0.1</code></td><td>Fixed issues with channel binding support | Updated SDK to the latest version (6.3.6)</td></tr>
+  <tr><td><code>10.0.0</code></td><td>Support for channel binding | Updated SDK to the latest version (6.3.3)</td></tr>
+  <tr><td><code>9.0.4</code></td><td>Updated SDK to the latest version (6.2.5)</td></tr>
+  <tr><td><code>9.0.3</code></td><td>Initial updates for fedramp compliance | Updated SDK to the latest version</td></tr>
+  <tr><td><code>9.0.2</code></td><td>Updated the SDK to the latest version to address memory usage issues</td></tr>
+  <tr><td><code>9.0.1</code></td><td>Fix problem where some ASCII characters were not escaped properly</td></tr>
+  <tr><td><code>9.0.0</code></td><td>Rename title of Disable &amp; Enable actions to Disable Users &amp; Enable Users on the front-end</td></tr>
+  <tr><td><code>8.0.0</code></td><td>Update actions Enable Users and Disable Users to add outputs Completed and Failed and remove output All Operations Succeeded</td></tr>
+  <tr><td><code>7.0.0</code></td><td>Update actions Enable Users and Disable Users to replace output Success with All Operations Succeeded True/False</td></tr>
+  <tr><td><code>6.0.0</code></td><td>Add actions Enable Users and Disable Users allowing for bulk enablement/disablement</td></tr>
+  <tr><td><code>5.3.5</code></td><td>Fix issue where JSON Marshaling error was raised when receiving unexpected API response in the Force Password Reset action</td></tr>
+  <tr><td><code>5.3.4</code></td><td>Fix issue with space character in DN in modify object action | Enhanced LDAP logging | Fix issue with variable error when connection fails</td></tr>
+  <tr><td><code>5.3.3</code></td><td>Fix issue with escaping brackets in Query action</td></tr>
+  <tr><td><code>5.3.2</code></td><td>Improve LDAP connection handling</td></tr>
+  <tr><td><code>5.3.1</code></td><td>Improved error messaging for missing groups in Query Group Membership action</td></tr>
+  <tr><td><code>5.3.0</code></td><td>Add Unlock User action</td></tr>
+  <tr><td><code>5.2.2</code></td><td>Add automatic pagination in Query Group Membership and Query actions</td></tr>
+  <tr><td><code>5.2.1</code></td><td>Add default prefix ldap:// and ldaps:// to provided host</td></tr>
+  <tr><td><code>5.2.0</code></td><td>New action Query Group Membership</td></tr>
+  <tr><td><code>5.1.0</code></td><td>Update error handling in Add User, Force Password Reset, Reset Password actions</td></tr>
+  <tr><td><code>5.0.0</code></td><td>Add Chase Referrals input | Rename Add action to Add User | Refactor reusable code into util.py</td></tr>
+  <tr><td><code>4.1.0</code></td><td>Add new input Attributes in action Query | Add new output Count in action Query</td></tr>
+  <tr><td><code>4.0.0</code></td><td>New action Modify Object | Rename Modify Groups action | Fix non-ASCII character escaping</td></tr>
+  <tr><td><code>3.2.0</code></td><td>New action Force Password Reset</td></tr>
+  <tr><td><code>3.1.0</code></td><td>Add user action expanded to allow setting of all attributes</td></tr>
+  <tr><td><code>3.0.0</code></td><td>Support web server mode | Update to new credential types</td></tr>
+  <tr><td><code>2.2.0</code></td><td>Add actions for move object, reset password and improved error logging</td></tr>
+  <tr><td><code>2.1.0</code></td><td>Add actions for account add/delete, disable/enable, modify</td></tr>
+  <tr><td><code>2.0.0</code></td><td>Simplify output to attributes and dn, return attributes fixed, major code cleanup</td></tr>
+  <tr><td><code>1.0.0</code></td><td>Revise input names, bugfixes for missing attributes and character escaping, fix security issue</td></tr>
+  <tr><td><code>0.1.0</code></td><td>Initial plugin</td></tr>
+</table>
+<!-- Links -->
+<h2 id="links">Links &amp; References</h2>
+<ul>
+  <li><a href="https://learn.microsoft.com/en-us/azure/active-directory/" target="_blank">Learn Azure Active Directory</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/3c5916a9-f1a0-429d-b937-f8fe672d777c" target="_blank">AD LDAP Protocol Specification (MS-ADTS)</a></li>
+  <li><a href="https://social.technet.microsoft.com/wiki/contents/articles/5392.active-directory-ldap-syntax-filters.aspx" target="_blank">Microsoft Active Directory LDAP Syntax Filters</a></li>
+  <li><a href="https://ldap3.readthedocs.io" target="_blank">Python LDAP3 Library Documentation</a></li>
+  <li><a href="https://tools.ietf.org/search/rfc4515" target="_blank">RFC 4515 — LDAP String Representation of Search Filters</a></li>
+  <li><a href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/active_directory_ldap" target="_blank">Plugin Source Code (GitHub)</a></li>
+  <li><a href="https://www.microsoft.com" target="_blank">Microsoft (Vendor)</a></li>
+</ul>
+
+<!-- Footer -->
+<div class="footer">
+  Rapid7 InsightConnect &middot; Active Directory LDAP Plugin v11.0.0 &middot; Supported Versions: Azure Active Directory 2.0.89.0
+</div>
+
+</div><!-- end .main -->
+</body>
+</html>

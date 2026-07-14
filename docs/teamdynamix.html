@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeamDynamix Plugin Documentation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1e293b; background: #fff; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 20px 0; z-index: 100; }
+.sidebar .brand { padding: 20px 20px 24px; border-bottom: 1px solid #2d2d4e; margin-bottom: 12px; }
+.sidebar .brand h1 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.sidebar .brand .version { color: #6c6c8c; font-size: 12px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; font-weight: 600; }
+.sidebar a { display: block; color: #b0b0d0; padding: 8px 20px; text-decoration: none; font-size: 13px; transition: background 0.15s, color 0.15s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; color: #0f172a; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: #1e293b; }
+h4 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: #334155; }
+p { margin: 8px 0 16px; font-size: 14px; color: #374151; }
+ul { margin: 8px 0 16px 20px; font-size: 14px; }
+li { margin-bottom: 6px; color: #374151; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; color: #374151; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Menlo, Monaco, monospace; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; color: #1e40af; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; color: #92400e; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.action-header { display: flex; align-items: center; gap: 12px; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="brand">
+    <h1>TeamDynamix</h1>
+    <div class="version">v1.0.0</div>
+  </div>
+
+  <div class="section-label">Overview</div>
+  <a href="#description">Description</a>
+  <a href="#key-features">Key Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#setup">Setup</a>
+  <a href="#permissions">Permissions</a>
+
+  <div class="section-label">Actions</div>
+  <a href="#create-ticket">Create Ticket</a>
+  <a href="#get-ticket">Get Ticket</a>
+  <a href="#update-ticket">Update Ticket</a>
+  <a href="#search-tickets">Search Tickets</a>
+
+  <div class="section-label">Reference</div>
+  <a href="#custom-types">Custom Types</a>
+  <a href="#version-history">Version History</a>
+  <a href="#links">Links</a>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Description -->
+  <h2 id="description">Description</h2>
+  <p>TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management platform. This plugin allows users to create, read, update, and search tickets within a TeamDynamix instance, enabling automated ticketing workflows.</p>
+
+  <!-- Key Features -->
+  <h2 id="key-features">Key Features</h2>
+  <ul>
+    <li>Create TeamDynamix tickets to initiate remediation workflows</li>
+    <li>Get ticket details to monitor ticket status</li>
+    <li>Update existing tickets with new information or status</li>
+    <li>Search tickets by various criteria</li>
+  </ul>
+
+  <!-- Requirements -->
+  <h2 id="requirements">Requirements</h2>
+  <ul>
+    <li>TeamDynamix instance base URL (e.g., <code>https://yourorg.teamdynamix.com</code>)</li>
+    <li>For Admin authentication &mdash; BEID and Web Services Key, found in TDAdmin under the organization detail page (requires the <em>Add BE Administrators</em> permission)</li>
+    <li>For User authentication &mdash; Username and password for a TeamDynamix service account with a security role that has ticket create/edit permissions and access to the target ticketing application</li>
+    <li>Application ID for the target TeamDynamix ticketing application, found in TDAdmin under Applications</li>
+  </ul>
+
+  <!-- Setup -->
+  <h2 id="setup">Setup</h2>
+
+  <h3>Vendor Side &mdash; TeamDynamix API Configuration</h3>
+
+  <h4>Option 1: Admin Authentication (BEID + Web Services Key)</h4>
+  <p>Admin authentication provides broad access and is suitable for integrations that need full ticket management capabilities.</p>
+  <ol>
+    <li>Log in to your TeamDynamix instance as an administrator</li>
+    <li>Navigate to <strong>TDAdmin</strong> (the admin console)</li>
+    <li>Go to the <strong>Organization</strong> detail page (usually accessible from the main admin dashboard)</li>
+    <li>Locate the <strong>BEID</strong> (Back End Identifier) &mdash; this is a GUID displayed on the organization page</li>
+    <li>Locate or generate the <strong>Web Services Key</strong> on the same page</li>
+    <li>Ensure the admin account associated with these credentials is set to <strong>Active</strong></li>
+  </ol>
+  <div class="info-box">
+    <strong>Note:</strong> You need the <em>Add BE Administrators</em> permission to view the BEID and Web Services Key on the organization detail page.
+  </div>
+  <div class="warning-box">
+    <strong>Security:</strong> The Web Services Key grants broad API access. Store it securely and rotate it periodically. Do not share it in plain text.
+  </div>
+
+  <h4>Option 2: User Authentication (Username + Password)</h4>
+  <p>User authentication uses a service account with scoped permissions, providing least-privilege access for ticket operations.</p>
+  <ol>
+    <li>Log in to <strong>TDAdmin</strong></li>
+    <li>Navigate to <strong>Users &amp; Roles &gt; Users</strong></li>
+    <li>Click <strong>Create &gt; Create Service Account</strong></li>
+    <li>Provide a username (e.g., <code>svc_insightconnect</code>) and a strong password</li>
+    <li>Assign a security role with the required permissions (see Permissions section below)</li>
+    <li>Navigate to <strong>Applications &gt; [Your Ticketing App] &gt; Users &amp; Roles</strong></li>
+    <li>Grant the service account access to the target ticketing application</li>
+  </ol>
+
+  <h4>Finding Your Application ID</h4>
+  <ol>
+    <li>In <strong>TDAdmin</strong>, navigate to <strong>Applications</strong></li>
+    <li>Select the target ticketing application</li>
+    <li>Note the numeric ID in the URL or application details panel</li>
+  </ol>
+
+  <h3>InsightConnect Side &mdash; Connection Configuration</h3>
+  <p>Configure the following fields when creating the TeamDynamix connection in InsightConnect:</p>
+
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>base_url</code></td>
+        <td>string</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>The base URL of your TeamDynamix instance (e.g., <code>https://yourorg.teamdynamix.com</code>). Do not include a trailing slash.</td>
+      </tr>
+      <tr>
+        <td><code>auth_type</code></td>
+        <td>string (enum)</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Authentication method. <code>Admin</code> uses BEID and Web Services Key; <code>User</code> uses username and password. Default: <code>Admin</code></td>
+      </tr>
+      <tr>
+        <td><code>beid</code></td>
+        <td>string</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Back End Identifier (GUID) found in TDAdmin on the organization detail page. Required when auth_type is Admin.</td>
+      </tr>
+      <tr>
+        <td><code>web_services_key</code></td>
+        <td>credential_secret_key</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Web Services Key found in TDAdmin on the organization detail page. Required when auth_type is Admin.</td>
+      </tr>
+      <tr>
+        <td><code>credentials</code></td>
+        <td>credential_username_password</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Username and password for a TeamDynamix service account. Required when auth_type is User.</td>
+      </tr>
+      <tr>
+        <td><code>app_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Numeric Application ID for the target ticketing application, found in TDAdmin under Applications.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <strong>How authentication works:</strong> The plugin authenticates against the TeamDynamix Web API at <code>/api/auth</code> (Admin) or <code>/api/auth/login</code> (User) to obtain a bearer token, which is then used for all subsequent API calls during the workflow execution.
+  </div>
+
+  <h3>Network Requirements</h3>
+  <ul>
+    <li>The InsightConnect orchestrator must be able to reach your TeamDynamix instance over HTTPS (port 443)</li>
+    <li>Target hostname: <code>yourorg.teamdynamix.com</code> (replace with your actual instance hostname)</li>
+    <li>If using an on-premises orchestrator behind a firewall, ensure outbound HTTPS is allowed to the TeamDynamix domain</li>
+  </ul>
+
+  <!-- Permissions -->
+  <h2 id="permissions">Permissions</h2>
+  <p>TeamDynamix supports two authentication methods with different permission scopes. Choose the method that aligns with your security requirements and the principle of least privilege.</p>
+
+  <h3>Admin Authentication (BEID + Web Services Key)</h3>
+  <p>Admin authentication provides broad access to the TeamDynamix API. The BEID and Web Services Key act as a system-level credential with full administrative scope.</p>
+
+  <table class="perm-table">
+    <thead>
+      <tr><th>Capability</th><th>Access Level</th><th>Actions Enabled</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ticket Management</td>
+        <td>Full (Create, Read, Update, Search)</td>
+        <td>Create Ticket, Get Ticket, Update Ticket, Search Tickets</td>
+      </tr>
+      <tr>
+        <td>Cross-Application Access</td>
+        <td>All applications</td>
+        <td>Can operate on tickets in any ticketing application</td>
+      </tr>
+      <tr>
+        <td>User Context</td>
+        <td>System-level</td>
+        <td>Actions performed as the system, not a specific user</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning-box">
+    <strong>Caution:</strong> Admin credentials provide unrestricted API access. Use this method only when broad access is required. Consider using User authentication for tighter permission control.
+  </div>
+
+  <h3>User Authentication (Service Account)</h3>
+  <p>User authentication uses a dedicated service account with a security role that can be scoped to specific permissions and applications. This is the recommended approach for production deployments following least-privilege principles.</p>
+
+  <h4>Minimum Required Permissions</h4>
+  <table class="perm-table">
+    <thead>
+      <tr><th>Permission / Scope</th><th>Access Level</th><th>Rationale / Actions Enabled</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>All: View All Accts/Depts</td>
+        <td>Read</td>
+        <td>Required to resolve account/department IDs when creating tickets</td>
+      </tr>
+      <tr>
+        <td>Tickets: Create/Edit Tickets</td>
+        <td>Create + Update</td>
+        <td>Enables Create Ticket, Update Ticket actions</td>
+      </tr>
+      <tr>
+        <td>Application Access</td>
+        <td>Granted per-app</td>
+        <td>Service account must be granted access to the target ticketing application</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Recommended Permission Profiles</h4>
+  <table class="perm-table">
+    <thead>
+      <tr><th>Profile</th><th>Permissions</th><th>Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Read-Only</td>
+        <td>View All Accts/Depts, View Tickets (application access)</td>
+        <td>Get Ticket, Search Tickets only &mdash; monitoring and reporting workflows</td>
+      </tr>
+      <tr>
+        <td>Ticket Management</td>
+        <td>View All Accts/Depts, Create/Edit Tickets (application access)</td>
+        <td>All actions &mdash; full remediation workflow automation</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <strong>Best Practice:</strong> Create separate service accounts for different privilege levels. Use a read-only account for monitoring workflows and a ticket-management account for remediation workflows.
+  </div>
+
+  <!-- Actions -->
+  <h2 id="create-ticket">Create Ticket</h2>
+  <p>Create a new ticket in TeamDynamix. Use this action to open remediation tickets as part of automated vulnerability management workflows.</p>
+
+  <h4>Input</h4>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>title</code></td>
+        <td>string</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Short title/subject of the ticket</td>
+      </tr>
+      <tr>
+        <td><code>description</code></td>
+        <td>string</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Full description of the ticket</td>
+      </tr>
+      <tr>
+        <td><code>type_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Numeric ID of the ticket type in TeamDynamix</td>
+      </tr>
+      <tr>
+        <td><code>form_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Numeric ID of the ticket form in TeamDynamix</td>
+      </tr>
+      <tr>
+        <td><code>account_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Numeric ID of the account or department</td>
+      </tr>
+      <tr>
+        <td><code>priority_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Numeric ID of the priority level in TeamDynamix</td>
+      </tr>
+      <tr>
+        <td><code>status_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Numeric ID of the initial ticket status in TeamDynamix</td>
+      </tr>
+      <tr>
+        <td><code>requestor_email</code></td>
+        <td>string</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>Email address of the ticket requestor</td>
+      </tr>
+      <tr>
+        <td><code>responsible_group_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Numeric ID of the group responsible for the ticket</td>
+      </tr>
+      <tr>
+        <td><code>additional_fields</code></td>
+        <td>object</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>JSON object of additional fields to include in the ticket payload (e.g., custom attributes)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Output</h4>
+  <p>Returns the newly created ticket's ID, direct URL, and a success indicator.</p>
+  <pre><code>{
+  "success": true,
+  "ticket_id": 12345,
+  "ticket_url": "https://yourorg.teamdynamix.com/TDClient/42/Requests/TicketDet?TicketID=12345"
+}</code></pre>
+
+  <!-- Get Ticket -->
+  <h2 id="get-ticket">Get Ticket</h2>
+  <p>Retrieve a TeamDynamix ticket by its numeric ID. Returns the full ticket object along with convenience fields for title and status.</p>
+
+  <h4>Input</h4>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ticket_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>The numeric ID of the ticket to retrieve</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Output</h4>
+  <p>Returns the full ticket object and extracted fields for quick access.</p>
+  <pre><code>{
+  "ticket": {
+    "ID": 12345,
+    "Title": "Test Ticket",
+    "StatusName": "New"
+  },
+  "title": "Test Ticket",
+  "status": "New",
+  "ticket_id": 12345
+}</code></pre>
+
+  <!-- Update Ticket -->
+  <h2 id="update-ticket">Update Ticket</h2>
+  <p>Update an existing TeamDynamix ticket. Only the fields provided will be modified; omitted fields remain unchanged.</p>
+
+  <h4>Input</h4>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ticket_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-required">required</span></td>
+        <td>The numeric ID of the ticket to update</td>
+      </tr>
+      <tr>
+        <td><code>title</code></td>
+        <td>string</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>New title for the ticket</td>
+      </tr>
+      <tr>
+        <td><code>description</code></td>
+        <td>string</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>New description for the ticket</td>
+      </tr>
+      <tr>
+        <td><code>status_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>New status ID for the ticket</td>
+      </tr>
+      <tr>
+        <td><code>priority_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>New priority ID for the ticket</td>
+      </tr>
+      <tr>
+        <td><code>additional_fields</code></td>
+        <td>object</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>JSON object of additional fields to update</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Output</h4>
+  <p>Returns a boolean indicating whether the update was successful.</p>
+  <pre><code>{
+  "success": true
+}</code></pre>
+
+  <!-- Search Tickets -->
+  <h2 id="search-tickets">Search Tickets</h2>
+  <p>Search for tickets in TeamDynamix by text content and/or status. Returns a list of matching ticket objects.</p>
+
+  <h4>Input</h4>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>search_text</code></td>
+        <td>string</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Text to search in ticket titles and descriptions</td>
+      </tr>
+      <tr>
+        <td><code>status_id</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Filter by status ID</td>
+      </tr>
+      <tr>
+        <td><code>max_results</code></td>
+        <td>integer</td>
+        <td><span class="badge badge-optional">optional</span></td>
+        <td>Maximum number of tickets to return (default: 25)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Output</h4>
+  <p>Returns the list of matching tickets and a count.</p>
+  <pre><code>{
+  "tickets": [
+    {
+      "ID": 12345,
+      "Title": "Test Ticket"
+    }
+  ],
+  "count": 1
+}</code></pre>
+
+  <!-- Custom Types -->
+  <h2 id="custom-types">Custom Types</h2>
+  <p>This plugin does not define any custom output types. All outputs use standard types (string, integer, boolean, object, []object).</p>
+
+  <!-- Version History -->
+  <h2 id="version-history">Version History</h2>
+  <table>
+    <thead>
+      <tr><th>Version</th><th>Changes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>1.0.0</code></td>
+        <td>Initial plugin release with Create, Get, Update, and Search Ticket actions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Links -->
+  <h2 id="links">Links &amp; References</h2>
+  <ul>
+    <li><a href="https://www.teamdynamix.com/" target="_blank" rel="noopener">TeamDynamix</a> &mdash; Vendor product page</li>
+    <li><a href="https://solutions.teamdynamix.com/TDWebApi/" target="_blank" rel="noopener">TeamDynamix Web API Documentation</a> &mdash; Full API reference</li>
+    <li><a href="https://solutions.teamdynamix.com/TDWebApi/Home/section/Auth" target="_blank" rel="noopener">TeamDynamix Web API Authentication</a> &mdash; Auth endpoint details and token usage</li>
+  </ul>
+
+  <!-- Footer -->
+  <div class="footer">
+    Rapid7 InsightConnect &middot; TeamDynamix Plugin v1.0.0 &middot; Supported Versions: TeamDynamix Web API
+  </div>
+
+</div>
+
+</body>
+</html>

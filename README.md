@@ -20,7 +20,7 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 
 The `docs/` directory contains setup guides and reference documentation for each plugin, served as a static site with sidebar navigation.
 
-**[Browse Plugin Documentation](docs/index.html)**
+**[Browse Plugin Documentation](https://ewilson-r7.github.io/plugins/)**
 
 To import a plugin into InsightConnect:
 1. Build the `.plg` file: `insight-plugin export -d plugins/<name>`

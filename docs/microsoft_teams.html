@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft Teams Plugin Documentation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; background: #fff; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 20px 0; z-index: 100; }
+.sidebar .brand { padding: 20px 20px 10px; border-bottom: 1px solid #2d2d4e; margin-bottom: 12px; }
+.sidebar .brand h2 { color: #fff; font-size: 15px; font-weight: 600; }
+.sidebar .brand .version { color: #6c6c8c; font-size: 12px; margin-top: 4px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; font-weight: 600; }
+.sidebar a { display: block; color: #b0b0d0; padding: 6px 20px; text-decoration: none; font-size: 13px; transition: background 0.15s, color 0.15s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h1 { font-size: 28px; margin-bottom: 8px; color: #1a1a2e; }
+h2 { font-size: 22px; margin-top: 48px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; color: #1a1a2e; }
+h3 { font-size: 17px; margin-top: 28px; margin-bottom: 12px; color: #2d2d4e; }
+h4 { font-size: 14px; margin-top: 20px; margin-bottom: 8px; color: #444; }
+p { margin-bottom: 12px; font-size: 14px; }
+ul, ol { margin: 8px 0 16px 24px; font-size: 14px; }
+li { margin-bottom: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+.action-section { margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="brand">
+<h2>Microsoft Teams</h2>
+<div class="version">v8.0.0</div>
+</div>
+<div class="section-label">Overview</div>
+<a href="#description">Description</a>
+<a href="#key-features">Key Features</a>
+<a href="#requirements">Requirements</a>
+<a href="#setup">Setup &amp; Configuration</a>
+<a href="#permissions">Permissions</a>
+<div class="section-label">Actions</div>
+<a href="#get-teams">Get Teams</a>
+<a href="#get-channels-for-team">Get Channels for Team</a>
+<a href="#send-message">Send Message</a>
+<a href="#send-message-by-guid">Send Message by GUID</a>
+<a href="#send-html-message">Send HTML Message</a>
+<a href="#add-member-to-team">Add Member to Team</a>
+<a href="#remove-member-from-team">Remove Member from Team</a>
+<a href="#add-channel-to-team">Add Channel to Team</a>
+<a href="#remove-channel-from-team">Remove Channel from Team</a>
+<a href="#create-teams-enabled-group">Create Teams Enabled Group</a>
+<a href="#delete-team">Delete Team</a>
+<a href="#add-group-owner">Add Group Owner</a>
+<a href="#add-member-to-channel">Add Member to Channel</a>
+<a href="#get-message-in-channel">Get Message in Channel</a>
+<a href="#get-message-in-chat">Get Message in Chat</a>
+<a href="#get-reply-list">Get Reply List</a>
+<a href="#list-messages-in-chat">List Messages from a Chat</a>
+<a href="#create-teams-chat">Create Teams Chat</a>
+<div class="section-label">Triggers</div>
+<a href="#new-message-received">New Message Received</a>
+<div class="section-label">Reference</div>
+<a href="#custom-types">Custom Types</a>
+<a href="#version-history">Version History</a>
+<a href="#links">Links &amp; References</a>
+</div>
+<div class="main">
+<h1>Microsoft Teams Plugin</h1>
+<p style="color:#6c6c8c; margin-bottom: 24px;">Rapid7 InsightConnect Plugin &middot; Version 8.0.0 &middot; Community Support</p>
+
+<h2 id="description">Description</h2>
+<p><a href="https://products.office.com/en-us/microsoft-teams/group-chat-software" target="_blank">Microsoft Teams</a> is a unified communications platform. The Microsoft Teams plugin allows you to send and trigger workflows on new messages. The plugin also allows for teams management with the ability to add and remove teams, channels, and users.</p>
+<p>This plugin uses the <a href="https://docs.microsoft.com/en-us/graph/api/resources/teams-api-overview?view=graph-rest-1.0" target="_blank">Microsoft Teams API</a> (Microsoft Graph v1.0) to interact with Microsoft Teams.</p>
+<div class="info-box">This plugin uses app-only authentication (client_credentials OAuth2 flow) with Bot Framework integration. No user account is required.</div>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li>Communication Management for all Microsoft products</li>
+<li>App-only authentication (no user account required)</li>
+<li>Bot Framework integration for sending messages</li>
+<li>Send plain text and HTML messages to channels and chats</li>
+<li>Team and channel management (create, delete, add/remove members)</li>
+<li>Trigger workflows based on new messages with regex filtering</li>
+<li>Automatic extraction of security indicators (IPs, URLs, hashes, CVEs) from messages</li>
+<li>Support for Commercial, GCC, GCC High, and DoD environments</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Azure App Registration with Application ID and Secret</li>
+<li>Microsoft Graph application permissions with admin consent</li>
+<li>Azure Bot registration (for sending messages)</li>
+<li>An Azure account with Global Administrator or Application Administrator role</li>
+<li>A Microsoft Teams environment where you can install apps</li>
+</ul>
+<h2 id="setup">Setup &amp; Configuration</h2>
+
+<h3>Part 1: Create the Azure App Registration</h3>
+
+<h4>Step 1: Register a New Application</h4>
+<ol>
+<li>Go to the <a href="https://portal.azure.com" target="_blank">Azure Portal</a></li>
+<li>Navigate to <strong>Microsoft Entra ID</strong> (formerly Azure Active Directory) &rarr; <strong>App registrations</strong></li>
+<li>Click <strong>+ New registration</strong></li>
+<li>Fill in the details:
+  <ul>
+    <li><strong>Name</strong>: <code>InsightConnect Teams Bot</code> (or any descriptive name)</li>
+    <li><strong>Supported account types</strong>: Select <em>Accounts in this organizational directory only (Single tenant)</em></li>
+    <li><strong>Redirect URI</strong>: Leave blank (not needed for this flow)</li>
+  </ul>
+</li>
+<li>Click <strong>Register</strong></li>
+</ol>
+
+<h4>Step 2: Record Your Application (Client) ID</h4>
+<p>After registration, you'll land on the app's <strong>Overview</strong> page. Record these values:</p>
+<table>
+<tr><th>Field</th><th>Where to Find It</th><th>Plugin Connection Field</th></tr>
+<tr><td><strong>Application (client) ID</strong></td><td>Overview page, top section</td><td><code>Application ID</code></td></tr>
+<tr><td><strong>Directory (tenant) ID</strong></td><td>Overview page, top section</td><td><code>Directory ID</code></td></tr>
+</table>
+
+<h4>Step 3: Create a Client Secret</h4>
+<ol>
+<li>In your app registration, go to <strong>Certificates &amp; secrets</strong> &rarr; <strong>Client secrets</strong></li>
+<li>Click <strong>+ New client secret</strong></li>
+<li>Set a description (e.g., <code>InsightConnect Plugin</code>) and expiration (recommended: 24 months)</li>
+<li>Click <strong>Add</strong></li>
+<li><strong>Immediately copy the Value</strong> (not the Secret ID) &mdash; this is shown only once</li>
+</ol>
+<div class="warning-box"><strong>Important:</strong> The secret value is only displayed once. If you navigate away without copying it, you'll need to create a new one.</div>
+<h3>Part 2: Configure API Permissions</h3>
+
+<h4>Step 4: Add Microsoft Graph Application Permissions</h4>
+<ol>
+<li>In your app registration, go to <strong>API permissions</strong></li>
+<li>Click <strong>+ Add a permission</strong> &rarr; <strong>Microsoft Graph</strong> &rarr; <strong>Application permissions</strong></li>
+<li>Add the permissions based on which actions you plan to use (see <a href="#permissions">Permissions</a> section below)</li>
+</ol>
+
+<h4>Step 5: Grant Admin Consent</h4>
+<ol>
+<li>On the <strong>API permissions</strong> page, click <strong>Grant admin consent for [Your Organization]</strong></li>
+<li>Click <strong>Yes</strong> to confirm</li>
+<li>Verify all permissions show a green checkmark under the <strong>Status</strong> column</li>
+</ol>
+<div class="warning-box"><strong>This step requires Global Administrator or Privileged Role Administrator.</strong> If you don't have this role, you'll need to request consent from someone who does.</div>
+
+<h3>Part 3: Create the Azure Bot Registration</h3>
+<p>The Bot Framework is used to send messages to Teams channels and chats without a user account. Messages will appear as coming from the bot identity.</p>
+
+<h4>Step 6: Create a Bot Resource</h4>
+<ol>
+<li>In the Azure Portal, search for <strong>Azure Bot</strong> in the top search bar</li>
+<li>Click <strong>Create</strong></li>
+<li>Fill in the details:
+  <ul>
+    <li><strong>Bot handle</strong>: <code>InsightConnectBot</code> (must be globally unique)</li>
+    <li><strong>Subscription</strong>: Select your Azure subscription</li>
+    <li><strong>Resource group</strong>: Select an existing one or create new</li>
+    <li><strong>Pricing tier</strong>: Select <strong>Standard</strong></li>
+    <li><strong>Type of App</strong>: <strong>Single Tenant</strong></li>
+    <li><strong>Creation type</strong>: <strong>Use existing app registration</strong></li>
+    <li><strong>App ID</strong>: Paste the Application (client) ID from Step 2</li>
+    <li><strong>App tenant ID</strong>: Paste the Directory (tenant) ID from Step 2</li>
+  </ul>
+</li>
+<li>Click <strong>Review + create</strong> &rarr; <strong>Create</strong></li>
+</ol>
+
+<h4>Step 7: Configure the Bot Channel (Teams)</h4>
+<ol>
+<li>Once the bot resource is created, go to it in the Azure Portal</li>
+<li>Navigate to <strong>Channels</strong> in the left menu</li>
+<li>Click <strong>Microsoft Teams</strong> (the Teams icon)</li>
+<li>Accept the Terms of Service</li>
+<li>Under <strong>Messaging</strong>, ensure it's enabled</li>
+<li>Click <strong>Apply</strong></li>
+</ol>
+<h3>Part 4: Install the Bot in Teams</h3>
+<p>For the bot to send messages to a specific team/channel, it must be installed in that team.</p>
+
+<h4>Option A: Sideload a Teams App Manifest</h4>
+<p>Create a <code>manifest.json</code> file:</p>
+<pre><code>{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.17",
+  "version": "1.0.0",
+  "id": "YOUR_APPLICATION_CLIENT_ID",
+  "developer": {
+    "name": "Your Organization",
+    "websiteUrl": "https://www.rapid7.com",
+    "privacyUrl": "https://www.rapid7.com/privacy-policy/",
+    "termsOfUseUrl": "https://www.rapid7.com/legal/"
+  },
+  "name": { "short": "InsightConnect Bot", "full": "InsightConnect Automation Bot" },
+  "description": {
+    "short": "InsightConnect SOAR automation bot",
+    "full": "Enables InsightConnect to send automated messages to Microsoft Teams."
+  },
+  "icons": { "outline": "outline.png", "color": "color.png" },
+  "accentColor": "#FF6600",
+  "bots": [{
+    "botId": "YOUR_APPLICATION_CLIENT_ID",
+    "scopes": ["team", "personal", "groupChat"],
+    "supportsFiles": false,
+    "isNotificationOnly": true
+  }],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": []
+}</code></pre>
+<p>Replace <code>YOUR_APPLICATION_CLIENT_ID</code> with your actual Application (client) ID.</p>
+<ol>
+<li>Create two icon files (32x32 <code>outline.png</code> and 192x192 <code>color.png</code>)</li>
+<li>Put <code>manifest.json</code>, <code>outline.png</code>, and <code>color.png</code> into a ZIP file</li>
+<li>In Microsoft Teams: go to <strong>Apps</strong> &rarr; <strong>Manage your apps</strong> &rarr; <strong>Upload an app</strong></li>
+<li>Upload the ZIP file</li>
+<li>Add the bot to each team: go to the team &rarr; <strong>Manage team</strong> &rarr; <strong>Apps</strong> &rarr; find and add the bot</li>
+</ol>
+
+<h4>Option B: Install via Teams Admin Center</h4>
+<ol>
+<li>Go to the <a href="https://admin.teams.microsoft.com" target="_blank">Teams Admin Center</a></li>
+<li>Navigate to <strong>Teams apps</strong> &rarr; <strong>Manage apps</strong></li>
+<li>Click <strong>+ Upload new app</strong> &rarr; upload the ZIP package</li>
+<li>Use <strong>Setup policies</strong> to push the app to users/teams</li>
+</ol>
+<h3>Part 5: Configure the Plugin Connection</h3>
+<p>Enter the following values in the InsightConnect Microsoft Teams plugin connection:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>Application ID</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Application (client) ID from the App Registration Overview page</td></tr>
+<tr><td><code>Directory ID</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Directory (tenant) ID from the App Registration Overview page</td></tr>
+<tr><td><code>Application Secret</code></td><td>credential_secret_key</td><td><span class="badge badge-required">Required</span></td><td>Client secret Value from Certificates &amp; secrets</td></tr>
+<tr><td><code>Endpoint</code></td><td>string (enum)</td><td><span class="badge badge-required">Required</span></td><td>The type of endpoint: Normal, GCC, GCC High, or DoD</td></tr>
+<tr><td><code>App Catalog ID</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Teams App Catalog ID of the bot. When set, the plugin auto-installs the bot into chats before sending messages.</td></tr>
+</table>
+
+<h4>Endpoint Selection Guide</h4>
+<table>
+<tr><th>Environment</th><th>Endpoint Setting</th></tr>
+<tr><td>Commercial Microsoft 365</td><td><code>Normal</code></td></tr>
+<tr><td>US Government Community Cloud</td><td><code>GCC</code></td></tr>
+<tr><td>US Government Community Cloud High</td><td><code>GCC High</code></td></tr>
+<tr><td>US Department of Defense</td><td><code>DoD</code></td></tr>
+</table>
+
+<h4>Finding Your App Catalog ID</h4>
+<ol>
+<li>Go to the <a href="https://admin.teams.microsoft.com" target="_blank">Teams Admin Center</a></li>
+<li>Navigate to <strong>Teams apps</strong> &rarr; <strong>Manage apps</strong></li>
+<li>Search for your bot app by name</li>
+<li>The <strong>App ID</strong> shown is your Teams App Catalog ID</li>
+</ol>
+<div class="info-box">The App Catalog ID is <strong>not</strong> the same as the Azure App Registration client ID. It's the ID assigned when the app is published to your organization's Teams app catalog.</div>
+
+<h3>Part 6: Verify the Setup</h3>
+<ol>
+<li>Save the plugin connection in InsightConnect</li>
+<li>The connection test will authenticate using client_credentials flow and call the Microsoft Graph API</li>
+<li>If successful, you'll see a green "Connected" status</li>
+</ol>
+<div class="info-box"><strong>Testing message send:</strong> Use the <strong>Send Message by GUID</strong> action with a team and channel GUID. Right-click a channel in Teams &rarr; "Get link to channel" to extract the IDs from the URL.</div>
+<h2 id="permissions">Permissions</h2>
+<p>This plugin uses Microsoft Graph <strong>Application permissions</strong> (app-only, no user context). All permissions require admin consent.</p>
+
+<h3>Minimum Required Permission</h3>
+<table class="perm-table">
+<tr><th>Permission</th><th>Access Level</th><th>Rationale</th></tr>
+<tr><td>Organization.Read.All</td><td>Application</td><td>Used by connection test to verify authentication</td></tr>
+</table>
+
+<h3>Profile: Notifications Only</h3>
+<p>Use this profile if you only need to send messages to channels (no management actions).</p>
+<table class="perm-table">
+<tr><th>Permission</th><th>Access Level</th><th>Actions Enabled</th></tr>
+<tr><td>Organization.Read.All</td><td>Application</td><td>Connection test</td></tr>
+<tr><td>Group.Read.All</td><td>Application</td><td>Get Teams, Send Message, Send HTML Message</td></tr>
+<tr><td>Channel.ReadBasic.All</td><td>Application</td><td>Get Channels for Team, Send Message, Send HTML Message</td></tr>
+</table>
+
+<h3>Profile: Full Messaging</h3>
+<p>Send and read messages in channels and chats.</p>
+<table class="perm-table">
+<tr><th>Permission</th><th>Access Level</th><th>Actions Enabled</th></tr>
+<tr><td>Organization.Read.All</td><td>Application</td><td>Connection test</td></tr>
+<tr><td>Group.Read.All</td><td>Application</td><td>Get Teams, Send Message, Send HTML Message, Get Reply List</td></tr>
+<tr><td>Channel.ReadBasic.All</td><td>Application</td><td>Get Channels, Send Message, Get Reply List</td></tr>
+<tr><td>ChannelMessage.Read.All</td><td>Application</td><td>Get Message in Channel, Get Reply List, New Message Received trigger</td></tr>
+<tr><td>Chat.Read.All</td><td>Application</td><td>Get Message in Chat, List Messages in Chat</td></tr>
+<tr><td>Chat.Create</td><td>Application</td><td>Create Teams Chat</td></tr>
+</table>
+
+<h3>Profile: Full Management</h3>
+<p>All actions including team, channel, and member management.</p>
+<table class="perm-table">
+<tr><th>Permission</th><th>Access Level</th><th>Actions Enabled</th></tr>
+<tr><td>Organization.Read.All</td><td>Application</td><td>Connection test</td></tr>
+<tr><td>Group.Read.All</td><td>Application</td><td>Get Teams, messaging, channel operations</td></tr>
+<tr><td>Group.ReadWrite.All</td><td>Application</td><td>Create Teams Enabled Group, Delete Team, Add Group Owner</td></tr>
+<tr><td>Channel.ReadBasic.All</td><td>Application</td><td>Get Channels, messaging, channel operations</td></tr>
+<tr><td>Channel.Create</td><td>Application</td><td>Add Channel to Team</td></tr>
+<tr><td>Channel.Delete.All</td><td>Application</td><td>Remove Channel from Team</td></tr>
+<tr><td>ChannelMessage.Read.All</td><td>Application</td><td>Get Message in Channel, Get Reply List, Trigger</td></tr>
+<tr><td>ChannelMember.ReadWrite.All</td><td>Application</td><td>Add Member to Channel</td></tr>
+<tr><td>TeamMember.ReadWrite.All</td><td>Application</td><td>Add Member to Team, Remove Member from Team</td></tr>
+<tr><td>Chat.Read.All</td><td>Application</td><td>Get Message in Chat, List Messages in Chat</td></tr>
+<tr><td>Chat.Create</td><td>Application</td><td>Create Teams Chat</td></tr>
+<tr><td>TeamsAppInstallation.ReadWriteForChat.All</td><td>Application</td><td>Auto-install bot in chats (requires App Catalog ID)</td></tr>
+<tr><td>User.Read.All</td><td>Application</td><td>Add Member, Remove Member, Add Group Owner, Add Member to Channel</td></tr>
+</table>
+
+<h3>Least-Privilege Guidance</h3>
+<div class="info-box">
+<strong>Recommendation:</strong> Start with the "Notifications Only" profile and add permissions as needed. Use separate App Registrations for different privilege levels when possible (e.g., one for read-only monitoring, another for management actions).
+</div>
+<ul>
+<li><code>TeamsAppInstallation.ReadWriteForChat.All</code> is only required if you configure the App Catalog ID in the connection for auto-install behavior</li>
+<li><code>TeamMember.ReadWriteNonOwnerRole.All</code> is a least-privileged alternative to <code>TeamMember.ReadWrite.All</code> if you only need to add members (not owners)</li>
+<li>Adding <strong>guest users</strong> to a team via application permissions is not supported by Microsoft &mdash; guest users can only be added using delegated permissions</li>
+</ul>
+<h2 id="get-teams" class="action-section">Get Teams</h2>
+<p>Returns all the teams the configured user is allowed to see.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Optional regex-capable team name to look for</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an array of team objects containing display name, ID, and description.</p>
+<pre><code>[
+  {
+    "Description": "test description",
+    "Display Name": "test display name",
+    "ID": "9e538ff5-dcb2-46a9-9a28-f93b8250deb0"
+  }
+]</code></pre>
+
+<h2 id="get-channels-for-team" class="action-section">Get Channels for Team</h2>
+<p>Returns all the channels associated with a team.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name to look for</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Optional regex-capable channel to look for</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an array of channel objects containing display name, ID, and description.</p>
+<pre><code>[
+  {
+    "Description": "test description",
+    "Display Name": "test display name",
+    "ID": "12:a12345bc678d901e12345f67890g1234_thread.v2"
+  }
+]</code></pre>
+
+<h2 id="send-message" class="action-section">Send Message</h2>
+<p>Send a message to a Teams channel or chat. Specify either team_name + channel_name for channel messages, or chat_id for chat messages.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Team name</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Channel name</td></tr>
+<tr><td><code>thread_id</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>To post in a thread, select parent message ID</td></tr>
+<tr><td><code>chat_id</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>The ID of the chat</td></tr>
+<tr><td><code>message</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Message to send</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the message object that was created, including body, sender, timestamp, and web URL.</p>
+<pre><code>{
+  "body": {"contentType": "text", "content": "Hello!"},
+  "from": {"user": {"displayName": "Example User", "id": "3395856c-..."}},
+  "ID": "1234567891",
+  "messageType": "message",
+  "importance": "normal"
+}</code></pre>
+<h2 id="send-message-by-guid" class="action-section">Send Message by GUID</h2>
+<p>Sends a message using the GUID for the team and channel. This is more performant than Send Message as it skips name resolution.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_guid</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team GUID</td></tr>
+<tr><td><code>channel_guid</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel GUID</td></tr>
+<tr><td><code>is_html</code></td><td>boolean</td><td><span class="badge badge-required">Required</span></td><td>Is the message HTML</td></tr>
+<tr><td><code>message</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Message to send</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the message object that was created.</p>
+<pre><code>{
+  "body": {"contentType": "text", "content": "Hello!"},
+  "from": {"user": {"displayName": "Example User", "id": "3395856c-..."}},
+  "ID": "1234567891",
+  "messageType": "message",
+  "importance": "normal"
+}</code></pre>
+<div class="info-box"><strong>Tip:</strong> To get team and channel GUIDs, right-click a channel in Teams &rarr; "Get link to channel". The <code>groupId</code> parameter is the Team GUID, and the channel ID is in the URL path (URL-decode <code>%3a</code> to <code>:</code> and <code>%40</code> to <code>@</code>).</div>
+
+<h2 id="send-html-message" class="action-section">Send HTML Message</h2>
+<p>Send HTML-formatted content as a message to a Teams channel.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel name</td></tr>
+<tr><td><code>thread_id</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>To post in a thread, select parent message ID</td></tr>
+<tr><td><code>message_content</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>HTML content to send</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the message object that was created.</p>
+<div class="info-box"><strong>Supported HTML tags:</strong> &lt;b&gt;, &lt;strong&gt;, &lt;i&gt;, &lt;em&gt;, &lt;s&gt;, &lt;code&gt;, &lt;pre&gt;, &lt;a href&gt;, &lt;br&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;h1&gt;-&lt;h3&gt;</div>
+
+<h2 id="add-member-to-team" class="action-section">Add Member to Team</h2>
+<p>Add a member to a team.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>member_login</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Member login e.g. user@example.com</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+<div class="warning-box"><strong>Note:</strong> Adding guest users via application permissions is not supported by Microsoft. Guest users can only be added using delegated permissions.</div>
+<h2 id="remove-member-from-team" class="action-section">Remove Member from Team</h2>
+<p>Remove a member from a team.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>member_login</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Member login e.g. user@example.com</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+<div class="warning-box"><strong>Caution:</strong> This action removes the user from the team entirely. They will lose access to all channels within that team.</div>
+
+<h2 id="add-channel-to-team" class="action-section">Add Channel to Team</h2>
+<p>Add a channel to a team.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel name</td></tr>
+<tr><td><code>channel_description</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel description</td></tr>
+<tr><td><code>channel_type</code></td><td>string (enum)</td><td><span class="badge badge-required">Required</span></td><td>Type of channel: Standard or Private</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+
+<h2 id="remove-channel-from-team" class="action-section">Remove Channel from Team</h2>
+<p>Remove a channel from a team.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel name</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+<div class="warning-box"><strong>Caution:</strong> This is a destructive action. Removing a channel deletes all messages and content within it. This cannot be undone.</div>
+
+<h2 id="create-teams-enabled-group" class="action-section">Create Teams Enabled Group</h2>
+<p>Create a group in Azure and enable it for Microsoft Teams.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>group_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>group_description</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Group description</td></tr>
+<tr><td><code>mail_nickname</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The nickname for the email address of this group in Outlook</td></tr>
+<tr><td><code>mail_enabled</code></td><td>boolean</td><td><span class="badge badge-required">Required</span></td><td>Should e-mail be enabled for this group</td></tr>
+<tr><td><code>owners</code></td><td>[]string</td><td><span class="badge badge-optional">Optional</span></td><td>A list of usernames to set as owners</td></tr>
+<tr><td><code>members</code></td><td>[]string</td><td><span class="badge badge-optional">Optional</span></td><td>A list of usernames to set as members</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a group object with details about the newly created group.</p>
+<pre><code>{
+  "Created Date Time": "2023-11-09T12:07:43.167Z",
+  "Description": "test description",
+  "Display Name": "test display name",
+  "ID": "12:a12345bc678d901e12345f67890g1234_thread.v2",
+  "Mail Enabled": true,
+  "Mail Nickname": "TestNickname",
+  "Security Enabled": true
+}</code></pre>
+<h2 id="delete-team" class="action-section">Delete Team</h2>
+<p>Delete a team and the associated group from Azure.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team Name</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+<div class="warning-box"><strong>Destructive action:</strong> This permanently deletes the team and all associated channels, messages, and files. This cannot be undone.</div>
+
+<h2 id="add-group-owner" class="action-section">Add Group Owner</h2>
+<p>Add a user to the group's list of owners.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>member_login</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The login of the group member to be added as owner</td></tr>
+<tr><td><code>group_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Name of the group or team</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+
+<h2 id="add-member-to-channel" class="action-section">Add Member to Channel</h2>
+<p>Add a conversation member to a private channel.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>member_login</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The login of the group member to be added to the channel</td></tr>
+<tr><td><code>group_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Name of the group in which the channel is located</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Name of the channel to which the member is to be added</td></tr>
+<tr><td><code>role</code></td><td>string (enum)</td><td><span class="badge badge-required">Required</span></td><td>Role of the member to add: Owner or Member</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success.</p>
+<pre><code>{"success": true}</code></pre>
+
+<h2 id="get-message-in-channel" class="action-section">Get Message in Channel</h2>
+<p>Retrieve a single message or a message reply in a channel.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the team</td></tr>
+<tr><td><code>channel_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the channel</td></tr>
+<tr><td><code>message_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the message</td></tr>
+<tr><td><code>reply_id</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>The ID of a reply message</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a chatMessage object with full message details including body, sender, timestamps, reactions, and attachments.</p>
+<pre><code>{
+  "id": "1234567891",
+  "messageType": "message",
+  "createdDateTime": "2023-08-01T12:00:00.000Z",
+  "from": {"user": {"displayName": "Example User", "id": "3395856c-..."}},
+  "body": {"contentType": "text", "content": "tests_v1"},
+  "importance": "normal",
+  "reactions": [],
+  "attachments": []
+}</code></pre>
+<h2 id="get-message-in-chat" class="action-section">Get Message in Chat</h2>
+<p>Retrieve a single message or a message reply in a chat.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>chat_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the chat</td></tr>
+<tr><td><code>message_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the message</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a chatMessage object with full message details.</p>
+<pre><code>{
+  "id": "1234567891",
+  "messageType": "message",
+  "createdDateTime": "2023-08-01T12:00:00.000Z",
+  "from": {"user": {"displayName": "Example User", "id": "3395856c-..."}},
+  "body": {"contentType": "text", "content": "tests_v1"},
+  "importance": "normal"
+}</code></pre>
+
+<h2 id="get-reply-list" class="action-section">Get Reply List</h2>
+<p>List all the replies to a message in a channel of a team.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel name</td></tr>
+<tr><td><code>message_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the message</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an array of chatMessage objects representing all replies to the specified message.</p>
+<pre><code>[
+  {
+    "id": "1234567890123",
+    "body": {"content": "Test message", "contentType": "text"},
+    "from": {"user": {"displayName": "Test User", "id": "8a234567-..."}},
+    "createdDateTime": "2023-11-08T10:38:18.048Z",
+    "messageType": "message",
+    "importance": "normal"
+  }
+]</code></pre>
+
+<h2 id="list-messages-in-chat" class="action-section">List Messages from a Chat</h2>
+<p>Retrieve up to the last 50 messages in a chat.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>chat_id</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>The ID of the chat</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an array of chatMessage objects (up to 50 most recent messages).</p>
+<pre><code>[
+  {
+    "id": "1234567890123",
+    "body": {"content": "Test message", "contentType": "text"},
+    "chatId": "12:a12345bc678d901e12345f67890g1234_thread.v2",
+    "from": {"user": {"displayName": "Test User"}},
+    "createdDateTime": "2023-11-08T10:38:18.048Z",
+    "messageType": "message"
+  }
+]</code></pre>
+
+<h2 id="create-teams-chat" class="action-section">Create Teams Chat</h2>
+<p>Create a chat in Microsoft Teams. 2 members creates a 1:1 chat; 3+ members creates a group chat.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>topic</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Topic of chat (only available for group chats with 3+ members)</td></tr>
+<tr><td><code>members</code></td><td>[]itemMember</td><td><span class="badge badge-required">Required</span></td><td>A list of members with user_info (email or ID) and role (owner or guest)</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an itemChat object with details about the newly created chat.</p>
+<pre><code>{
+  "chatType": "group",
+  "createdDateTime": "2023-11-09T12:07:43.167Z",
+  "id": "12:a12345bc678d901e12345f67890g1234_thread.v2",
+  "tenantId": "1a234567-bc8d-9e01-23fg-4h567i8j9k01",
+  "webUrl": "https://teams.microsoft.com/l/chat/..."
+}</code></pre>
+<div class="info-box"><strong>Tip:</strong> If you have the App Catalog ID configured in the connection, you don't need to pre-install the bot &mdash; it will auto-install when it first sends a message to the chat.</div>
+<h2 id="new-message-received" class="action-section">New Message Received (Trigger)</h2>
+<p>Poll a channel for new messages and trigger a workflow when a match is found. Optionally filter messages with a regex pattern.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>team_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Team name</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Channel name</td></tr>
+<tr><td><code>message_content</code></td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Regex to match new messages against</td></tr>
+</table>
+<h4>Output</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>message</code></td><td>message</td><td>The message object that was created (includes body, sender, timestamp, first_word, words)</td></tr>
+<tr><td><code>indicators</code></td><td>indicators</td><td>Extracted security indicators: domains, URLs, emails, hashes (MD5/SHA1/SHA256), IPs (v4/v6), MAC addresses, CVEs, UUIDs</td></tr>
+<tr><td><code>channel_name</code></td><td>string</td><td>Name of the channel where the message was posted</td></tr>
+<tr><td><code>team_name</code></td><td>string</td><td>Name of the team to which the channel belongs</td></tr>
+</table>
+<h4>Example Output</h4>
+<pre><code>{
+  "message": {
+    "body": {"contentType": "text", "content": "!investigate 192.168.1.100"},
+    "from": {"user": {"displayName": "Example User"}},
+    "first_word": "!investigate",
+    "words": ["!investigate", "192.168.1.100"],
+    "ID": "1234567891"
+  },
+  "indicators": {
+    "IP Addressses": {"IPv4 Addressses": ["192.168.1.100"]},
+    "Domains": [],
+    "URLs": [],
+    "Hashes": {"MD5 Hashes": [], "SHA1 Hashes": [], "SHA256 Hashes": []},
+    "CVEs": [],
+    "UUIDs": []
+  },
+  "channel_name": "Bot Commands",
+  "team_name": "Security Operations"
+}</code></pre>
+<div class="info-box"><strong>Regex filtering:</strong> The <code>message_content</code> field uses <a href="https://docs.python.org/3.7/library/re.html" target="_blank">Python regex syntax</a>. Leave empty to trigger on all messages.</div>
+<h2 id="custom-types">Custom Types</h2>
+
+<h3>team</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>displayName</code></td><td>string</td><td>Display name of the team</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>Unique identifier</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>Team description</td></tr>
+</table>
+
+<h3>channel</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>displayName</code></td><td>string</td><td>Display name of the channel</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>Unique identifier</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>Channel description</td></tr>
+</table>
+
+<h3>message</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>body</code></td><td>body</td><td>Message body (content + contentType)</td></tr>
+<tr><td><code>from</code></td><td>from</td><td>Sender information</td></tr>
+<tr><td><code>createdDateTime</code></td><td>string</td><td>Created date time</td></tr>
+<tr><td><code>webUrl</code></td><td>string</td><td>Web URL to the message</td></tr>
+<tr><td><code>importance</code></td><td>string</td><td>Message importance level</td></tr>
+<tr><td><code>messageType</code></td><td>string</td><td>Message type</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>Message ID</td></tr>
+<tr><td><code>first_word</code></td><td>string</td><td>Extracted first word (useful for chat commands)</td></tr>
+<tr><td><code>words</code></td><td>[]string</td><td>Message split by spaces into a word list</td></tr>
+<tr><td><code>channelIdentity</code></td><td>channelIdentity</td><td>Channel and team identity</td></tr>
+</table>
+
+<h3>chatMessage</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>id</code></td><td>string</td><td>Unique ID of the message</td></tr>
+<tr><td><code>body</code></td><td>itemBody</td><td>Content and content type</td></tr>
+<tr><td><code>from</code></td><td>from</td><td>Sender details</td></tr>
+<tr><td><code>createdDateTime</code></td><td>string</td><td>Created timestamp</td></tr>
+<tr><td><code>lastModifiedDateTime</code></td><td>string</td><td>Last modified timestamp</td></tr>
+<tr><td><code>importance</code></td><td>string</td><td>Message importance</td></tr>
+<tr><td><code>messageType</code></td><td>string</td><td>Type of chat message</td></tr>
+<tr><td><code>chatId</code></td><td>string</td><td>Chat identity</td></tr>
+<tr><td><code>channelIdentity</code></td><td>channelIdentity</td><td>Channel identity</td></tr>
+<tr><td><code>webUrl</code></td><td>string</td><td>Link to message in Teams</td></tr>
+<tr><td><code>reactions</code></td><td>[]chatMessageReaction</td><td>Reactions on the message</td></tr>
+<tr><td><code>attachments</code></td><td>[]object</td><td>Attached objects</td></tr>
+<tr><td><code>mentions</code></td><td>[]object</td><td>Mentioned entities</td></tr>
+<tr><td><code>replyToId</code></td><td>string</td><td>Parent message ID (for replies)</td></tr>
+</table>
+
+<h3>indicators</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>domains</code></td><td>[]string</td><td>Extracted domains</td></tr>
+<tr><td><code>urls</code></td><td>[]string</td><td>Extracted URLs</td></tr>
+<tr><td><code>email_addresses</code></td><td>[]string</td><td>Extracted email addresses</td></tr>
+<tr><td><code>hashes</code></td><td>hashes</td><td>Extracted hashes (MD5, SHA1, SHA256)</td></tr>
+<tr><td><code>ip_addresses</code></td><td>ip_addresses</td><td>Extracted IP addresses (IPv4, IPv6)</td></tr>
+<tr><td><code>mac_addresses</code></td><td>[]string</td><td>Extracted MAC addresses</td></tr>
+<tr><td><code>cves</code></td><td>[]string</td><td>Extracted CVE identifiers</td></tr>
+<tr><td><code>uuids</code></td><td>[]string</td><td>Extracted UUIDs</td></tr>
+</table>
+
+<h3>group</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>displayName</code></td><td>string</td><td>Display name</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>Group ID</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>Description</td></tr>
+<tr><td><code>mail</code></td><td>string</td><td>Mail address</td></tr>
+<tr><td><code>mailNickname</code></td><td>string</td><td>Mail nickname</td></tr>
+<tr><td><code>mailEnabled</code></td><td>boolean</td><td>Mail enabled flag</td></tr>
+<tr><td><code>securityEnabled</code></td><td>boolean</td><td>Security enabled flag</td></tr>
+<tr><td><code>createdDateTime</code></td><td>string</td><td>Created date time</td></tr>
+</table>
+
+<h3>itemChat</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>id</code></td><td>string</td><td>Chat ID</td></tr>
+<tr><td><code>chatType</code></td><td>string</td><td>Type of chat (oneOnOne or group)</td></tr>
+<tr><td><code>createdDateTime</code></td><td>string</td><td>Created date time</td></tr>
+<tr><td><code>lastUpdatedDateTime</code></td><td>string</td><td>Last updated date time</td></tr>
+<tr><td><code>tenantId</code></td><td>string</td><td>Tenant ID</td></tr>
+<tr><td><code>webUrl</code></td><td>string</td><td>URL of the chat</td></tr>
+</table>
+
+<h3>itemMember</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>user_info</code></td><td>string</td><td>The ID or email address of the user</td></tr>
+<tr><td><code>role</code></td><td>string</td><td>Role: owner or guest</td></tr>
+</table>
+<h2 id="version-history">Version History</h2>
+<table>
+<tr><th>Version</th><th>Changes</th></tr>
+<tr><td><strong>8.0.0</strong></td><td>Major refactor to eliminate user account requirement. Switched to client_credentials (app-only) OAuth2 flow. Added Bot Framework for sending messages. Migrated all endpoints from /beta to /v1.0. Removed username_password from connection. Removed username input from get_message_in_chat. Added App Catalog ID to connection.</td></tr>
+<tr><td>7.0.6</td><td>Updated SDK to the latest version (6.5.1)</td></tr>
+<tr><td>7.0.5</td><td>Updated SDK to the latest version (6.4.3)</td></tr>
+<tr><td>7.0.4</td><td>Updated SDK to the latest version (6.4.2)</td></tr>
+<tr><td>7.0.3</td><td>Updated SDK to the latest version (6.3.10)</td></tr>
+<tr><td>7.0.2</td><td>Updated SDK to the latest version (6.3.3)</td></tr>
+<tr><td>7.0.1</td><td>Updated SDK to the latest version (6.2.5)</td></tr>
+<tr><td>7.0.0</td><td>Updated SDK to the latest version. Initial updates for FedRAMP compliance.</td></tr>
+<tr><td>6.0.1</td><td>Using exact match on channel names rather than search. Using urllib to encode team names in API calls.</td></tr>
+<tr><td>6.0.0</td><td>New actions: create_teams_chat, list_messages_in_chat. Updated Event Detail type to object.</td></tr>
+<tr><td>5.1.0</td><td>New actions: Get Reply List. Improved typing on message.</td></tr>
+<tr><td>5.0.0</td><td>New actions: Get Message in Chat, Get Message in Channel. Updated to latest SDK. Changed required fields in message schema.</td></tr>
+<tr><td>4.2.0</td><td>Fixed font-size appearing in urls/domains output. Added role selection for channel members. Fixed case-sensitive URL issue. Improved domains output.</td></tr>
+<tr><td>4.1.0</td><td>Cloud enabled. Add Channel to Team supports Standard and Private channel types.</td></tr>
+<tr><td>4.0.0</td><td>Fixed Create Teams Enabled Group members/owners input field types.</td></tr>
+<tr><td>3.2.0</td><td>Send Message supports chat messages via chat_id. team_name set to optional.</td></tr>
+<tr><td>3.1.5</td><td>Added microsoft_teams and office365 keywords.</td></tr>
+<tr><td>3.1.0</td><td>New actions: Add Group Owner, Add Member to Channel.</td></tr>
+<tr><td>3.0.0</td><td>Made words and first_word required in message custom type.</td></tr>
+<tr><td>2.3.0</td><td>Added words to message output type for easier chat command parameters.</td></tr>
+<tr><td>2.2.0</td><td>Extract and return security/network indicators in New Message Received trigger.</td></tr>
+<tr><td>2.1.0</td><td>Send Message and Send HTML Message accept thread_id for threaded replies. Trigger outputs team/channel names.</td></tr>
+<tr><td>2.0.0</td><td>Fixed send message with many teams. Removed regex for team/channel inputs (performance improvement).</td></tr>
+<tr><td>1.3.0</td><td>New action: Send Message by GUID.</td></tr>
+<tr><td>1.2.0</td><td>New actions: Add/Remove Member, Create Teams Enabled Group, Delete Team, Add/Remove Channel.</td></tr>
+<tr><td>1.1.0</td><td>New trigger: New Message Received. New action: Send HTML Message.</td></tr>
+<tr><td>1.0.0</td><td>Initial plugin.</td></tr>
+</table>
+<h2 id="links">Links &amp; References</h2>
+<ul>
+<li><a href="https://extensions.rapid7.com/extension/microsoft-teams" target="_blank">Microsoft Teams in Extension Library</a></li>
+<li><a href="https://products.office.com/en-us/microsoft-teams/group-chat-software" target="_blank">Microsoft Teams Product Page</a></li>
+<li><a href="https://docs.microsoft.com/en-us/graph/api/resources/teams-api-overview?view=graph-rest-1.0" target="_blank">Microsoft Teams API (Graph API Documentation)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/cards/cards-actions#adaptive-cards-actions" target="_blank">Adaptive Cards Actions</a></li>
+<li><a href="https://docs.python.org/3.7/library/re.html" target="_blank">Python Regular Expression Library (used for message_content filtering)</a></li>
+<li><a href="https://docs.rapid7.com/insightconnect/microsoft-teams/" target="_blank">Rapid7 InsightConnect Microsoft Teams Setup Guide</a></li>
+<li><a href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/microsoft_teams" target="_blank">Plugin Source Code (GitHub)</a></li>
+</ul>
+
+<h3>Troubleshooting</h3>
+<ul>
+<li><strong>"Bot is not authorized to send messages"</strong> &mdash; Install the bot app in the target team. For chats, configure the App Catalog ID for auto-install.</li>
+<li><strong>"Authentication to Microsoft Graph failed"</strong> &mdash; Verify Application ID, Directory ID, and Secret. Ensure admin consent is granted.</li>
+<li><strong>"Forbidden - insufficient permissions"</strong> &mdash; Add the missing permission and re-grant admin consent.</li>
+<li><strong>"Resource not found"</strong> &mdash; Verify team/channel IDs and that the bot is installed in the target team.</li>
+<li><strong>"Rate limit exceeded"</strong> &mdash; Microsoft Graph limits ~10,000 requests per 10 minutes. Add delays or reduce polling frequency.</li>
+<li><strong>Duplicate team names</strong> &mdash; If multiple teams share the same name, the oldest team will be used.</li>
+</ul>
+
+<div class="footer">
+Rapid7 InsightConnect &middot; Microsoft Teams Plugin v8.0.0 &middot; Supported Versions: Microsoft Graph API v1.0 2025-05-18
+</div>
+</div>
+</body>
+</html>
