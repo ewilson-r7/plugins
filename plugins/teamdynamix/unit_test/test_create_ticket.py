@@ -1,86 +1,138 @@
-"""Unit tests for CreateTicket action."""
+"""Unit tests for the Create Ticket action."""
 
-import unittest
-from unittest.mock import patch, call
+import sys
+import os
 
-from insightconnect_plugin_runtime.exceptions import PluginException
-from parameterized import parameterized
+sys.path.append(os.path.abspath("../"))
 
+from unittest import TestCase
+from unittest.mock import MagicMock
 from icon_teamdynamix.actions.create_ticket import CreateTicket
-from unit_test.util import default_connector, MockResponse, AUTH_TOKEN
+from icon_teamdynamix.actions.create_ticket.schema import Input, Output
+from icon_teamdynamix.connection.connection import Connection
+from insightconnect_plugin_runtime.exceptions import PluginException
+import logging
 
 
-class TestCreateTicket(unittest.TestCase):
+class TestCreateTicket(TestCase):
     def setUp(self):
-        self.action = default_connector(CreateTicket())
-        # Pre-seed a token so _authenticate is not triggered during most tests
-        self.action.connection.client._token = AUTH_TOKEN
+        self.action = CreateTicket()
+        self.connection = Connection()
+        self.connection.logger = logging.getLogger("test")
 
-    # ------------------------------------------------------------------
-    # Happy-path tests
-    # ------------------------------------------------------------------
+        self.mock_client = MagicMock()
+        self.mock_client.app_id = 42
+        self.mock_client.base_url = "https://example.teamdynamix.com"
+        self.connection.client = self.mock_client
+        self.action.connection = self.connection
 
-    @parameterized.expand(
-        [
-            (
-                "with_required_fields_only",
-                {"title": "Remediate CVE-2024-1234", "type_id": 123},
-            ),
-            (
-                "with_all_optional_fields",
-                {
-                    "title": "Remediate CVE-2024-1234",
-                    "type_id": 123,
-                    "description": "Details here",
-                    "form_id": 456,
-                    "account_id": 789,
-                    "priority_id": 20,
-                    "requestor_uid": "aaaa-bbbb",
-                    "responsible_group_id": 100,
-                    "additional_fields": {"CustomAttr": "value"},
-                },
-            ),
-        ]
-    )
-    @patch("requests.Session.request")
-    def test_create_ticket_success(self, _name, input_params, mock_request):
-        mock_request.return_value = MockResponse(200, "create_ticket_success.json")
-        result = self.action.run(input_params)
+    def test_create_ticket_success(self):
+        self.mock_client.create_ticket.return_value = {
+            "ID": 12345,
+            "Title": "Test Ticket",
+            "StatusName": "New",
+        }
 
-        self.assertEqual(result["ticket_id"], 12345)
-        self.assertIn("12345", result["ticket_url"])
-        self.assertTrue(result["success"])
+        params = {
+            Input.TITLE: "Test Ticket",
+            Input.TYPE_ID: 123,
+            Input.ACCOUNT_ID: 789,
+            Input.STATUS_ID: 602,
+            Input.PRIORITY_ID: 20,
+            Input.REQUESTOR_EMAIL: "user@example.com",
+            Input.DESCRIPTION: "Test description",
+        }
 
-    # ------------------------------------------------------------------
-    # Error-path tests
-    # ------------------------------------------------------------------
+        result = self.action.run(params)
 
-    @parameterized.expand(
-        [
-            ("bad_request", 400),
-            ("unauthorized", 401),
-            ("forbidden", 403),
-            ("not_found", 404),
-            ("server_error", 500),
-            ("service_unavailable", 503),
-        ]
-    )
-    @patch("requests.Session.request")
-    def test_create_ticket_http_error(self, _name, status_code, mock_request):
-        # First call returns the error status; re-auth path returns a new token on 401
-        mock_request.return_value = MockResponse(status_code)
+        self.assertTrue(result[Output.SUCCESS])
+        self.assertEqual(result[Output.TICKET_ID], 12345)
+        self.assertIn("12345", result[Output.TICKET_URL])
+
+        call_payload = self.mock_client.create_ticket.call_args[0][0]
+        self.assertEqual(call_payload["TypeID"], 123)
+        self.assertEqual(call_payload["Title"], "Test Ticket")
+        self.assertEqual(call_payload["AccountID"], 789)
+        self.assertEqual(call_payload["StatusID"], 602)
+        self.assertEqual(call_payload["PriorityID"], 20)
+        self.assertEqual(call_payload["RequestorEmail"], "user@example.com")
+        self.assertEqual(call_payload["Description"], "Test description")
+
+    def test_create_ticket_with_all_optional_fields(self):
+        self.mock_client.create_ticket.return_value = {"ID": 99999}
+
+        params = {
+            Input.TITLE: "Full Ticket",
+            Input.TYPE_ID: 100,
+            Input.ACCOUNT_ID: 789,
+            Input.STATUS_ID: 602,
+            Input.PRIORITY_ID: 20,
+            Input.REQUESTOR_EMAIL: "user@example.com",
+            Input.DESCRIPTION: "Full description",
+            Input.FORM_ID: 456,
+            Input.RESPONSIBLE_GROUP_ID: 50,
+            Input.ADDITIONAL_FIELDS: {"CustomField": "value"},
+        }
+
+        result = self.action.run(params)
+
+        self.assertTrue(result[Output.SUCCESS])
+        self.assertEqual(result[Output.TICKET_ID], 99999)
+
+        call_payload = self.mock_client.create_ticket.call_args[0][0]
+        self.assertEqual(call_payload["FormID"], 456)
+        self.assertEqual(call_payload["ResponsibleGroupID"], 50)
+        self.assertEqual(call_payload["CustomField"], "value")
+
+    def test_create_ticket_no_id_returned(self):
+        self.mock_client.create_ticket.return_value = {"Title": "Oops"}
+
+        params = {
+            Input.TITLE: "Bad Ticket",
+            Input.TYPE_ID: 123,
+            Input.ACCOUNT_ID: 789,
+            Input.STATUS_ID: 602,
+            Input.PRIORITY_ID: 20,
+            Input.REQUESTOR_EMAIL: "user@example.com",
+        }
+
         with self.assertRaises(PluginException):
-            self.action.run({"title": "Test", "type_id": 1})
+            self.action.run(params)
 
-    @patch("requests.Session.request")
-    def test_create_ticket_missing_id_in_response(self, mock_request):
-        """API returns 200 but no ID field — should raise PluginException."""
-        mock_request.return_value = MockResponse(200, text='{"Title": "No ID here"}')
-        with self.assertRaises(PluginException):
-            self.action.run({"title": "Test", "type_id": 1})
+    def test_create_ticket_minimal_required_fields(self):
+        self.mock_client.create_ticket.return_value = {"ID": 1}
 
-    @patch("requests.Session.request")
-    def test_create_ticket_non_json_response(self, mock_request):
-        mock_request.return_value = MockResponse(200, text="not-json")
-        with self.assertRaises(PluginException):
-            self.action.run({"title": "Test", "type_id": 1})
+        params = {
+            Input.TITLE: "Minimal",
+            Input.TYPE_ID: 1,
+            Input.ACCOUNT_ID: 100,
+            Input.STATUS_ID: 500,
+            Input.PRIORITY_ID: 10,
+            Input.REQUESTOR_EMAIL: "min@example.com",
+        }
+
+        result = self.action.run(params)
+
+        self.assertTrue(result[Output.SUCCESS])
+        self.assertEqual(result[Output.TICKET_ID], 1)
+
+        call_payload = self.mock_client.create_ticket.call_args[0][0]
+        self.assertNotIn("FormID", call_payload)
+        self.assertNotIn("ResponsibleGroupID", call_payload)
+
+    def test_create_ticket_url_format(self):
+        self.mock_client.create_ticket.return_value = {"ID": 555}
+
+        params = {
+            Input.TITLE: "URL Test",
+            Input.TYPE_ID: 1,
+            Input.ACCOUNT_ID: 100,
+            Input.STATUS_ID: 500,
+            Input.PRIORITY_ID: 10,
+            Input.REQUESTOR_EMAIL: "test@example.com",
+        }
+
+        result = self.action.run(params)
+
+        expected_url = "https://example.teamdynamix.com/TDClient/42/Requests/TicketDet?TicketID=555"
+        self.assertEqual(result[Output.TICKET_URL], expected_url)

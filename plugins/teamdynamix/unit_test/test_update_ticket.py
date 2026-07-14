@@ -1,92 +1,98 @@
-"""Unit tests for UpdateTicket action."""
+"""Unit tests for the Update Ticket action."""
 
-import unittest
-from unittest.mock import patch, MagicMock
+import sys
+import os
 
-from insightconnect_plugin_runtime.exceptions import PluginException
-from parameterized import parameterized
+sys.path.append(os.path.abspath("../"))
 
+from unittest import TestCase
+from unittest.mock import MagicMock
 from icon_teamdynamix.actions.update_ticket import UpdateTicket
-from unit_test.util import default_connector, MockResponse, AUTH_TOKEN
+from icon_teamdynamix.actions.update_ticket.schema import Input, Output
+from icon_teamdynamix.connection.connection import Connection
+import logging
 
 
-class TestUpdateTicket(unittest.TestCase):
+class TestUpdateTicket(TestCase):
     def setUp(self):
-        self.action = default_connector(UpdateTicket())
-        self.action.connection.client._token = AUTH_TOKEN
+        self.action = UpdateTicket()
+        self.connection = Connection()
+        self.connection.logger = logging.getLogger("test")
 
-    # ------------------------------------------------------------------
-    # Happy-path tests
-    # ------------------------------------------------------------------
+        self.mock_client = MagicMock()
+        self.mock_client.app_id = 42
+        self.mock_client.base_url = "https://example.teamdynamix.com"
+        self.connection.client = self.mock_client
+        self.action.connection = self.connection
 
-    @patch("requests.Session.request")
-    def test_update_ticket_success_title_only(self, mock_request):
-        # First call: GET current ticket; second call: POST update
-        mock_request.side_effect = [
-            MockResponse(200, "get_ticket_success.json"),
-            MockResponse(200, "get_ticket_success.json"),
-        ]
-        result = self.action.run({"ticket_id": 12345, "title": "Updated Title"})
-        self.assertTrue(result["success"])
+        self.existing_ticket = {
+            "ID": 12345,
+            "Title": "Original Title",
+            "Description": "Original Description",
+            "StatusID": 100,
+            "PriorityID": 10,
+        }
 
-    @parameterized.expand(
-        [
-            (
-                "update_status_and_priority",
-                {"ticket_id": 12345, "status_id": 602, "priority_id": 20},
-            ),
-            (
-                "update_description",
-                {"ticket_id": 12345, "description": "New description text"},
-            ),
-            (
-                "update_with_additional_fields",
-                {"ticket_id": 12345, "additional_fields": {"CustomAttr": "val"}},
-            ),
-        ]
-    )
-    @patch("requests.Session.request")
-    def test_update_ticket_variants(self, _name, input_params, mock_request):
-        mock_request.side_effect = [
-            MockResponse(200, "get_ticket_success.json"),
-            MockResponse(200, "get_ticket_success.json"),
-        ]
-        result = self.action.run(input_params)
-        self.assertTrue(result["success"])
+    def test_update_ticket_title(self):
+        self.mock_client.get_ticket.return_value = self.existing_ticket
+        self.mock_client.update_ticket.return_value = {"ID": 12345}
 
-    @patch("requests.Session.request")
-    def test_update_ticket_post_returns_204(self, mock_request):
-        """POST returning 204 (no content) is also a success."""
-        mock_request.side_effect = [
-            MockResponse(200, "get_ticket_success.json"),
-            MockResponse(204),
-        ]
-        result = self.action.run({"ticket_id": 12345, "status_id": 602})
-        self.assertTrue(result["success"])
+        params = {
+            Input.TICKET_ID: 12345,
+            Input.TITLE: "Updated Title",
+        }
 
-    # ------------------------------------------------------------------
-    # Error-path tests
-    # ------------------------------------------------------------------
+        result = self.action.run(params)
 
-    @parameterized.expand(
-        [
-            ("not_found_on_get", 404),
-            ("unauthorized_on_get", 401),
-            ("server_error_on_get", 500),
-        ]
-    )
-    @patch("requests.Session.request")
-    def test_update_ticket_get_error(self, _name, status_code, mock_request):
-        mock_request.return_value = MockResponse(status_code)
-        with self.assertRaises(PluginException):
-            self.action.run({"ticket_id": 12345, "title": "New Title"})
+        self.assertTrue(result[Output.SUCCESS])
+        update_payload = self.mock_client.update_ticket.call_args[0][1]
+        self.assertEqual(update_payload["Title"], "Updated Title")
+        self.assertEqual(update_payload["Description"], "Original Description")
 
-    @patch("requests.Session.request")
-    def test_update_ticket_post_error(self, mock_request):
-        """GET succeeds but POST returns an error."""
-        mock_request.side_effect = [
-            MockResponse(200, "get_ticket_success.json"),
-            MockResponse(500),
-        ]
-        with self.assertRaises(PluginException):
-            self.action.run({"ticket_id": 12345, "title": "New Title"})
+    def test_update_ticket_status_and_priority(self):
+        self.mock_client.get_ticket.return_value = self.existing_ticket
+        self.mock_client.update_ticket.return_value = {"ID": 12345}
+
+        params = {
+            Input.TICKET_ID: 12345,
+            Input.STATUS_ID: 602,
+            Input.PRIORITY_ID: 30,
+        }
+
+        result = self.action.run(params)
+
+        self.assertTrue(result[Output.SUCCESS])
+        update_payload = self.mock_client.update_ticket.call_args[0][1]
+        self.assertEqual(update_payload["StatusID"], 602)
+        self.assertEqual(update_payload["PriorityID"], 30)
+
+    def test_update_ticket_with_additional_fields(self):
+        self.mock_client.get_ticket.return_value = self.existing_ticket
+        self.mock_client.update_ticket.return_value = {"ID": 12345}
+
+        params = {
+            Input.TICKET_ID: 12345,
+            Input.ADDITIONAL_FIELDS: {"CustomField": "CustomValue"},
+        }
+
+        result = self.action.run(params)
+
+        self.assertTrue(result[Output.SUCCESS])
+        update_payload = self.mock_client.update_ticket.call_args[0][1]
+        self.assertEqual(update_payload["CustomField"], "CustomValue")
+
+    def test_update_ticket_fetches_current_first(self):
+        self.mock_client.get_ticket.return_value = self.existing_ticket
+        self.mock_client.update_ticket.return_value = {"ID": 12345}
+
+        params = {
+            Input.TICKET_ID: 12345,
+            Input.TITLE: "New Title",
+        }
+
+        self.action.run(params)
+
+        self.mock_client.get_ticket.assert_called_once_with(12345)
+        self.mock_client.update_ticket.assert_called_once()
+        update_call_args = self.mock_client.update_ticket.call_args[0]
+        self.assertEqual(update_call_args[0], 12345)

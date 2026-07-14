@@ -2,6 +2,8 @@
 
 import insightconnect_plugin_runtime
 from insightconnect_plugin_runtime.exceptions import PluginException
+from insightconnect_plugin_runtime.helper import clean
+
 from .schema import GetTicketInput, GetTicketOutput, Input, Output, Component
 
 
@@ -15,13 +17,9 @@ class GetTicket(insightconnect_plugin_runtime.Action):
         )
 
     def run(self, params={}):
-        app_id = self.connection.client.app_id
         ticket_id = params.get(Input.TICKET_ID)
 
-        response = self.connection.client.make_request(
-            method="get",
-            endpoint=f"/TDWebApi/api/{app_id}/tickets/{ticket_id}",
-        )
+        response = self.connection.client.get_ticket(ticket_id)
 
         if not response:
             raise PluginException(
@@ -29,9 +27,11 @@ class GetTicket(insightconnect_plugin_runtime.Action):
                 assistance="Verify the ticket ID and application ID in your connection.",
             )
 
-        return {
-            Output.TICKET: response,
-            Output.TITLE: response.get("Title", ""),
-            Output.STATUS: response.get("StatusName", ""),
-            Output.TICKET_ID: response.get("ID", 0),
-        }
+        return clean(
+            {
+                Output.TICKET: response,
+                Output.TITLE: response.get("Title", ""),
+                Output.STATUS: response.get("StatusName", ""),
+                Output.TICKET_ID: response.get("ID", 0),
+            }
+        )

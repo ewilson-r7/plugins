@@ -1,6 +1,9 @@
 """Search Tickets action for TeamDynamix InsightConnect plugin."""
 
 import insightconnect_plugin_runtime
+from insightconnect_plugin_runtime.helper import clean
+
+from icon_teamdynamix.util.constants import DEFAULT_MAX_RESULTS
 from .schema import SearchTicketsInput, SearchTicketsOutput, Input, Output, Component
 
 
@@ -14,10 +17,8 @@ class SearchTickets(insightconnect_plugin_runtime.Action):
         )
 
     def run(self, params={}):
-        app_id = self.connection.client.app_id
-
         search_payload = {
-            "MaxResults": params.get(Input.MAX_RESULTS, 25),
+            "MaxResults": params.get(Input.MAX_RESULTS, DEFAULT_MAX_RESULTS),
         }
 
         if params.get(Input.SEARCH_TEXT):
@@ -25,15 +26,11 @@ class SearchTickets(insightconnect_plugin_runtime.Action):
         if params.get(Input.STATUS_ID):
             search_payload["StatusIDs"] = [params.get(Input.STATUS_ID)]
 
-        response = self.connection.client.make_request(
-            method="post",
-            endpoint=f"/TDWebApi/api/{app_id}/tickets/search",
-            payload=search_payload,
+        tickets = self.connection.client.search_tickets(search_payload)
+
+        return clean(
+            {
+                Output.TICKETS: tickets,
+                Output.COUNT: len(tickets),
+            }
         )
-
-        tickets = response if isinstance(response, list) else []
-
-        return {
-            Output.TICKETS: tickets,
-            Output.COUNT: len(tickets),
-        }

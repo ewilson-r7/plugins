@@ -4,7 +4,7 @@ import json
 
 
 class Component:
-    DESCRIPTION = "Create a new ticket in TeamDynamix to open remediation workflows"
+    DESCRIPTION = "Create a new ticket in TeamDynamix, use this action to open remediation tickets"
 
 
 class Input:
@@ -13,8 +13,9 @@ class Input:
     DESCRIPTION = "description"
     FORM_ID = "form_id"
     PRIORITY_ID = "priority_id"
-    REQUESTOR_UID = "requestor_uid"
+    REQUESTOR_EMAIL = "requestor_email"
     RESPONSIBLE_GROUP_ID = "responsible_group_id"
+    STATUS_ID = "status_id"
     TITLE = "title"
     TYPE_ID = "type_id"
 
@@ -41,7 +42,7 @@ class CreateTicketInput(insightconnect_plugin_runtime.Input):
       "type": "object",
       "title": "Additional Fields",
       "description": "JSON object of additional fields to include in the ticket payload (e.g., custom attributes)",
-      "order": 9
+      "order": 10
     },
     "description": {
       "type": "string",
@@ -61,17 +62,23 @@ class CreateTicketInput(insightconnect_plugin_runtime.Input):
       "description": "Numeric ID of the priority level in TeamDynamix",
       "order": 6
     },
-    "requestor_uid": {
+    "requestor_email": {
       "type": "string",
-      "title": "Requestor UID",
-      "description": "UID of the ticket requestor (TeamDynamix user GUID)",
-      "order": 7
+      "title": "Requestor Email",
+      "description": "Email address of the ticket requestor",
+      "order": 8
     },
     "responsible_group_id": {
       "type": "integer",
       "title": "Responsible Group ID",
       "description": "Numeric ID of the group responsible for the ticket",
-      "order": 8
+      "order": 9
+    },
+    "status_id": {
+      "type": "integer",
+      "title": "Status ID",
+      "description": "Numeric ID of the initial ticket status in TeamDynamix",
+      "order": 7
     },
     "title": {
       "type": "string",
@@ -87,6 +94,10 @@ class CreateTicketInput(insightconnect_plugin_runtime.Input):
     }
   },
   "required": [
+    "account_id",
+    "priority_id",
+    "requestor_email",
+    "status_id",
     "title",
     "type_id"
   ],

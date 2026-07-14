@@ -14,16 +14,12 @@ class UpdateTicket(insightconnect_plugin_runtime.Action):
         )
 
     def run(self, params={}):
-        app_id = self.connection.client.app_id
+        client = self.connection.client
         ticket_id = params.get(Input.TICKET_ID)
 
-        # First fetch the current ticket so we can PATCH only changed fields
-        current = self.connection.client.make_request(
-            method="get",
-            endpoint=f"/TDWebApi/api/{app_id}/tickets/{ticket_id}",
-        )
-
-        payload = dict(current)  # Start from current state
+        # Fetch the current ticket to preserve required fields during update
+        current = client.get_ticket(ticket_id)
+        payload = dict(current)
 
         if params.get(Input.TITLE):
             payload["Title"] = params.get(Input.TITLE)
@@ -36,10 +32,6 @@ class UpdateTicket(insightconnect_plugin_runtime.Action):
 
         payload.update(params.get(Input.ADDITIONAL_FIELDS, {}))
 
-        self.connection.client.make_request(
-            method="post",
-            endpoint=f"/TDWebApi/api/{app_id}/tickets/{ticket_id}",
-            payload=payload,
-        )
+        client.update_ticket(ticket_id, payload)
 
         return {Output.SUCCESS: True}

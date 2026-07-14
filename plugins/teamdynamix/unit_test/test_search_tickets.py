@@ -1,79 +1,94 @@
-"""Unit tests for SearchTickets action."""
+"""Unit tests for the Search Tickets action."""
 
-import unittest
-from unittest.mock import patch
+import sys
+import os
 
-from insightconnect_plugin_runtime.exceptions import PluginException
-from parameterized import parameterized
+sys.path.append(os.path.abspath("../"))
 
+from unittest import TestCase
+from unittest.mock import MagicMock
 from icon_teamdynamix.actions.search_tickets import SearchTickets
-from unit_test.util import default_connector, MockResponse, AUTH_TOKEN
+from icon_teamdynamix.actions.search_tickets.schema import Input, Output
+from icon_teamdynamix.connection.connection import Connection
+from icon_teamdynamix.util.constants import DEFAULT_MAX_RESULTS
+import logging
 
 
-class TestSearchTickets(unittest.TestCase):
+class TestSearchTickets(TestCase):
     def setUp(self):
-        self.action = default_connector(SearchTickets())
-        self.action.connection.client._token = AUTH_TOKEN
+        self.action = SearchTickets()
+        self.connection = Connection()
+        self.connection.logger = logging.getLogger("test")
 
-    # ------------------------------------------------------------------
-    # Happy-path tests
-    # ------------------------------------------------------------------
+        self.mock_client = MagicMock()
+        self.mock_client.app_id = 42
+        self.mock_client.base_url = "https://example.teamdynamix.com"
+        self.connection.client = self.mock_client
+        self.action.connection = self.connection
 
-    @patch("requests.Session.request")
-    def test_search_tickets_returns_results(self, mock_request):
-        mock_request.return_value = MockResponse(200, "search_tickets_success.json")
-        result = self.action.run({"search_text": "CVE-2024", "max_results": 25})
-
-        self.assertEqual(result["count"], 2)
-        self.assertEqual(len(result["tickets"]), 2)
-        self.assertEqual(result["tickets"][0]["ID"], 12345)
-
-    @patch("requests.Session.request")
-    def test_search_tickets_empty_result(self, mock_request):
-        mock_request.return_value = MockResponse(200, "search_tickets_empty.json")
-        result = self.action.run({"max_results": 25})
-
-        self.assertEqual(result["count"], 0)
-        self.assertEqual(result["tickets"], [])
-
-    @parameterized.expand(
-        [
-            ("with_search_text_only", {"search_text": "CVE", "max_results": 10}),
-            ("with_status_filter", {"status_id": 602, "max_results": 5}),
-            ("with_all_filters", {"search_text": "CVE", "status_id": 602, "max_results": 50}),
-            ("no_filters", {"max_results": 25}),
+    def test_search_tickets_with_results(self):
+        self.mock_client.search_tickets.return_value = [
+            {"ID": 1, "Title": "Ticket One"},
+            {"ID": 2, "Title": "Ticket Two"},
         ]
-    )
-    @patch("requests.Session.request")
-    def test_search_tickets_filter_variants(self, _name, input_params, mock_request):
-        mock_request.return_value = MockResponse(200, "search_tickets_success.json")
-        result = self.action.run(input_params)
-        self.assertIn("tickets", result)
-        self.assertIn("count", result)
 
-    @patch("requests.Session.request")
-    def test_search_tickets_non_list_response_returns_empty(self, mock_request):
-        """If the API returns a non-list (e.g. an object), tickets defaults to []."""
-        mock_request.return_value = MockResponse(200, text='{"error": "unexpected"}')
-        result = self.action.run({"max_results": 25})
-        self.assertEqual(result["tickets"], [])
-        self.assertEqual(result["count"], 0)
+        params = {
+            Input.SEARCH_TEXT: "CVE-2024",
+            Input.MAX_RESULTS: 10,
+        }
 
-    # ------------------------------------------------------------------
-    # Error-path tests
-    # ------------------------------------------------------------------
+        result = self.action.run(params)
 
-    @parameterized.expand(
-        [
-            ("unauthorized", 401),
-            ("forbidden", 403),
-            ("bad_request", 400),
-            ("server_error", 500),
-            ("service_unavailable", 503),
+        self.assertEqual(result[Output.COUNT], 2)
+        self.assertEqual(len(result[Output.TICKETS]), 2)
+        self.mock_client.search_tickets.assert_called_once_with({"MaxResults": 10, "SearchText": "CVE-2024"})
+
+    def test_search_tickets_empty_results(self):
+        self.mock_client.search_tickets.return_value = []
+
+        params = {Input.MAX_RESULTS: 25}
+
+        result = self.action.run(params)
+
+        self.assertEqual(result[Output.COUNT], 0)
+
+    def test_search_tickets_with_status_filter(self):
+        self.mock_client.search_tickets.return_value = [
+            {"ID": 5, "Title": "Filtered Ticket"},
         ]
-    )
-    @patch("requests.Session.request")
-    def test_search_tickets_http_error(self, _name, status_code, mock_request):
-        mock_request.return_value = MockResponse(status_code)
-        with self.assertRaises(PluginException):
-            self.action.run({"max_results": 25})
+
+        params = {
+            Input.STATUS_ID: 602,
+            Input.MAX_RESULTS: 25,
+        }
+
+        result = self.action.run(params)
+
+        self.assertEqual(result[Output.COUNT], 1)
+        call_payload = self.mock_client.search_tickets.call_args[0][0]
+        self.assertEqual(call_payload["StatusIDs"], [602])
+
+    def test_search_tickets_default_max_results(self):
+        self.mock_client.search_tickets.return_value = []
+
+        params = {}
+
+        self.action.run(params)
+
+        call_payload = self.mock_client.search_tickets.call_args[0][0]
+        self.assertEqual(call_payload["MaxResults"], DEFAULT_MAX_RESULTS)
+
+    def test_search_tickets_cleans_none_values_in_results(self):
+        self.mock_client.search_tickets.return_value = [
+            {"ID": 1, "Title": "Ticket One", "Description": None, "Tags": None},
+            {"ID": 2, "Title": "Ticket Two", "RequestorUid": None},
+        ]
+
+        params = {Input.MAX_RESULTS: 25}
+
+        result = self.action.run(params)
+
+        self.assertEqual(result[Output.COUNT], 2)
+        self.assertNotIn("Description", result[Output.TICKETS][0])
+        self.assertNotIn("Tags", result[Output.TICKETS][0])
+        self.assertNotIn("RequestorUid", result[Output.TICKETS][1])

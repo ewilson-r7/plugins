@@ -1,0 +1,87 @@
+{
+	"spec": "58acbe926cb9e0dd23eb4c58b7b91d45",
+	"manifest": "1a2dc7e814ace4c7fccb8b8c9e1eed51",
+	"setup": "4faaaed8301154a2f0927e17639cd58a",
+	"schemas": [
+		{
+			"identifier": "add_channel_to_team/schema.py",
+			"hash": "77e24ac01d838c9123877dc23fd4e8ee"
+		},
+		{
+			"identifier": "add_group_owner/schema.py",
+			"hash": "16e088871a34a4d80365d23a5fff1825"
+		},
+		{
+			"identifier": "add_member_to_channel/schema.py",
+			"hash": "bc3cd2a55c6a307621ae7bc2759b98e4"
+		},
+		{
+			"identifier": "add_member_to_team/schema.py",
+			"hash": "daf644fdedf69570b4de8d3c8b5d4692"
+		},
+		{
+			"identifier": "create_teams_chat/schema.py",
+			"hash": "624f57b6ee026fa69e74e6ba2ebf732b"
+		},
+		{
+			"identifier": "create_teams_enabled_group/schema.py",
+			"hash": "9d1a41cc30c7af5e5c61841b586f0a3b"
+		},
+		{
+			"identifier": "delete_team/schema.py",
+			"hash": "75dd8243f40ba2243f43bee3d830c8f7"
+		},
+		{
+			"identifier": "get_channels_for_team/schema.py",
+			"hash": "b55634a33858b858e593dc50b5e38f6d"
+		},
+		{
+			"identifier": "get_message_in_channel/schema.py",
+			"hash": "b8b1956f659ff8070bf11ac27f20e1dc"
+		},
+		{
+			"identifier": "get_message_in_chat/schema.py",
+			"hash": "1d97efe4bafcf8c5ff60695bf64cdfea"
+		},
+		{
+			"identifier": "get_reply_list/schema.py",
+			"hash": "d299f50370d5d1672687faf0defa92be"
+		},
+		{
+			"identifier": "get_teams/schema.py",
+			"hash": "d4167388ba5726a8f13639844294cee5"
+		},
+		{
+			"identifier": "list_messages_in_chat/schema.py",
+			"hash": "b20a85b662826aabdd19c0fa6c55aecc"
+		},
+		{
+			"identifier": "remove_channel_from_team/schema.py",
+			"hash": "02305968869d8a40c21c7e2176862ddc"
+		},
+		{
+			"identifier": "remove_member_from_team/schema.py",
+			"hash": "96cc61fcb20382a233761dd307290a55"
+		},
+		{
+			"identifier": "send_html_message/schema.py",
+			"hash": "9c0c92551c309818340e997a0e7e2f0d"
+		},
+		{
+			"identifier": "send_message/schema.py",
+			"hash": "d2b2d55bcff15c6692b22175ddf9b609"
+		},
+		{
+			"identifier": "send_message_by_guid/schema.py",
+			"hash": "3963118963efd46377a4cb6afcfda7b0"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "274339e718b9be7131f37b480c23b3d7"
+		},
+		{
+			"identifier": "new_message_received/schema.py",
+			"hash": "3477a956b10d18dc5e72c0ce60444c17"
+		}
+	]
+}

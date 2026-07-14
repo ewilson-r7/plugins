@@ -16,44 +16,38 @@ class CreateTicket(insightconnect_plugin_runtime.Action):
         )
 
     def run(self, params={}):
-        app_id = self.connection.client.app_id
-        base_url = self.connection.client.base_url
+        client = self.connection.client
 
         payload = {
             "TypeID": params.get(Input.TYPE_ID),
             "Title": params.get(Input.TITLE),
+            "AccountID": params.get(Input.ACCOUNT_ID),
+            "StatusID": params.get(Input.STATUS_ID),
+            "PriorityID": params.get(Input.PRIORITY_ID),
+            "RequestorEmail": params.get(Input.REQUESTOR_EMAIL),
             "Description": params.get(Input.DESCRIPTION, ""),
         }
 
         # Optional fields — only include if provided
         if params.get(Input.FORM_ID):
             payload["FormID"] = params.get(Input.FORM_ID)
-        if params.get(Input.ACCOUNT_ID):
-            payload["AccountID"] = params.get(Input.ACCOUNT_ID)
-        if params.get(Input.PRIORITY_ID):
-            payload["PriorityID"] = params.get(Input.PRIORITY_ID)
-        if params.get(Input.REQUESTOR_UID):
-            payload["RequestorUID"] = params.get(Input.REQUESTOR_UID)
         if params.get(Input.RESPONSIBLE_GROUP_ID):
             payload["ResponsibleGroupID"] = params.get(Input.RESPONSIBLE_GROUP_ID)
 
         # Merge any additional custom fields
         payload.update(params.get(Input.ADDITIONAL_FIELDS, {}))
 
-        response = self.connection.client.make_request(
-            method="post",
-            endpoint=f"/TDWebApi/api/{app_id}/tickets",
-            payload=payload,
-        )
+        response = client.create_ticket(payload)
 
         ticket_id = response.get("ID")
         if not ticket_id:
             raise PluginException(
                 cause="TeamDynamix did not return a ticket ID.",
-                assistance=f"Response: {response}",
+                assistance="Verify all required fields are valid in your TeamDynamix instance.",
+                data=str(response),
             )
 
-        ticket_url = f"{base_url}/TDClient/{app_id}/Requests/TicketDet?TicketID={ticket_id}"
+        ticket_url = f"{client.base_url}/TDClient/{client.app_id}/Requests/TicketDet?TicketID={ticket_id}"
 
         return {
             Output.TICKET_ID: ticket_id,
