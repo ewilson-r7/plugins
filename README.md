@@ -9,7 +9,7 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 | [active_directory_ldap](plugins/active_directory_ldap/) | 11.0.0 | Add Kerberos (SASL GSSAPI) authentication support, changed user to root for Kerberos credential management, updated SDK to 6.6.0 |
 | [chatgpt](plugins/chatgpt/) | 1.0.0 | Initial release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions for SOC analysts |
 | [fortinet_fortimanager](plugins/fortinet_fortimanager/) | 1.0.0 | Initial release — manage FortiGate address objects, address groups, and firewall policies through FortiManager's JSON-RPC API |
-| [halo_itsm](plugins/halo_itsm/) | 1.1.0 | Added Attach File to Ticket action |
+| [halo_itsm](plugins/halo_itsm/) | 1.0.0 | Initial release — create, get, update, delete, and list tickets with action notes and file attachments in Halo ITSM |
 | [ip_api](plugins/ip_api/) | 1.0.0 | Initial release — geolocate IPv4/IPv6 addresses and domain names using ip-api.com |
 | [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.0 | Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry. Updated SDK to 6.6.0 |
 | [microsoft_teams](plugins/microsoft_teams/) | 8.0.0 | Major refactor to app-only OAuth2 (client_credentials), added Bot Framework messaging, migrated endpoints to /v1.0, added installed_apps support for create_teams_chat |

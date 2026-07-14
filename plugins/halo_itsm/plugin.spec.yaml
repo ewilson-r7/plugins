@@ -5,7 +5,7 @@ name: halo_itsm
 title: Halo ITSM
 description: Halo ITSM is a cloud-based IT Service Management platform that provides
   ticket management, asset tracking, and service desk capabilities
-version: 1.1.0
+version: 1.0.0
 connection_version: 1
 supported_versions: ["2025-07-10"]
 vendor: rapid7
@@ -38,8 +38,7 @@ requirements:
   - Base URL of your Halo ITSM instance
   - API application configured with Client Credentials grant type in Halo ITSM
 version_history:
-  - "1.1.0 - Added Attach File to Ticket action"
-  - "1.0.0 - Initial plugin release"
+  - "1.0.0 - Initial plugin release with Create, Get, Update, Delete, List Tickets, Add Action, and Attach File actions"
 sdk:
   type: full
   version: 6.6.0
