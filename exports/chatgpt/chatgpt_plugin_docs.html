@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Plugin Documentation - Rapid7 InsightConnect</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; background: #fff; }
+        .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 0; z-index: 100; }
+        .sidebar .brand { padding: 24px 20px 16px; border-bottom: 1px solid #2d2d4e; }
+        .sidebar .brand h1 { font-size: 16px; color: #fff; font-weight: 700; }
+        .sidebar .brand .version { font-size: 12px; color: #6c6c8c; margin-top: 4px; }
+        .sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; font-weight: 600; }
+        .sidebar nav { padding: 8px 0; }
+        .sidebar a { display: block; color: #b0b0d0; padding: 7px 20px; text-decoration: none; font-size: 13px; transition: all 0.15s; }
+        .sidebar a:hover { background: #2d2d4e; color: #fff; }
+        .main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+        h2 { font-size: 24px; color: #1a1a2e; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; }
+        h2:first-of-type { margin-top: 0; }
+        h3 { font-size: 18px; color: #333; margin: 24px 0 12px; }
+        h4 { font-size: 14px; color: #555; margin: 16px 0 8px; font-weight: 600; }
+        p { margin: 8px 0 16px; color: #444; font-size: 14px; }
+        ul { margin: 8px 0 16px 24px; }
+        li { margin: 4px 0; font-size: 14px; color: #444; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+        th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; color: #333; }
+        td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; color: #444; }
+        tr:hover td { background: #fafafe; }
+        pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 24px; }
+        code { font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace; font-size: 12px; }
+        .inline-code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #c7254e; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .badge-required { background: #fee2e2; color: #b91c1c; }
+        .badge-optional { background: #e0f2fe; color: #0369a1; }
+        .info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0 24px; font-size: 13px; color: #1e40af; }
+        .action-section { margin-bottom: 48px; }
+        .footer { margin-top: 64px; padding: 24px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #888; text-align: center; }
+        .tag { display: inline-block; background: #f0f0f5; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin: 2px 4px 2px 0; }
+        .enum-list { margin: 4px 0 0 0; padding: 0; list-style: none; }
+        .enum-list li { display: inline-block; }
+        .enum-list li .tag { background: #e8e8f0; }
+        a.external { color: #2563eb; text-decoration: none; }
+        a.external:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ChatGPT</h1>
+            <div class="version">Plugin v1.0.0</div>
+        </div>
+        <nav>
+            <div class="section-label">Overview</div>
+            <a href="#description">Description</a>
+            <a href="#key-features">Key Features</a>
+            <a href="#requirements">Requirements</a>
+            <a href="#setup">Setup &amp; Connection</a>
+
+            <div class="section-label">Actions</div>
+            <a href="#ask-chatgpt">Ask ChatGPT</a>
+            <a href="#analyze-indicator">Analyze Indicator</a>
+            <a href="#summarize-incident">Summarize Incident</a>
+            <a href="#suggest-response-actions">Suggest Response Actions</a>
+            <a href="#explain-script">Explain Script</a>
+
+            <div class="section-label">Reference</div>
+            <a href="#version-history">Version History</a>
+            <a href="#links">Links &amp; References</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <!-- DESCRIPTION -->
+        <h2 id="description">Description</h2>
+        <p>Interact with OpenAI ChatGPT models to assist SOC analysts with threat analysis, incident summarization, script explanation, and response recommendations.</p>
+        <p>This plugin connects to the OpenAI Chat Completions API and provides structured, security-focused actions designed for use in analyst workflows within InsightConnect.</p>
+
+        <h4>Supported Models</h4>
+        <div style="margin-bottom: 24px;">
+            <span class="tag">gpt-4o</span>
+            <span class="tag">gpt-4o-mini</span>
+            <span class="tag">gpt-4-turbo</span>
+            <span class="tag">gpt-3.5-turbo</span>
+        </div>
+
+        <!-- KEY FEATURES -->
+        <h2 id="key-features">Key Features</h2>
+        <ul>
+            <li>Send prompts to ChatGPT and receive AI-generated responses</li>
+            <li>Analyze indicators of compromise with AI-powered threat context</li>
+            <li>Summarize security incidents into concise executive briefings</li>
+            <li>Get AI-recommended response actions for security incidents</li>
+            <li>Explain suspicious scripts and commands with security context</li>
+        </ul>
+
+        <!-- REQUIREMENTS -->
+        <h2 id="requirements">Requirements</h2>
+        <ul>
+            <li>OpenAI API key with access to Chat Completions API</li>
+            <li>Sufficient API credits/quota for the selected model</li>
+        </ul>
+
+        <!-- SETUP -->
+        <h2 id="setup">Setup &amp; Connection</h2>
+        <div class="info-box">
+            To obtain an API key, visit <a class="external" href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>. Create a new secret key and copy it immediately — it will not be shown again.
+        </div>
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>API Key</strong></td>
+                    <td><span class="inline-code">credential_secret_key</span></td>
+                    <td><span class="badge badge-required">Required</span></td>
+                    <td>OpenAI API key for authenticating to the ChatGPT API</td>
+                </tr>
+                <tr>
+                    <td><strong>Model</strong></td>
+                    <td><span class="inline-code">string</span></td>
+                    <td><span class="badge badge-required">Required</span></td>
+                    <td>Default ChatGPT model to use for completions. Options: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo. Default: <span class="inline-code">gpt-4o</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ACTION: Ask ChatGPT -->
+        <h2 id="ask-chatgpt">Ask ChatGPT</h2>
+        <div class="action-section">
+            <p>Send a prompt to ChatGPT and receive a response. This is the general-purpose action for any free-form query to the model.</p>
+
+            <h4>Input</h4>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Prompt</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>The prompt or question to send to ChatGPT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>System Message</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Optional system message to set the behavior and context for the AI assistant</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Max Tokens</strong></td>
+                        <td><span class="inline-code">integer</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Maximum number of tokens in the response (higher values allow longer responses). Default: 2048</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Temperature</strong></td>
+                        <td><span class="inline-code">float</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Controls randomness in the response (0.0 = deterministic, 2.0 = most random). Default: 0.7</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Output</h4>
+            <p>Returns the text response from ChatGPT along with token usage details.</p>
+            <pre><code>{
+  "response": "Common indicators of a phishing email include suspicious sender addresses, urgent language, unexpected attachments, and mismatched URLs",
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 150,
+    "total_tokens": 175
+  }
+}</code></pre>
+        </div>
+
+        <!-- ACTION: Analyze Indicator -->
+        <h2 id="analyze-indicator">Analyze Indicator</h2>
+        <div class="action-section">
+            <p>Submit an indicator of compromise (IP, domain, hash, or URL) to ChatGPT for threat context analysis. Returns a structured threat assessment with risk level and recommended actions.</p>
+
+            <h4>Input</h4>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Indicator</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>The indicator of compromise to analyze (IP address, domain, file hash, or URL)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Indicator Type</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>The type of indicator. Options: ip_address, domain, file_hash, url</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Additional Context</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Optional additional context about where this indicator was observed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Output</h4>
+            <p>Returns a threat analysis, risk assessment, and list of recommended response actions.</p>
+            <pre><code>{
+  "analysis": "The IP address 198.51.100.23 is associated with known command-and-control infrastructure. Recommended actions: block at firewall, investigate endpoints that communicated with this IP",
+  "risk_assessment": "HIGH - Associated with known C2 infrastructure",
+  "recommended_actions": [
+    "Block IP at perimeter firewall",
+    "Search SIEM for historical connections to this IP",
+    "Isolate any endpoints that have communicated with this IP"
+  ]
+}</code></pre>
+        </div>
+
+        <!-- ACTION: Summarize Incident -->
+        <h2 id="summarize-incident">Summarize Incident</h2>
+        <div class="action-section">
+            <p>Generate a concise executive summary of a security incident from provided alert data or notes. Adjusts technical depth based on the target audience.</p>
+
+            <h4>Input</h4>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Incident Data</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>Raw incident data, alert details, or analyst notes to summarize</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Severity</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Severity level of the incident. Options: critical, high, medium, low, informational</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Audience</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Target audience to adjust technical depth. Options: executive, technical, both. Default: technical</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Output</h4>
+            <p>Returns a concise summary, timeline of events, and list of key findings.</p>
+            <pre><code>{
+  "summary": "INCIDENT SUMMARY: Malware infection detected on WORKSTATION-045 with active C2 communications and lateral movement attempts. Immediate containment recommended.",
+  "timeline": "1. Malware executed on WORKSTATION-045. 2. C2 callback established to 198.51.100.23:443. 3. Lateral movement attempted to FILE-SERVER-02.",
+  "key_findings": [
+    "Active C2 communication to 198.51.100.23",
+    "Lateral movement attempted to FILE-SERVER-02",
+    "User account jsmith potentially compromised"
+  ]
+}</code></pre>
+        </div>
+
+        <!-- ACTION: Suggest Response Actions -->
+        <h2 id="suggest-response-actions">Suggest Response Actions</h2>
+        <div class="action-section">
+            <p>Get AI-recommended response and containment actions for a security incident. Recommendations are tailored to the current incident response phase (NIST framework).</p>
+
+            <h4>Input</h4>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Incident Description</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>Description of the security incident requiring response recommendations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Environment Context</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Optional context about the environment (network segmentation, critical assets, existing controls)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Response Phase</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Current phase of incident response. Options: identification, containment, eradication, recovery, lessons_learned. Default: containment</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Output</h4>
+            <p>Returns prioritized immediate actions, investigation steps, and long-term strategic recommendations.</p>
+            <pre><code>{
+  "immediate_actions": [
+    "Isolate affected workstations from the network immediately",
+    "Block SMB lateral movement via host-based firewall rules",
+    "Disable compromised user accounts"
+  ],
+  "investigation_steps": [
+    "Identify patient zero and initial infection vector",
+    "Search for LockBit IOCs across all endpoints",
+    "Review authentication logs for compromised credentials"
+  ],
+  "long_term_recommendations": [
+    "Implement network segmentation between workstation and server VLANs",
+    "Deploy EDR with ransomware-specific detection rules",
+    "Conduct phishing awareness training"
+  ]
+}</code></pre>
+        </div>
+
+        <!-- ACTION: Explain Script -->
+        <h2 id="explain-script">Explain Script</h2>
+        <div class="action-section">
+            <p>Submit a suspicious script or command for AI-powered explanation with security context. Returns a breakdown of functionality, risk assessment, MITRE ATT&amp;CK technique mapping, and extracted IOCs.</p>
+
+            <h4>Input</h4>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Script</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-required">Required</span></td>
+                        <td>The script content or command to analyze and explain</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Script Type</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>The type or language of the script. Options: powershell, bash, python, batch, vbscript, javascript, unknown</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Context</strong></td>
+                        <td><span class="inline-code">string</span></td>
+                        <td><span class="badge badge-optional">Optional</span></td>
+                        <td>Optional context about where the script was found (e.g., email attachment, scheduled task, registry)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Output</h4>
+            <p>Returns a human-readable explanation, risk level, MITRE ATT&amp;CK techniques, and any IOCs extracted from the script.</p>
+            <pre><code>{
+  "explanation": "This PowerShell command decodes and executes a base64-encoded script that downloads and runs content from http://example.com/malware using the .NET WebClient class",
+  "risk_level": "CRITICAL - Downloads and executes remote code",
+  "techniques": [
+    "T1059.001 - PowerShell",
+    "T1027 - Obfuscated Files or Information",
+    "T1105 - Ingress Tool Transfer"
+  ],
+  "indicators": [
+    "http://example.com/malware"
+  ]
+}</code></pre>
+        </div>
+
+        <!-- VERSION HISTORY -->
+        <h2 id="version-history">Version History</h2>
+        <table>
+            <thead>
+                <tr><th>Version</th><th>Changes</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1.0.0</strong></td>
+                    <td>Initial plugin release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- LINKS -->
+        <h2 id="links">Links &amp; References</h2>
+        <ul>
+            <li><a class="external" href="https://openai.com" target="_blank">OpenAI</a></li>
+            <li><a class="external" href="https://platform.openai.com/docs/api-reference" target="_blank">OpenAI API Reference</a></li>
+            <li><a class="external" href="https://platform.openai.com/docs/guides/chat-completions" target="_blank">OpenAI Chat Completions API</a></li>
+            <li><a class="external" href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/chatgpt" target="_blank">Plugin Source Code</a></li>
+        </ul>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            Rapid7 InsightConnect &middot; ChatGPT Plugin v1.0.0 &middot; Supported Versions: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo
+        </div>
+    </main>
+</body>
+</html>

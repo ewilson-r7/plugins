@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zscaler Plugin Documentation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 20px 0; z-index: 100; }
+.sidebar .brand { padding: 10px 20px 20px; border-bottom: 1px solid #2d2d4e; margin-bottom: 10px; }
+.sidebar .brand h2 { color: #fff; font-size: 16px; margin-bottom: 4px; }
+.sidebar .brand span { color: #6c6c8c; font-size: 12px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; display: block; }
+.sidebar a { display: block; color: #b0b0d0; padding: 6px 20px; text-decoration: none; font-size: 13px; transition: background 0.2s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h1 { font-size: 28px; margin-bottom: 8px; }
+h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; }
+h3 { font-size: 17px; margin-top: 28px; margin-bottom: 8px; color: #333; }
+h4 { font-size: 14px; margin-top: 16px; margin-bottom: 6px; color: #555; }
+p { margin-bottom: 12px; font-size: 14px; color: #333; }
+ul, ol { margin: 8px 0 16px 24px; font-size: 14px; }
+li { margin-bottom: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 8px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+.product-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+.badge-zia { background: #dbeafe; color: #1d4ed8; }
+.badge-zpa { background: #dcfce7; color: #166534; }
+.badge-zcc { background: #fef3c7; color: #92400e; }
+</style>
+</head>
+<body>
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="brand">
+    <h2>Zscaler</h2>
+    <span>Plugin v2.0.0 &middot; OneAPI</span>
+  </div>
+  <span class="section-label">Overview</span>
+  <a href="#description">Description</a>
+  <a href="#key-features">Key Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#setup">Setup &amp; Configuration</a>
+  <a href="#permissions">Permissions &amp; Scopes</a>
+  <span class="section-label">ZIA Actions</span>
+  <a href="#lookup-url">Lookup URL</a>
+  <a href="#blacklist-url">Blacklist URL</a>
+  <a href="#get-blacklist-url">Get Blacklist URL</a>
+  <a href="#get-sandbox-report-for-hash">Get Sandbox Report</a>
+  <a href="#get-users">Get Users</a>
+  <a href="#create-user">Create User</a>
+  <a href="#delete-user">Delete User</a>
+  <a href="#get-url-category-by-name">Get URL Category</a>
+  <a href="#update-urls-of-url-category">Update URLs of Category</a>
+  <a href="#get-dlp-incidents">Get DLP Incidents</a>
+  <a href="#list-firewall-rules">List Firewall Rules</a>
+  <a href="#get-firewall-rule">Get Firewall Rule</a>
+  <a href="#create-firewall-rule">Create Firewall Rule</a>
+  <a href="#update-firewall-rule">Update Firewall Rule</a>
+  <a href="#get-web-logs">Get Web Logs</a>
+  <a href="#get-firewall-logs">Get Firewall Logs</a>
+  <a href="#submit-threat-feed">Submit Threat Feed</a>
+  <span class="section-label">ZPA Actions</span>
+  <a href="#list-application-segments">List App Segments</a>
+  <a href="#get-application-segment">Get App Segment</a>
+  <a href="#list-server-groups">List Server Groups</a>
+  <a href="#get-server-group">Get Server Group</a>
+  <span class="section-label">ZCC Actions</span>
+  <a href="#get-vpn-gateway-bypasses">Get VPN Bypasses</a>
+  <a href="#remove-vpn-gateway-bypass">Remove VPN Bypass</a>
+  <span class="section-label">Reference</span>
+  <a href="#custom-types">Custom Types</a>
+  <a href="#version-history">Version History</a>
+  <a href="#links">Links</a>
+</nav>
+<!-- Main Content -->
+<div class="main">
+<h1>Zscaler Plugin</h1>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.0.0 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
+
+<h2 id="description">Description</h2>
+<p>Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network. This plugin uses the Zscaler OneAPI unified gateway (<code>api.zsapi.net</code>) with OAuth 2.0 Client Credentials authentication to manage security policies across three Zscaler product lines:</p>
+<ul>
+  <li><strong>ZIA (Zscaler Internet Access)</strong> — URL categorization, blacklisting, DLP, firewall rules, logs, users, threat feeds</li>
+  <li><strong>ZPA (Zscaler Private Access)</strong> — Application segments and server groups</li>
+  <li><strong>ZCC (Zscaler Client Connector)</strong> — VPN gateway bypass auditing and management</li>
+</ul>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li>Lookup categories for a given URL</li>
+  <li>Blacklist or unblacklist URLs</li>
+  <li>Create, delete, and search users</li>
+  <li>Get and update URL categories</li>
+  <li>Manage DLP incidents with time-range filtering</li>
+  <li>List, get, create, and update firewall rules</li>
+  <li>Retrieve web and firewall logs</li>
+  <li>Submit threat feed IoCs (IPs, domains, URLs)</li>
+  <li>Manage ZPA application segments and server groups</li>
+  <li>Audit and manage ZCC VPN gateway bypass entries</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+  <li>A Zscaler OneAPI OAuth 2.0 Client ID from ZIdentity</li>
+  <li>A PEM RSA private key for JWT signing (RS256)</li>
+  <li>The customer vanity domain (e.g., <code>mycompany</code>)</li>
+  <li>Network connectivity from InsightConnect orchestrator to <code>*.zsapi.net</code> on HTTPS (port 443)</li>
+</ul>
+<h2 id="setup">Setup &amp; Configuration</h2>
+
+<h3>Step 1: Create an API Client in ZIdentity</h3>
+<ol>
+  <li>Log in to ZIdentity at <code>https://{vanity_domain}.zsapi.net</code></li>
+  <li>Navigate to <strong>Administration &gt; API Clients</strong></li>
+  <li>Click <strong>Add API Client</strong></li>
+  <li>Configure:
+    <ul>
+      <li><strong>Name:</strong> Descriptive name (e.g., <code>InsightConnect-SOAR</code>)</li>
+      <li><strong>Description:</strong> Purpose of the integration</li>
+      <li><strong>Scopes:</strong> Assign the minimum scopes needed (see Permissions section below)</li>
+    </ul>
+  </li>
+  <li>Save and note the <strong>Client ID</strong></li>
+</ol>
+
+<h3>Step 2: Generate and Upload an RSA Key Pair</h3>
+<ol>
+  <li>Generate an RSA private key (2048-bit minimum, 4096-bit recommended):
+    <pre><code>openssl genrsa -out zscaler_private.pem 4096</code></pre>
+  </li>
+  <li>Extract the public key:
+    <pre><code>openssl rsa -in zscaler_private.pem -pubout -out zscaler_public.pem</code></pre>
+  </li>
+  <li>In ZIdentity, navigate to the API Client you created</li>
+  <li>Click <strong>Add Public Key</strong> and upload <code>zscaler_public.pem</code></li>
+  <li>Keep <code>zscaler_private.pem</code> secure — this is what you'll paste into the InsightConnect connection</li>
+</ol>
+
+<div class="warning-box">
+  <strong>Security:</strong> The private key should never be shared or stored in plaintext outside of InsightConnect's credential vault. Treat it like a password.
+</div>
+
+<h3>Step 3: Configure the InsightConnect Connection</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Client ID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>OAuth Client ID from the ZIdentity API Client</td></tr>
+  <tr><td>Private Key</td><td><code>credential_asymmetric_key</code></td><td><span class="badge badge-required">Required</span></td><td>PEM-encoded RSA private key for JWT signing. Paste the full content of <code>zscaler_private.pem</code></td></tr>
+  <tr><td>Vanity Domain</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Your Zscaler vanity domain (e.g., <code>mycompany</code>). This is the prefix in <code>mycompany.zsapi.net</code></td></tr>
+  <tr><td>Cloud</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Zscaler cloud domain. Default: <code>zsapi.net</code>. Most customers use the default.</td></tr>
+</table>
+
+<div class="info-box">
+  <strong>How authentication works:</strong> The plugin builds a JWT assertion (signed with your private key), sends it to <code>https://{vanity_domain}.{cloud}/oauth2/v1/token</code> to obtain an access token, then uses that token as a Bearer header for all API requests through <code>api.zsapi.net</code>. Tokens are cached and auto-refreshed before expiry.
+</div>
+<h3>Network Requirements</h3>
+<ul>
+  <li>Outbound HTTPS to <code>{vanity_domain}.zsapi.net</code> (token endpoint)</li>
+  <li>Outbound HTTPS to <code>api.zsapi.net</code> (unified API gateway for all ZIA/ZPA/ZCC requests)</li>
+  <li>No inbound connections required</li>
+  <li>If using an HTTP proxy, ensure it allows connections to <code>*.zsapi.net</code></li>
+</ul>
+
+<h2 id="permissions">Permissions &amp; OAuth Scopes</h2>
+<p>Zscaler OneAPI uses OAuth 2.0 scopes to control what the API client can access. Assign the minimum scopes needed for your workflows in the ZIdentity API Client configuration.</p>
+
+<h3>Scope Matrix by Use Case</h3>
+
+<h4>Threat Response (URL Blocking, Blacklisting)</h4>
+<table class="perm-table">
+  <tr><th>Scope</th><th>Access</th><th>Actions Enabled</th></tr>
+  <tr><td>zia:security_policy</td><td>Read-Write</td><td>Blacklist URL, Get Blacklist URL</td></tr>
+  <tr><td>zia:url_categories</td><td>Read-Write</td><td>Get URL Category, Update URLs of URL Category</td></tr>
+  <tr><td>zia:url_lookup</td><td>Read</td><td>Lookup URL</td></tr>
+  <tr><td>zia:sandbox_report</td><td>Read</td><td>Get Sandbox Report for Hash</td></tr>
+  <tr><td>zia:threat_feeds</td><td>Read-Write</td><td>Submit Threat Feed</td></tr>
+</table>
+
+<h4>User Management</h4>
+<table class="perm-table">
+  <tr><th>Scope</th><th>Access</th><th>Actions Enabled</th></tr>
+  <tr><td>zia:users</td><td>Read-Write</td><td>Get Users, Create User, Delete User</td></tr>
+</table>
+
+<h4>DLP &amp; Compliance Monitoring</h4>
+<table class="perm-table">
+  <tr><th>Scope</th><th>Access</th><th>Actions Enabled</th></tr>
+  <tr><td>zia:dlp</td><td>Read</td><td>Get DLP Incidents</td></tr>
+  <tr><td>zia:logs</td><td>Read</td><td>Get Web Logs, Get Firewall Logs</td></tr>
+</table>
+
+<h4>Firewall Policy Management</h4>
+<table class="perm-table">
+  <tr><th>Scope</th><th>Access</th><th>Actions Enabled</th></tr>
+  <tr><td>zia:firewall_rules</td><td>Read-Write</td><td>List/Get/Create/Update Firewall Rules</td></tr>
+</table>
+
+<h4>ZPA Resource Visibility</h4>
+<table class="perm-table">
+  <tr><th>Scope</th><th>Access</th><th>Actions Enabled</th></tr>
+  <tr><td>zpa:application_segments</td><td>Read</td><td>List/Get Application Segments</td></tr>
+  <tr><td>zpa:server_groups</td><td>Read</td><td>List/Get Server Groups</td></tr>
+</table>
+
+<h4>ZCC VPN Gateway Bypass Auditing</h4>
+<table class="perm-table">
+  <tr><th>Scope</th><th>Access</th><th>Actions Enabled</th></tr>
+  <tr><td>zcc:application_profiles</td><td>Read-Write</td><td>Get VPN Gateway Bypasses, Remove VPN Gateway Bypass</td></tr>
+</table>
+
+<div class="info-box">
+  <strong>Least Privilege Tip:</strong> Create multiple API clients with different scope sets if you have workflows with different privilege requirements. For example, a read-only audit workflow can use a client with only read scopes, while a response workflow uses a client with write access to security policies.
+</div>
+<h2 id="lookup-url">Lookup URL</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Look up the categorization of a given set of URLs.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>URLs</td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>URLs or domains to look up (max 100)</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>[
+  {
+    "url": "example.com",
+    "urlClassifications": ["REFERENCE_SITES", "INTERNET_SERVICES"],
+    "urlClassificationsWithSecurityAlert": []
+  }
+]</code></pre>
+
+<h2 id="blacklist-url">Blacklist URL</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Add or remove URLs from the blocked malicious URLs list.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>URLs</td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>URLs or domains to blacklist/unblacklist</td></tr>
+  <tr><td>Blacklist State</td><td><code>boolean</code></td><td><span class="badge badge-optional">Optional</span></td><td>True to blacklist, false to remove. Default: <code>true</code></td></tr>
+  <tr><td>Activate Configuration</td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Activate changes immediately. Default: <code>false</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true,
+  "status": "ACTIVE"
+}</code></pre>
+
+<h2 id="get-blacklist-url">Get Blacklist URL</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Retrieve all currently blacklisted URLs.</p>
+<h4>Output</h4>
+<pre><code>{
+  "blacklisted_urls": ["domain.com", "evil.example.com"]
+}</code></pre>
+
+<h2 id="get-sandbox-report-for-hash">Get Sandbox Report for Hash</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Get a full sandbox analysis report for an MD5 hash.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Hash</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>MD5 hash of the file</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "FullDetails": {
+    "Classification": {"Type": "MALICIOUS", "Score": 76},
+    "FileProperties": {"FileType": "EXE", "MD5": "afcb861..."},
+    "Summary": {"Status": "COMPLETED", "Category": "ADWARE"}
+  }
+}</code></pre>
+<h2 id="get-users">Get Users</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Get a filtered list of organization users.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Name</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Partial match filter on user name</td></tr>
+  <tr><td>Department</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Starts-with filter on department name</td></tr>
+  <tr><td>Group</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Starts-with filter on group name</td></tr>
+  <tr><td>Page</td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Page offset</td></tr>
+  <tr><td>Page Size</td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Results per page</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "users": [
+    {"id": 123456789, "name": "John", "email": "john@example.com", "adminUser": false}
+  ]
+}</code></pre>
+
+<h2 id="create-user">Create User</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Create a new user in the organization.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Name</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>User name</td></tr>
+  <tr><td>Email</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>User email (must be unique, domain must belong to org)</td></tr>
+  <tr><td>Group Names</td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>Groups the user belongs to</td></tr>
+  <tr><td>Department Name</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Department the user belongs to</td></tr>
+  <tr><td>Password</td><td><code>password</code></td><td><span class="badge badge-required">Required</span></td><td>User password (for Hosted DB auth)</td></tr>
+  <tr><td>Comments</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Additional information</td></tr>
+  <tr><td>Temp Auth Email</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Email for one-time tokens/links</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "user": {"id": 123456789, "name": "John", "email": "john@example.com", "adminUser": false}
+}</code></pre>
+
+<h2 id="delete-user">Delete User</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Delete a user by their ID.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>User ID</td><td><code>integer</code></td><td><span class="badge badge-required">Required</span></td><td>Unique identifier for the user</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"success": true}</code></pre>
+<h2 id="get-url-category-by-name">Get URL Category by Name</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Get URL category information for a predefined or custom category.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>URL Category Name</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Predefined or custom category name</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "urlCategory": {
+    "id": "CUSTOM_01",
+    "configuredName": "Custom Category",
+    "customCategory": true,
+    "urls": ["example.com"],
+    "editable": true
+  }
+}</code></pre>
+
+<h2 id="update-urls-of-url-category">Update URLs of URL Category</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Add or remove URLs from a URL category.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>URL Category Name</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Category name to update</td></tr>
+  <tr><td>Action</td><td><code>enum</code></td><td><span class="badge badge-required">Required</span></td><td><code>Add to the list</code> or <code>Remove from the list</code></td></tr>
+  <tr><td>URL List</td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>URLs to add or remove</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the updated URL category object.</p>
+
+<h2 id="get-dlp-incidents">Get DLP Incidents</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Retrieve DLP incident data with time range filtering and pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Start Time</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>ISO 8601 start time</td></tr>
+  <tr><td>End Time</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>ISO 8601 end time</td></tr>
+  <tr><td>Next Link</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Pagination token</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "incidents": [
+    {"id": 1, "eventTime": "2024-01-01T12:00:00Z", "dlpPolicy": "PCI", "severity": "HIGH", "user": "user@example.com"}
+  ],
+  "next_link": ""
+}</code></pre>
+
+<h2 id="list-firewall-rules">List Firewall Rules</h2>
+<p><span class="product-badge badge-zia">ZIA</span> List all firewall filtering rules with optional search and pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Search</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Case-insensitive name filter</td></tr>
+  <tr><td>Next Link</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Pagination token</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "rules": [{"id": 1, "name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET"}],
+  "next_link": ""
+}</code></pre>
+<h2 id="get-firewall-rule">Get Firewall Rule</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Get a specific firewall filtering rule by ID.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Rule ID</td><td><code>integer</code></td><td><span class="badge badge-required">Required</span></td><td>Unique identifier of the rule</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"id": 12345, "name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}</code></pre>
+
+<h2 id="create-firewall-rule">Create Firewall Rule</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Create a new firewall filtering rule.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Rule Data</td><td><code>object</code></td><td><span class="badge badge-required">Required</span></td><td>Rule configuration (name, state, action, order, etc.)</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"id": 12345, "name": "Block Malware", "state": "ENABLED", "action": "BLOCK_RESET", "order": 1}</code></pre>
+
+<h2 id="update-firewall-rule">Update Firewall Rule</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Update an existing firewall filtering rule.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Rule ID</td><td><code>integer</code></td><td><span class="badge badge-required">Required</span></td><td>ID of the rule to update</td></tr>
+  <tr><td>Rule Data</td><td><code>object</code></td><td><span class="badge badge-required">Required</span></td><td>Updated rule configuration</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"id": 12345, "name": "Block Malware Updated", "state": "ENABLED", "action": "BLOCK_RESET"}</code></pre>
+
+<h2 id="get-web-logs">Get Web Logs</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Retrieve web transaction logs with time range filtering and pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Start Time</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>ISO 8601 start time</td></tr>
+  <tr><td>End Time</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>ISO 8601 end time</td></tr>
+  <tr><td>Next Link</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Pagination token</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "logs": [{"datetime": "2024-01-01T12:00:00Z", "user": "user@example.com", "url": "https://example.com", "action": "ALLOWED"}],
+  "next_link": ""
+}</code></pre>
+
+<h2 id="get-firewall-logs">Get Firewall Logs</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Retrieve firewall logs with time range filtering and pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Start Time</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>ISO 8601 start time</td></tr>
+  <tr><td>End Time</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>ISO 8601 end time</td></tr>
+  <tr><td>Next Link</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Pagination token</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "logs": [{"datetime": "2024-01-01T12:00:00Z", "sourceIp": "192.168.1.1", "destinationIp": "10.0.0.1", "action": "BLOCKED", "rule": "Block Malware"}],
+  "next_link": ""
+}</code></pre>
+<h2 id="submit-threat-feed">Submit Threat Feed</h2>
+<p><span class="product-badge badge-zia">ZIA</span> Submit custom threat indicators (IoCs) to a Zscaler threat feed.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Feed Type</td><td><code>enum</code></td><td><span class="badge badge-required">Required</span></td><td><code>IP</code>, <code>DOMAIN</code>, or <code>URL</code></td></tr>
+  <tr><td>Indicators</td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>List of threat indicators to submit</td></tr>
+  <tr><td>Description</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Description for the submission</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"success": true, "submitted_count": 2}</code></pre>
+
+<h2 id="list-application-segments">List Application Segments</h2>
+<p><span class="product-badge badge-zpa">ZPA</span> List ZPA application segments with pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Next Link</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Pagination token</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "segments": [{"id": "123456", "name": "Internal App", "enabled": true, "domainNames": ["app.internal.com"]}],
+  "next_link": ""
+}</code></pre>
+
+<h2 id="get-application-segment">Get Application Segment</h2>
+<p><span class="product-badge badge-zpa">ZPA</span> Get a specific ZPA application segment by ID.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Segment ID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Application segment ID</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"id": "123456", "name": "Internal App", "enabled": true, "domainNames": ["app.internal.com"]}</code></pre>
+
+<h2 id="list-server-groups">List Server Groups</h2>
+<p><span class="product-badge badge-zpa">ZPA</span> List ZPA server groups with pagination.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Next Link</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Pagination token</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "groups": [{"id": "789", "name": "App Server Group", "enabled": true}],
+  "next_link": ""
+}</code></pre>
+
+<h2 id="get-server-group">Get Server Group</h2>
+<p><span class="product-badge badge-zpa">ZPA</span> Get a specific ZPA server group by ID.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Group ID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Server group ID</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{"id": "789", "name": "App Server Group", "enabled": true}</code></pre>
+<h2 id="get-vpn-gateway-bypasses">Get VPN Gateway Bypasses</h2>
+<p><span class="product-badge badge-zcc">ZCC</span> Retrieve VPN gateway bypass entries from ZCC application profiles. Used to audit for shared-hosting/CDN IP conflicts where a bypass hostname resolves to a shared IP (e.g., Cloudflare), effectively tunneling unintended traffic outside the VPN.</p>
+<h4>Input</h4>
+<p>No input required — retrieves all profiles.</p>
+<h4>Output</h4>
+<pre><code>{
+  "profiles": [
+    {
+      "profile_id": "12345",
+      "profile_name": "Default Profile",
+      "vpn_gateways": [
+        {"hostname": "gateway.example.com", "ip": "10.0.0.1", "type": "hostname"}
+      ]
+    }
+  ]
+}</code></pre>
+
+<h2 id="remove-vpn-gateway-bypass">Remove VPN Gateway Bypass</h2>
+<p><span class="product-badge badge-zcc">ZCC</span> Remove a VPN gateway bypass entry from a ZCC application profile. Idempotent — removing an entry that doesn't exist returns success.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Profile ID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Application profile ID to update</td></tr>
+  <tr><td>Entry</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Hostname or IP to remove from bypasses</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true,
+  "vpn_gateways": [
+    {"hostname": "other-gateway.example.com", "type": "hostname"}
+  ]
+}</code></pre>
+
+<h2 id="custom-types">Custom Types</h2>
+
+<h3>vpn_gateway_entry</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>hostname</td><td><code>string</code></td><td>Hostname of the bypass entry</td><td><code>gateway.example.com</code></td></tr>
+  <tr><td>ip</td><td><code>string</code></td><td>IP address of the bypass entry</td><td><code>10.0.0.1</code></td></tr>
+  <tr><td>type</td><td><code>string</code></td><td>Entry type (hostname or ip)</td><td><code>hostname</code></td></tr>
+</table>
+
+<h3>vpn_gateway_profile</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>profile_id</td><td><code>string</code></td><td>Application profile ID</td><td><code>12345</code></td></tr>
+  <tr><td>profile_name</td><td><code>string</code></td><td>Application profile name</td><td><code>Default Profile</code></td></tr>
+  <tr><td>vpn_gateways</td><td><code>[]vpn_gateway_entry</code></td><td>VPN gateway bypass entries</td><td>—</td></tr>
+</table>
+
+<h3>firewallRule</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>id</td><td><code>integer</code></td><td>Unique rule identifier</td><td><code>12345</code></td></tr>
+  <tr><td>name</td><td><code>string</code></td><td>Rule name</td><td><code>Block Malware</code></td></tr>
+  <tr><td>state</td><td><code>string</code></td><td>ENABLED or DISABLED</td><td><code>ENABLED</code></td></tr>
+  <tr><td>action</td><td><code>string</code></td><td>Action (BLOCK_RESET, ALLOW, etc.)</td><td><code>BLOCK_RESET</code></td></tr>
+  <tr><td>order</td><td><code>integer</code></td><td>Rule order</td><td><code>1</code></td></tr>
+</table>
+
+<h3>dlpIncident</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>id</td><td><code>integer</code></td><td>Incident ID</td><td><code>12345</code></td></tr>
+  <tr><td>eventTime</td><td><code>string</code></td><td>ISO 8601 timestamp</td><td><code>2024-01-01T12:00:00Z</code></td></tr>
+  <tr><td>dlpPolicy</td><td><code>string</code></td><td>Triggering DLP policy</td><td><code>PCI Data Protection</code></td></tr>
+  <tr><td>severity</td><td><code>string</code></td><td>Severity level</td><td><code>HIGH</code></td></tr>
+  <tr><td>user</td><td><code>string</code></td><td>Associated user</td><td><code>user@example.com</code></td></tr>
+</table>
+
+<h3>applicationSegment</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>id</td><td><code>string</code></td><td>Segment ID</td><td><code>123456</code></td></tr>
+  <tr><td>name</td><td><code>string</code></td><td>Segment name</td><td><code>Internal App</code></td></tr>
+  <tr><td>enabled</td><td><code>boolean</code></td><td>Whether enabled</td><td><code>true</code></td></tr>
+  <tr><td>domainNames</td><td><code>[]string</code></td><td>Associated domains</td><td><code>["app.internal.com"]</code></td></tr>
+</table>
+<h2 id="version-history">Version History</h2>
+<table>
+  <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>2.0.0</td><td>Major version bump: migrate to Zscaler OneAPI with OAuth 2.0 Private Key authentication | Add DLP, firewall, logs, threat feed, ZPA, and ZCC VPN gateway bypass actions | SDK bump to 6.6.0</td></tr>
+  <tr><td>1.5.2</td><td>SDK Bump to 6.3.10 | Update connection test</td></tr>
+  <tr><td>1.5.1</td><td>Requirements.txt bumped | SDK Bump to 6.1.4</td></tr>
+  <tr><td>1.5.0</td><td>Add Actions: Create User, Delete User, Get Users, Get URL Category by Name, Update URLs of URL Category</td></tr>
+  <tr><td>1.4.0</td><td>Add Activate Configuration input in Blacklist URL action</td></tr>
+  <tr><td>1.3.0</td><td>Add Get Blacklist URL action</td></tr>
+  <tr><td>1.2.1</td><td>Usability updates and updated icon</td></tr>
+  <tr><td>1.2.0</td><td>New action Get Sandbox Report for Hash</td></tr>
+  <tr><td>1.1.2</td><td>Support both domains and URL inputs in the Blacklist URL and Lookup URL actions</td></tr>
+  <tr><td>1.1.1</td><td>Improve documentation around action inputs</td></tr>
+  <tr><td>1.1.0</td><td>New action Blacklist URL</td></tr>
+  <tr><td>1.0.0</td><td>Initial plugin</td></tr>
+</table>
+
+<h2 id="links">Links &amp; References</h2>
+<ul>
+  <li><a href="https://www.zscaler.com/" target="_blank">Zscaler</a></li>
+  <li><a href="https://help.zscaler.com/oneapi/understanding-oneapi" target="_blank">Zscaler OneAPI Documentation</a></li>
+  <li><a href="https://help.zscaler.com/zidentity/configuring-api-clients" target="_blank">ZIdentity — Configuring API Clients</a></li>
+  <li><a href="https://help.zscaler.com/zia/about-url-categories" target="_blank">ZIA — About URL Categories</a></li>
+  <li><a href="https://help.zscaler.com/zpa/about-application-segments" target="_blank">ZPA — About Application Segments</a></li>
+</ul>
+
+<div class="footer">
+  Rapid7 InsightConnect &middot; Zscaler Plugin v2.0.0 &middot; Supported Versions: Zscaler OneAPI 2024
+</div>
+</div>
+</body>
+</html>

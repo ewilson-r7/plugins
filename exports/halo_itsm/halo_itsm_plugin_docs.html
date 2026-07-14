@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halo ITSM Plugin - InsightConnect Documentation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; display: flex; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; color: #e0e0e0; padding: 24px 0; overflow-y: auto; }
+.sidebar h2 { padding: 0 20px; font-size: 16px; color: #fff; margin-bottom: 8px; }
+.sidebar .brand { padding: 0 20px 20px; border-bottom: 1px solid #2d2d4e; margin-bottom: 12px; }
+.sidebar .brand h1 { font-size: 18px; color: #fff; } .sidebar .brand span { font-size: 12px; color: #7c7c9c; }
+.sidebar ul { list-style: none; } .sidebar li { margin: 0; }
+.sidebar a { display: block; padding: 8px 20px; color: #b0b0d0; text-decoration: none; font-size: 14px; transition: all .15s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.sidebar a.active { background: #3d3d6e; color: #fff; border-left: 3px solid #6c63ff; }
+.sidebar .section-label { padding: 16px 20px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 960px; width: 100%; }
+</style>
+</head>
+<body>
+<nav class="sidebar">
+<div class="brand"><h1>Halo ITSM</h1><span>InsightConnect Plugin v1.1.0</span></div>
+<div class="section-label">Overview</div>
+<ul>
+<li><a href="#description">Description</a></li>
+<li><a href="#key-features">Key Features</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#setup">Setup</a></li>
+</ul>
+<div class="section-label">Actions</div>
+<ul>
+<li><a href="#create-ticket">Create Ticket</a></li>
+<li><a href="#get-ticket">Get Ticket</a></li>
+<li><a href="#update-ticket">Update Ticket</a></li>
+<li><a href="#delete-ticket">Delete Ticket</a></li>
+<li><a href="#list-tickets">List Tickets</a></li>
+<li><a href="#add-action-to-ticket">Add Action to Ticket</a></li>
+<li><a href="#attach-file-to-ticket">Attach File to Ticket</a></li>
+</ul>
+<div class="section-label">Reference</div>
+<ul>
+<li><a href="#custom-types">Custom Types</a></li>
+<li><a href="#version-history">Version History</a></li>
+<li><a href="#links">Links</a></li>
+</ul>
+</nav>
+<main class="main">
+<style>
+h1 { font-size: 28px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e8e8f0; }
+h2 { font-size: 22px; margin: 40px 0 16px; color: #1a1a2e; }
+h3 { font-size: 18px; margin: 32px 0 12px; color: #2d2d4e; }
+h4 { font-size: 15px; margin: 24px 0 8px; color: #4a4a6a; }
+p, li { font-size: 15px; margin-bottom: 8px; }
+ul { padding-left: 20px; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+th { background: #f4f4f8; text-align: left; padding: 10px 12px; border: 1px solid #e0e0e8; font-weight: 600; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+tr:nth-child(even) { background: #fafafc; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; margin: 12px 0 20px; font-size: 13px; line-height: 1.5; }
+code { font-family: 'SF Mono', 'Fira Code', monospace; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 14px; }
+</style>
+
+<h1 id="description">Halo ITSM Plugin</h1>
+<p>Halo ITSM is a cloud-based IT Service Management platform that provides ticket management, asset tracking, and service desk capabilities. This plugin enables Rapid7 InsightConnect workflows to interact with Halo ITSM tickets programmatically.</p>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li>Create, update, delete, and retrieve tickets</li>
+<li>List tickets with filtering support (by status, type, agent, client, or search term)</li>
+<li>Add actions (notes/comments) to tickets</li>
+<li>Attach files to tickets</li>
+<li>Manage ticket assignments and status changes</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Halo ITSM API Client ID and Client Secret</li>
+<li>Base URL of your Halo ITSM instance</li>
+<li>API application configured with the <strong>Client Credentials</strong> grant type in Halo ITSM</li>
+</ul>
+<div class="info-box">To configure API access, go to <strong>Configuration &gt; Integrations &gt; HaloITSM API &gt; View Applications</strong> in your Halo instance and create a new application with the Client ID and Secret (Services) authentication type.</div>
+
+<h2 id="setup">Connection Setup</h2>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>Base URL</td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Base URL of your Halo ITSM instance (e.g. <code>https://your-instance.haloitsm.com</code>)</td></tr>
+<tr><td>Client ID</td><td>string</td><td><span class="badge badge-required">Required</span></td><td>OAuth Client ID for the Halo ITSM API application</td></tr>
+<tr><td>Client Secret</td><td>credential_secret_key</td><td><span class="badge badge-required">Required</span></td><td>OAuth Client Secret for the Halo ITSM API application</td></tr>
+<tr><td>Tenant</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Tenant name for multi-tenant instances (leave blank if not applicable)</td></tr>
+</table>
+
+<h2 id="create-ticket">Create Ticket</h2>
+<p>Create a new ticket in Halo ITSM.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>summary</td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Summary of the ticket</td></tr>
+<tr><td>tickettype_id</td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>ID of the ticket type (e.g. 1 for Incident, 2 for Service Request)</td></tr>
+<tr><td>details</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Full details of the ticket in plain text or HTML</td></tr>
+<tr><td>user_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>ID of the user raising the ticket</td></tr>
+<tr><td>client_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>ID of the client associated with the ticket</td></tr>
+<tr><td>priority_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>ID of the ticket priority</td></tr>
+<tr><td>status_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>ID of the initial status for the ticket</td></tr>
+<tr><td>category_1</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Primary category of the ticket</td></tr>
+<tr><td>category_2</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Subcategory of the ticket</td></tr>
+<tr><td>agent_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>ID of the agent to assign the ticket to</td></tr>
+<tr><td>impact</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Impact level of the ticket</td></tr>
+<tr><td>urgency</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Urgency level of the ticket</td></tr>
+<tr><td>site_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>ID of the site to associate with the ticket</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the created <code>ticket</code> object.</p>
+<pre><code>{
+  "ticket": {
+    "id": 101,
+    "summary": "Server is unresponsive",
+    "details": "The production server has been unresponsive since 10:00 AM",
+    "status_id": 1,
+    "priority_id": 3,
+    "tickettype_id": 1,
+    "category_1": "Hardware",
+    "agent_id": 15,
+    "agent_name": "John Smith",
+    "user_name": "Jane Doe",
+    "client_name": "ACME Corp",
+    "datecreated": "2025-07-10T10:05:00Z"
+  }
+}</code></pre>
+
+<h2 id="get-ticket">Get Ticket</h2>
+<p>Get details of a specific ticket by ID.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>ticket_id</td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>ID of the ticket to retrieve</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the full <code>ticket</code> object with all fields populated.</p>
+<pre><code>{
+  "ticket": {
+    "id": 1234,
+    "summary": "Email not working",
+    "details": "User reports email client is not connecting to server",
+    "status_id": 2,
+    "priority_id": 2,
+    "tickettype_id": 1,
+    "category_1": "Software",
+    "category_2": "Email",
+    "impact": "High",
+    "urgency": "High",
+    "user_id": 20,
+    "user_name": "Jane Doe",
+    "agent_id": 15,
+    "agent_name": "John Smith",
+    "team": "IT Support",
+    "datecreated": "2025-07-09T14:05:00Z",
+    "lastupdate": "2025-07-10T08:30:00Z",
+    "client_name": "ACME Corp"
+  }
+}</code></pre>
+
+<h2 id="update-ticket">Update Ticket</h2>
+<p>Update an existing ticket in Halo ITSM. Only the fields you provide will be updated.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>ticket_id</td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>ID of the ticket to update</td></tr>
+<tr><td>summary</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Updated summary</td></tr>
+<tr><td>details</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Updated details</td></tr>
+<tr><td>status_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Updated status ID</td></tr>
+<tr><td>priority_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Updated priority ID</td></tr>
+<tr><td>agent_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Updated agent ID</td></tr>
+<tr><td>category_1</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Updated category</td></tr>
+<tr><td>category_2</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Updated subcategory</td></tr>
+<tr><td>impact</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Updated impact level</td></tr>
+<tr><td>urgency</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Updated urgency level</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the updated <code>ticket</code> object.</p>
+<pre><code>{
+  "ticket": {
+    "id": 1234,
+    "summary": "Email not working - UPDATED",
+    "status_id": 3,
+    "priority_id": 1,
+    "urgency": "Critical",
+    "lastupdate": "2025-07-10T09:00:00Z"
+  }
+}</code></pre>
+
+<h2 id="delete-ticket">Delete Ticket</h2>
+<p>Delete a ticket from Halo ITSM.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>ticket_id</td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>ID of the ticket to delete</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true
+}</code></pre>
+
+<h2 id="list-tickets">List Tickets</h2>
+<p>List tickets from Halo ITSM with optional filtering.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>status_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Filter by status ID</td></tr>
+<tr><td>tickettype_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Filter by ticket type ID</td></tr>
+<tr><td>agent_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Filter by assigned agent ID</td></tr>
+<tr><td>client_id</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Filter by client ID</td></tr>
+<tr><td>count</td><td>integer</td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of tickets to return (default: 50)</td></tr>
+<tr><td>search</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Search string to filter tickets</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns an array of <code>ticket</code> objects.</p>
+<pre><code>{
+  "tickets": [
+    {
+      "id": 1234,
+      "summary": "Email not working",
+      "status_id": 2,
+      "agent_name": "John Smith",
+      "client_name": "ACME Corp"
+    },
+    {
+      "id": 1235,
+      "summary": "Printer jam on 3rd floor",
+      "status_id": 1,
+      "agent_name": null,
+      "client_name": "ACME Corp"
+    }
+  ]
+}</code></pre>
+
+<h2 id="add-action-to-ticket">Add Action to Ticket</h2>
+<p>Add an action (note, comment, or update) to an existing ticket. Actions are part of Halo's audit trail architecture.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>ticket_id</td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>ID of the ticket to add the action to</td></tr>
+<tr><td>note</td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Content of the action note in plain text or HTML</td></tr>
+<tr><td>outcome</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Outcome of the action</td></tr>
+<tr><td>hiddenfromuser</td><td>boolean</td><td><span class="badge badge-optional">Optional</span></td><td>Whether this note should be hidden from the end user (default: false)</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "action": {
+    "id": 501,
+    "ticket_id": 1234,
+    "who": "John Smith",
+    "note": "Investigated the issue and found root cause",
+    "hiddenfromuser": false,
+    "outcome": "Ongoing",
+    "actiondate": "2025-07-10T10:30:00Z"
+  }
+}</code></pre>
+
+<h2 id="attach-file-to-ticket">Attach File to Ticket</h2>
+<p>Attach a file to an existing ticket via an action note. The file is uploaded as multipart form data and linked to the ticket's action history.</p>
+<h4>Input</h4>
+<table>
+<tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><td>ticket_id</td><td>integer</td><td><span class="badge badge-required">Required</span></td><td>ID of the ticket to attach the file to</td></tr>
+<tr><td>filename</td><td>string</td><td><span class="badge badge-required">Required</span></td><td>Name of the file (e.g. screenshot.png)</td></tr>
+<tr><td>content</td><td>bytes</td><td><span class="badge badge-required">Required</span></td><td>Base64-encoded content of the file</td></tr>
+<tr><td>note</td><td>string</td><td><span class="badge badge-optional">Optional</span></td><td>Note to include with the attachment</td></tr>
+<tr><td>hiddenfromuser</td><td>boolean</td><td><span class="badge badge-optional">Optional</span></td><td>Whether the attachment action should be hidden from the end user (default: false)</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "action": {
+    "id": 502,
+    "ticket_id": 1234,
+    "who": "John Smith",
+    "note": "Attaching error log for reference",
+    "hiddenfromuser": false,
+    "outcome": null,
+    "actiondate": "2025-07-10T11:00:00Z"
+  }
+}</code></pre>
+
+<h2 id="custom-types">Custom Types</h2>
+<h3>ticket</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+<tr><td>id</td><td>integer</td><td>Unique ID of the ticket</td><td>1234</td></tr>
+<tr><td>summary</td><td>string</td><td>Summary of the ticket</td><td>Server is unresponsive</td></tr>
+<tr><td>details</td><td>string</td><td>Details of the ticket</td><td>The production server has been unresponsive since 10:00 AM</td></tr>
+<tr><td>status_id</td><td>integer</td><td>ID of the ticket status</td><td>1</td></tr>
+<tr><td>priority_id</td><td>integer</td><td>ID of the ticket priority</td><td>3</td></tr>
+<tr><td>tickettype_id</td><td>integer</td><td>ID of the ticket type</td><td>1</td></tr>
+<tr><td>category_1</td><td>string</td><td>Primary category</td><td>Hardware</td></tr>
+<tr><td>category_2</td><td>string</td><td>Subcategory</td><td>Server</td></tr>
+<tr><td>impact</td><td>string</td><td>Impact level</td><td>Medium</td></tr>
+<tr><td>urgency</td><td>string</td><td>Urgency level</td><td>High</td></tr>
+<tr><td>user_id</td><td>integer</td><td>ID of user who raised the ticket</td><td>10</td></tr>
+<tr><td>user_name</td><td>string</td><td>Name of user who raised the ticket</td><td>Jane Doe</td></tr>
+<tr><td>agent_id</td><td>integer</td><td>ID of assigned agent</td><td>15</td></tr>
+<tr><td>agent_name</td><td>string</td><td>Name of assigned agent</td><td>John Smith</td></tr>
+<tr><td>team</td><td>string</td><td>Team assigned to the ticket</td><td>IT Support</td></tr>
+<tr><td>dateoccurred</td><td>string</td><td>Date ticket was raised</td><td>2025-07-10T10:00:00Z</td></tr>
+<tr><td>datecreated</td><td>string</td><td>Creation timestamp</td><td>2025-07-10T10:05:00Z</td></tr>
+<tr><td>lastupdate</td><td>string</td><td>Last update timestamp</td><td>2025-07-10T11:30:00Z</td></tr>
+<tr><td>closeddate</td><td>string</td><td>Closed timestamp</td><td>2025-07-11T09:00:00Z</td></tr>
+<tr><td>client_id</td><td>integer</td><td>Associated client ID</td><td>5</td></tr>
+<tr><td>client_name</td><td>string</td><td>Associated client name</td><td>ACME Corp</td></tr>
+<tr><td>site_id</td><td>integer</td><td>Associated site ID</td><td>2</td></tr>
+<tr><td>sla_id</td><td>integer</td><td>Applied SLA ID</td><td>1</td></tr>
+</table>
+
+<h3>ticket_action</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+<tr><td>id</td><td>integer</td><td>Unique ID of the action</td><td>501</td></tr>
+<tr><td>ticket_id</td><td>integer</td><td>ID of the parent ticket</td><td>1234</td></tr>
+<tr><td>who</td><td>string</td><td>Person who performed the action</td><td>John Smith</td></tr>
+<tr><td>note</td><td>string</td><td>Content of the action note</td><td>Investigated the issue and found root cause</td></tr>
+<tr><td>hiddenfromuser</td><td>boolean</td><td>Whether hidden from end user</td><td>false</td></tr>
+<tr><td>outcome</td><td>string</td><td>Outcome of the action</td><td>Ongoing</td></tr>
+<tr><td>actiondate</td><td>string</td><td>Timestamp of the action</td><td>2025-07-10T10:30:00Z</td></tr>
+</table>
+
+<h2 id="version-history">Version History</h2>
+<table>
+<tr><th>Version</th><th>Changes</th></tr>
+<tr><td>1.1.0</td><td>Added Attach File to Ticket action</td></tr>
+<tr><td>1.0.0</td><td>Initial plugin release</td></tr>
+</table>
+
+<h2 id="links">Links &amp; References</h2>
+<ul>
+<li><a href="https://haloitsm.com" target="_blank">Halo ITSM</a></li>
+<li><a href="https://haloitsm.com/guides/article/?kbid=929" target="_blank">Halo ITSM API Guide</a></li>
+<li><a href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/halo_itsm" target="_blank">Plugin Source Code</a></li>
+</ul>
+
+<div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #e0e0e8; color: #7c7c9c; font-size: 13px;">
+<p>Rapid7 InsightConnect &middot; Halo ITSM Plugin v1.1.0 &middot; Supported Versions: 2025-07-10</p>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortinet FortiManager Plugin Documentation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; }
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 20px 0; z-index: 100; }
+.sidebar .brand { padding: 10px 20px 20px; border-bottom: 1px solid #2d2d4e; margin-bottom: 10px; }
+.sidebar .brand h2 { color: #fff; font-size: 16px; margin-bottom: 4px; }
+.sidebar .brand span { color: #6c6c8c; font-size: 12px; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; display: block; }
+.sidebar a { display: block; color: #b0b0d0; padding: 7px 20px; text-decoration: none; font-size: 13px; transition: background 0.2s; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+h1 { font-size: 28px; margin-bottom: 8px; }
+h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; }
+h3 { font-size: 17px; margin-top: 28px; margin-bottom: 8px; color: #333; }
+h4 { font-size: 14px; margin-top: 16px; margin-bottom: 6px; color: #555; }
+p { margin-bottom: 12px; font-size: 14px; color: #333; }
+ul, ol { margin: 8px 0 16px 24px; font-size: 14px; }
+li { margin-bottom: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+</style>
+</head>
+<body>
+<style>
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 8px 0 20px; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+</style>
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="brand">
+    <h2>Fortinet FortiManager</h2>
+    <span>Plugin v1.0.0</span>
+  </div>
+  <span class="section-label">Overview</span>
+  <a href="#description">Description</a>
+  <a href="#key-features">Key Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#setup">Setup &amp; Configuration</a>
+  <a href="#permissions">Permissions &amp; Least Privilege</a>
+  <span class="section-label">Actions</span>
+  <a href="#get-address-objects">Get Address Objects</a>
+  <a href="#create-address-object">Create Address Object</a>
+  <a href="#delete-address-object">Delete Address Object</a>
+  <a href="#add-address-object-to-group">Add to Group</a>
+  <a href="#remove-address-object-from-group">Remove from Group</a>
+  <a href="#check-if-address-in-group">Check if in Group</a>
+  <a href="#get-policies">Get Policies</a>
+  <a href="#install-policy-package">Install Policy Package</a>
+  <span class="section-label">Reference</span>
+  <a href="#custom-types">Custom Types</a>
+  <a href="#version-history">Version History</a>
+  <a href="#links">Links &amp; References</a>
+</nav>
+<!-- Main Content -->
+<div class="main">
+<h1>Fortinet FortiManager Plugin</h1>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v1.0.0 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
+
+<h2 id="description">Description</h2>
+<p>Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API.</p>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li>Create, delete, and list address objects</li>
+  <li>Add and remove address objects from address groups</li>
+  <li>Check if an address exists in an address group</li>
+  <li>Retrieve firewall policies from policy packages</li>
+  <li>Install policy packages to managed FortiGate devices</li>
+  <li>Supports API Token and session-based authentication</li>
+  <li>Per-action ADOM override for multi-tenant environments</li>
+  <li>Built-in RFC 1918 and whitelist filtering for address creation</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+  <li>Fortinet FortiManager 7.0 or later</li>
+  <li>An API token (FortiManager 7.2.2+ recommended) or admin username and password</li>
+  <li>Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)</li>
+  <li>JSON-RPC API access enabled for the admin account</li>
+</ul>
+<h2 id="setup">Setup &amp; Configuration</h2>
+
+<h3>FortiManager Side — API Token Authentication (Recommended)</h3>
+<p>API token authentication is available in FortiManager 7.2.2 and later. This is the recommended approach as it avoids session management overhead and is more suitable for automation.</p>
+
+<ol>
+  <li><strong>Navigate to</strong> System Settings &gt; Admin &gt; Administrators</li>
+  <li><strong>Click</strong> Create New &gt; REST API Admin</li>
+  <li><strong>Configure the admin:</strong>
+    <ul>
+      <li><strong>Username:</strong> Choose a descriptive name (e.g., <code>insightconnect-api</code>)</li>
+      <li><strong>Admin Profile:</strong> Assign the least-privilege profile you created (see Permissions section below)</li>
+      <li><strong>JSON API Access:</strong> Set to <code>Read-Write</code></li>
+      <li><strong>Trusted Hosts:</strong> Restrict to the InsightConnect orchestrator IP(s) for security</li>
+      <li><strong>ADOM:</strong> Assign to the specific ADOM(s) this integration will manage</li>
+    </ul>
+  </li>
+  <li><strong>Save</strong> — FortiManager will generate an API token. Copy and store it securely; it cannot be retrieved later.</li>
+</ol>
+
+<div class="info-box">
+  <strong>Tip:</strong> If you are running FortiManager 7.0.x or 7.2.0–7.2.1, API token auth is not available. Use Session-Based authentication instead.
+</div>
+
+<h3>FortiManager Side — Session-Based Authentication (Legacy)</h3>
+<p>For FortiManager versions below 7.2.2, use a standard admin account with JSON-RPC access:</p>
+<ol>
+  <li><strong>Navigate to</strong> System Settings &gt; Admin &gt; Administrators</li>
+  <li><strong>Create or edit</strong> an admin user (e.g., <code>insightconnect-session</code>)</li>
+  <li><strong>Set the Admin Profile</strong> to the least-privilege profile (see Permissions below)</li>
+  <li><strong>Under the admin's settings, ensure</strong> JSON API Access is set to <code>Read-Write</code></li>
+  <li><strong>Set Trusted Hosts</strong> to the InsightConnect orchestrator IP(s)</li>
+  <li><strong>Save</strong></li>
+</ol>
+
+<div class="warning-box">
+  <strong>Security Note:</strong> Session-based auth transmits credentials with each login request. Always use HTTPS and restrict trusted hosts to minimize exposure.
+</div>
+<h3>InsightConnect Side — Connection Configuration</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Hostname</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>FortiManager hostname or IP address (e.g., <code>fortimanager.example.com</code>, <code>192.168.1.1</code>, or <code>fortimanager.example.com:8443</code> for non-standard ports)</td></tr>
+  <tr><td>Authentication Type</td><td><code>enum</code></td><td><span class="badge badge-required">Required</span></td><td><code>API Token</code> or <code>Session-Based</code></td></tr>
+  <tr><td>API Key</td><td><code>credential_secret_key</code></td><td><span class="badge badge-optional">Optional</span></td><td>API token for Bearer authentication. Required when Authentication Type is "API Token"</td></tr>
+  <tr><td>Username</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Admin username. Required when Authentication Type is "Session-Based"</td></tr>
+  <tr><td>Password</td><td><code>credential_secret_key</code></td><td><span class="badge badge-optional">Optional</span></td><td>Admin password. Required when Authentication Type is "Session-Based"</td></tr>
+  <tr><td>SSL Verify</td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Validate TLS certificate. Set to <code>true</code> in production with a valid cert. Default: <code>false</code></td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Default Administrative Domain (ADOM) name. Can be overridden per-action. Default: <code>root</code></td></tr>
+</table>
+
+<div class="info-box">
+  <strong>ADOM Override:</strong> Every action supports an optional <code>adom</code> input parameter. If provided, it overrides the connection-level ADOM for that specific action execution. This is useful in multi-tenant environments where a single connection serves multiple ADOMs.
+</div>
+
+<h3>Network Requirements</h3>
+<ul>
+  <li>InsightConnect orchestrator must be able to reach FortiManager on TCP/443 (HTTPS)</li>
+  <li>If using a non-standard port (e.g., 8443), append it to the hostname: <code>fortimanager.example.com:8443</code></li>
+  <li>If FortiManager uses a self-signed certificate, set SSL Verify to <code>false</code> (not recommended for production)</li>
+  <li>Ensure any intermediate firewalls allow the orchestrator's IP to reach FortiManager's management interface</li>
+</ul>
+<h2 id="permissions">Permissions &amp; Least Privilege</h2>
+<p>FortiManager uses <strong>Admin Profiles</strong> to control access. Create a dedicated profile for the InsightConnect integration at System Settings &gt; Admin &gt; Admin Profiles &gt; Create New. Below are recommended least-privilege configurations for different use cases.</p>
+
+<h3>Profile: Read-Only (Audit / Visibility)</h3>
+<p>Use this profile when workflows only need to query objects and policies — no modifications.</p>
+<table class="perm-table">
+  <tr><th>Permission Category</th><th>Access Level</th><th>Rationale</th></tr>
+  <tr><td>Policy &amp; Objects</td><td>Read-Only</td><td>Required to list address objects, groups, and policies</td></tr>
+  <tr><td>Administrative Domain</td><td>Read-Only</td><td>Required to access ADOM-scoped objects</td></tr>
+  <tr><td>System Settings</td><td>None</td><td>Not needed for object queries</td></tr>
+  <tr><td>Device Manager</td><td>None</td><td>Not needed for object queries</td></tr>
+  <tr><td>JSON API Access</td><td>Read-Write</td><td>Must be Read-Write for any API access (FortiManager requirement)</td></tr>
+</table>
+<p><strong>Supported actions:</strong> Get Address Objects, Check if Address in Group, Get Policies</p>
+
+<h3>Profile: Object Management (Block/Unblock Workflows)</h3>
+<p>Use this profile for threat response workflows that create/delete address objects and manage group membership — the most common SOAR use case.</p>
+<table class="perm-table">
+  <tr><th>Permission Category</th><th>Access Level</th><th>Rationale</th></tr>
+  <tr><td>Policy &amp; Objects</td><td>Read-Write</td><td>Required to create, delete, and modify address objects and groups</td></tr>
+  <tr><td>Administrative Domain</td><td>Read-Only</td><td>Required to access ADOM-scoped objects</td></tr>
+  <tr><td>System Settings</td><td>None</td><td>Not needed for object management</td></tr>
+  <tr><td>Device Manager</td><td>None</td><td>Not needed unless installing policy packages</td></tr>
+  <tr><td>JSON API Access</td><td>Read-Write</td><td>Required for all API operations</td></tr>
+</table>
+<p><strong>Supported actions:</strong> All object actions (Get, Create, Delete, Add to Group, Remove from Group, Check if in Group, Get Policies)</p>
+<h3>Profile: Full Automation (Object Management + Policy Install)</h3>
+<p>Use this profile when workflows need to push changes to FortiGate devices after modifying objects. This is the most privileged level required by the plugin.</p>
+<table class="perm-table">
+  <tr><th>Permission Category</th><th>Access Level</th><th>Rationale</th></tr>
+  <tr><td>Policy &amp; Objects</td><td>Read-Write</td><td>Required for all object and policy operations</td></tr>
+  <tr><td>Administrative Domain</td><td>Read-Only</td><td>Required to access ADOM-scoped objects</td></tr>
+  <tr><td>System Settings</td><td>None</td><td>Not needed by the plugin</td></tr>
+  <tr><td>Device Manager</td><td>Read-Write</td><td>Required for Install Policy Package action</td></tr>
+  <tr><td>JSON API Access</td><td>Read-Write</td><td>Required for all API operations</td></tr>
+</table>
+<p><strong>Supported actions:</strong> All actions including Install Policy Package</p>
+
+<div class="warning-box">
+  <strong>Important:</strong> The Install Policy Package action pushes configuration to production FortiGate devices. Only grant Device Manager Read-Write if workflows actively deploy policy changes. Consider using a separate connection/profile for install operations to reduce blast radius.
+</div>
+
+<h3>ADOM Scoping</h3>
+<p>For multi-tenant environments, assign the API admin to specific ADOMs rather than granting global access:</p>
+<ul>
+  <li>When creating the admin, select only the ADOM(s) the integration needs to manage</li>
+  <li>An ADOM-scoped admin cannot see or modify objects in other ADOMs</li>
+  <li>Use the per-action <code>adom</code> parameter to target specific ADOMs at runtime</li>
+</ul>
+<h2 id="get-address-objects">Get Address Objects</h2>
+<p>Retrieve address objects from a FortiManager ADOM with optional filtering by name, subnet, or FQDN.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Name Filter</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter address objects by name (case-insensitive exact match)</td></tr>
+  <tr><td>Subnet Filter</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by subnet value (e.g., <code>198.51.100.100/32</code>)</td></tr>
+  <tr><td>FQDN Filter</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by FQDN value (e.g., <code>example.com</code>)</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a list of address objects matching the specified filters.</p>
+<pre><code>[
+  {
+    "name": "MaliciousHost",
+    "type": "ipmask",
+    "subnet": "198.51.100.100/32"
+  }
+]</code></pre>
+
+<h2 id="create-address-object">Create Address Object</h2>
+<p>Create a new address object in a FortiManager ADOM. Automatically detects address type (IP, CIDR, FQDN) and applies whitelist/RFC 1918 filtering.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Address</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>IP address, CIDR notation, or FQDN</td></tr>
+  <tr><td>Address Object Name</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Custom name. Defaults to the address value if not provided</td></tr>
+  <tr><td>Whitelist</td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Addresses that should not be blocked (IPs, CIDRs, domains)</td></tr>
+  <tr><td>Skip RFC 1918</td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Skip creation for private IP addresses. Default: <code>true</code></td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns a boolean indicating success and the created object details.</p>
+<pre><code>{
+  "success": true,
+  "address_object": {
+    "name": "MaliciousHost",
+    "type": "ipmask",
+    "subnet": "198.51.100.100/32"
+  }
+}</code></pre>
+<h2 id="delete-address-object">Delete Address Object</h2>
+<p>Delete an address object from a FortiManager ADOM by name.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Address Object</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the address object to delete</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true
+}</code></pre>
+
+<h2 id="add-address-object-to-group">Add Address Object to Group</h2>
+<p>Add an address object to an address group. The object must already exist in the ADOM. Addition is idempotent — adding an object that already exists in the group succeeds without error.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Address Object</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the address object to add</td></tr>
+  <tr><td>Group</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the target address group</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true,
+  "address_objects": ["MaliciousHost", "AnotherHost"]
+}</code></pre>
+
+<h2 id="remove-address-object-from-group">Remove Address Object from Group</h2>
+<p>Remove an address object from an address group. The group must have at least one remaining member after removal.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Address Object</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the address object to remove</td></tr>
+  <tr><td>Group</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the address group</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true,
+  "address_objects": ["AnotherHost"]
+}</code></pre>
+<h2 id="check-if-address-in-group">Check if Address in Group</h2>
+<p>Check if an address exists in an address group. Supports matching by object name or by searching the stored value (subnet/FQDN) of each member.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Address</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Address to check (matched by name or value depending on Enable Search)</td></tr>
+  <tr><td>Group</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the address group to check</td></tr>
+  <tr><td>Enable Search</td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>When true, searches member stored values instead of names. Default: <code>false</code></td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "found": true,
+  "address_objects": ["198.51.100.100/32"]
+}</code></pre>
+
+<h2 id="get-policies">Get Policies</h2>
+<p>Retrieve firewall policies from a FortiManager policy package with optional name filtering.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Policy Package</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the policy package (e.g., <code>default</code>)</td></tr>
+  <tr><td>Name Filter</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by policy name (case-insensitive exact match)</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "policies": [
+    {
+      "policyid": 1,
+      "name": "Allow Outbound",
+      "srcintf": ["port1"],
+      "dstintf": ["port2"],
+      "srcaddr": ["all"],
+      "dstaddr": ["all"],
+      "service": ["ALL"],
+      "action": "accept",
+      "status": "enable",
+      "schedule": "always",
+      "logtraffic": "all"
+    }
+  ]
+}</code></pre>
+<h2 id="install-policy-package">Install Policy Package</h2>
+<p>Install a policy package to managed FortiGate devices or device groups. This pushes the current ADOM configuration (including any address object changes) to the specified targets.</p>
+<div class="warning-box">
+  <strong>Caution:</strong> This action deploys configuration changes to production devices. Ensure changes are validated before triggering this in automated workflows.
+</div>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Policy Package</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the policy package to install</td></tr>
+  <tr><td>Target Devices</td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>List of target device names (at least one device or group required)</td></tr>
+  <tr><td>Target Device Groups</td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>List of target device group names</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<p>Returns the task ID for the asynchronous install operation. Use FortiManager's task monitor to track progress.</p>
+<pre><code>{
+  "task_id": 512
+}</code></pre>
+
+<h2 id="custom-types">Custom Types</h2>
+
+<h3>address_object</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>name</td><td><code>string</code></td><td>Address object name</td><td><code>MaliciousHost</code></td></tr>
+  <tr><td>type</td><td><code>string</code></td><td>Address type: ipmask, FQDN, iprange</td><td><code>ipmask</code></td></tr>
+  <tr><td>subnet</td><td><code>string</code></td><td>Subnet in CIDR notation (ipmask type)</td><td><code>198.51.100.100/32</code></td></tr>
+  <tr><td>fqdn</td><td><code>string</code></td><td>Fully qualified domain name (FQDN type)</td><td><code>evil.example.com</code></td></tr>
+  <tr><td>start_ip</td><td><code>string</code></td><td>Range start IP (iprange type)</td><td><code>10.0.0.1</code></td></tr>
+  <tr><td>end_ip</td><td><code>string</code></td><td>Range end IP (iprange type)</td><td><code>10.0.0.254</code></td></tr>
+  <tr><td>comment</td><td><code>string</code></td><td>Optional comment</td><td><code>Blocked by SOAR</code></td></tr>
+  <tr><td>associated_interface</td><td><code>string</code></td><td>Associated network interface</td><td><code>any</code></td></tr>
+</table>
+<h3>address_group</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>name</td><td><code>string</code></td><td>Address group name</td><td><code>InsightConnect Block List</code></td></tr>
+  <tr><td>member</td><td><code>[]string</code></td><td>List of member address object names</td><td><code>["Host1", "Host2"]</code></td></tr>
+  <tr><td>comment</td><td><code>string</code></td><td>Optional comment</td><td><code>Managed by SOAR</code></td></tr>
+</table>
+
+<h3>policy</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
+  <tr><td>policyid</td><td><code>integer</code></td><td>Firewall policy ID</td><td><code>1</code></td></tr>
+  <tr><td>name</td><td><code>string</code></td><td>Policy name</td><td><code>Allow Outbound</code></td></tr>
+  <tr><td>srcintf</td><td><code>[]string</code></td><td>Source interfaces</td><td><code>["port1"]</code></td></tr>
+  <tr><td>dstintf</td><td><code>[]string</code></td><td>Destination interfaces</td><td><code>["port2"]</code></td></tr>
+  <tr><td>srcaddr</td><td><code>[]string</code></td><td>Source address objects or groups</td><td><code>["all"]</code></td></tr>
+  <tr><td>dstaddr</td><td><code>[]string</code></td><td>Destination address objects or groups</td><td><code>["all"]</code></td></tr>
+  <tr><td>service</td><td><code>[]string</code></td><td>Service objects</td><td><code>["ALL"]</code></td></tr>
+  <tr><td>action</td><td><code>string</code></td><td>Policy action: accept, deny, ipsec</td><td><code>accept</code></td></tr>
+  <tr><td>status</td><td><code>string</code></td><td>Policy status: enable, disable</td><td><code>enable</code></td></tr>
+  <tr><td>schedule</td><td><code>string</code></td><td>Schedule name</td><td><code>always</code></td></tr>
+  <tr><td>logtraffic</td><td><code>string</code></td><td>Logging mode: disable, all, utm</td><td><code>all</code></td></tr>
+  <tr><td>comments</td><td><code>string</code></td><td>Policy comments</td><td><code>Allow internet access</code></td></tr>
+</table>
+
+<h2 id="version-history">Version History</h2>
+<table>
+  <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>1.0.0</td><td>Initial plugin release</td></tr>
+</table>
+
+<h2 id="links">Links &amp; References</h2>
+<ul>
+  <li><a href="https://www.fortinet.com/products/management/fortimanager" target="_blank">Fortinet FortiManager Product Page</a></li>
+  <li><a href="https://fndn.fortinet.net/" target="_blank">FortiManager JSON-RPC API (Fortinet Developer Network)</a></li>
+  <li><a href="https://docs.fortinet.com/document/fortimanager/7.2.0/new-features/47777/fortimanager-supports-authentication-token-for-api-administrators-7-2-2" target="_blank">FortiManager API Token Authentication (7.2.2+)</a></li>
+  <li><a href="https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/675151" target="_blank">Creating Administrator Profiles</a></li>
+</ul>
+
+<div class="footer">
+  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v1.0.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
+</div>
+</div>
+</body>
+</html>
