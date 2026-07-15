@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiro Configuration - Rapid7 InsightConnect Plugins</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; line-height: 1.6; background: #fff; }
+        .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; padding: 0; z-index: 100; }
+        .sidebar .brand { padding: 24px 20px 16px; border-bottom: 1px solid #2d2d4e; }
+        .sidebar .brand h1 { font-size: 16px; color: #fff; font-weight: 700; }
+        .sidebar .brand .subtitle { font-size: 12px; color: #6c6c8c; margin-top: 4px; }
+        .sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; font-weight: 600; }
+        .sidebar nav { padding: 8px 0; }
+        .sidebar a { display: block; color: #b0b0d0; padding: 7px 20px; text-decoration: none; font-size: 13px; transition: all 0.15s; }
+        .sidebar a:hover { background: #2d2d4e; color: #fff; }
+        .main { margin-left: 260px; padding: 40px 60px; max-width: 1220px; }
+        h2 { font-size: 24px; color: #1a1a2e; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e8; }
+        h2:first-of-type { margin-top: 0; }
+        h3 { font-size: 18px; color: #333; margin: 24px 0 12px; }
+        h4 { font-size: 14px; color: #555; margin: 16px 0 8px; font-weight: 600; }
+        p { margin: 8px 0 16px; color: #444; font-size: 14px; }
+        ul { margin: 8px 0 16px 24px; }
+        li { margin: 4px 0; font-size: 14px; color: #444; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+        th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; color: #333; }
+        td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; color: #444; }
+        tr:hover td { background: #fafafe; }
+        pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0 24px; }
+        code { font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace; font-size: 12px; }
+        .inline-code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #c7254e; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .badge-auto { background: #d1fae5; color: #065f46; }
+        .badge-filematch { background: #e0f2fe; color: #0369a1; }
+        .badge-manual { background: #f3f4f6; color: #4b5563; }
+        .info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0 24px; font-size: 13px; color: #1e40af; }
+        .warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0 24px; font-size: 13px; color: #92400e; }
+        .footer { margin-top: 64px; padding: 24px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #888; text-align: center; }
+        .steering-item { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f5; }
+        .steering-item:last-child { border-bottom: none; }
+        .skill-item { margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>Kiro Configuration</h1>
+            <div class="subtitle">AI Development Setup</div>
+        </div>
+        <nav>
+            <div class="section-label">Overview</div>
+            <a href="#description">Description</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#structure">Directory Structure</a>
+
+            <div class="section-label">Steering Files</div>
+            <a href="#steering-repos">repos</a>
+            <a href="#steering-plugin-dev">plugin-dev</a>
+            <a href="#steering-common-mistakes">common-mistakes</a>
+            <a href="#steering-structure">structure</a>
+            <a href="#steering-implementation">implementation</a>
+            <a href="#steering-exceptions">exceptions</a>
+            <a href="#steering-plugin-spec">plugin-spec</a>
+            <a href="#steering-testing">testing</a>
+            <a href="#steering-prospector">prospector</a>
+            <a href="#steering-git-workflow">git-workflow</a>
+            <a href="#steering-quick-actions-create">quick-actions-create</a>
+            <a href="#steering-quick-actions-update">quick-actions-update</a>
+
+            <div class="section-label">Skills</div>
+            <a href="#skill-plugin-dev">plugin-dev</a>
+            <a href="#skill-plugin-build-prep">plugin-build-prep</a>
+            <a href="#skill-create-new-plugin">create-new-plugin</a>
+            <a href="#skill-create-plugin-action">create-plugin-action</a>
+            <a href="#skill-plugin-release">plugin-release</a>
+            <a href="#skill-plugin-review">plugin-review</a>
+            <a href="#skill-refactor-plugin-auth">refactor-plugin-auth</a>
+            <a href="#skill-generate-plugin-html-docs">generate-plugin-html-docs</a>
+            <a href="#skill-workflow-builder">workflow-builder</a>
+            <a href="#skill-workflow-submission">workflow-submission</a>
+
+            <div class="section-label">Hooks</div>
+            <a href="#hook-update-steering-on-fix">update-steering-on-fix</a>
+            <a href="#hook-regenerate-docs">regenerate-docs</a>
+
+            <div class="section-label">Settings</div>
+            <a href="#settings-mcp">mcp</a>
+            <a href="#settings-permissions">permissions</a>
+
+            <div class="section-label">Reference</div>
+            <a href="#inclusion-modes">Inclusion Modes</a>
+            <a href="#for-contributors">For Contributors</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <!-- DESCRIPTION -->
+        <h2 id="description">Description</h2>
+        <p>Kiro is an AI-powered development environment that assists with building, testing, reviewing, and releasing InsightConnect plugins. The <span class="inline-code">.kiro/</span> directory in this repository provides Kiro with the context, rules, and workflows it needs to operate effectively within the plugin development lifecycle.</p>
+        <p>This configuration transforms Kiro from a general-purpose AI into a specialized InsightConnect plugin engineer that understands the SDK, follows conventions, avoids known pitfalls, and can execute multi-step build and release workflows autonomously.</p>
+
+        <!-- HOW IT WORKS -->
+        <h2 id="how-it-works">How It Works</h2>
+        <p>The <span class="inline-code">.kiro/</span> configuration operates as a three-layer system:</p>
+
+        <h3>1. Steering (Context Rules)</h3>
+        <p>Steering files provide persistent context — facts, conventions, and constraints that Kiro should always (or conditionally) keep in mind. They don't tell Kiro <em>what</em> to do; they tell it <em>how</em> to behave when doing anything. Steering files are loaded based on their inclusion mode: automatically on every interaction, when specific file patterns are open, or only when manually activated.</p>
+
+        <h3>2. Skills (Step-by-Step Workflows)</h3>
+        <p>Skills are multi-step procedures that Kiro follows when performing complex tasks. Each skill defines a sequence of phases — research, implement, validate — that Kiro executes in order. Skills reference steering files for their rules but add orchestration on top: deciding which commands to run, what order to do things, and when to stop.</p>
+
+        <h3>3. Hooks (Event Automation)</h3>
+        <p>Hooks trigger automatically in response to events — a user prompt, a completed task, or a file change. They run skills or custom logic without the user needing to ask. This creates a feedback loop: fixes update steering to prevent recurrence, and completed builds automatically regenerate documentation.</p>
+
+        <div class="info-box">
+            These three layers interact: steering provides the rules, skills orchestrate the work, and hooks automate the triggers. A typical flow might be: a hook detects a completed build → triggers the doc-generation skill → which follows steering rules about formatting and content.
+        </div>
+
+        <!-- DIRECTORY STRUCTURE -->
+        <h2 id="structure">Directory Structure</h2>
+        <pre><code>.kiro/
+├── steering/
+│   ├── repos.md                  # Repository routing + dev workflow
+│   ├── plugin-dev.md             # Product overview + core rules
+│   ├── common-mistakes.md        # Anti-patterns to avoid
+│   ├── structure.md              # Project layout + conventions
+│   ├── implementation.md         # Code patterns + API client
+│   ├── exceptions.md             # Error handling + PluginException
+│   ├── plugin-spec.md            # Spec YAML field reference
+│   ├── testing.md                # Unit test strategies
+│   ├── prospector.md             # Linter resolution guide
+│   ├── git-workflow.md           # Production release branching
+│   ├── quick-actions-create.md   # Creating analyst quick actions
+│   └── quick-actions-update.md   # Updating quick actions
+├── skills/
+│   ├── plugin-dev.md             # Master intent router
+│   ├── plugin-build-prep.md      # Pre-build readiness
+│   ├── create-new-plugin.md      # Full new plugin workflow
+│   ├── create-plugin-action.md   # Add action to existing plugin
+│   ├── plugin-release.md         # Production release process
+│   ├── plugin-review.md          # Read-only review
+│   ├── refactor-plugin-auth.md   # Auth migration workflow
+│   ├── generate-plugin-html-docs.md  # HTML docs generation
+│   ├── workflow-builder.md       # .icon workflow creation
+│   └── workflow-submission.md    # Workflow submission process
+├── hooks/
+│   ├── update-steering-on-fix.md # Learn from session fixes
+│   └── regenerate-docs.md        # Auto-regen docs after build
+├── settings/
+│   ├── mcp.json                  # MCP server configuration
+│   └── permissions.yaml          # Shell command allowlists
+└── README.md                     # Overview documentation</code></pre>
+
+        <!-- STEERING FILES -->
+        <h2 id="steering">Steering Files</h2>
+        <p>Steering files inject context into Kiro's reasoning. They define what the AI should know and remember, organized by concern. Each file has an inclusion mode that determines when it loads into context.</p>
+
+        <div class="steering-item">
+            <h3 id="steering-repos">repos.md</h3>
+            <span class="badge badge-auto">auto</span>
+            <p>Repository routing table mapping plugin names to their development and production locations. Includes dev workflow commands (<span class="inline-code">insight-plugin</span> CLI), the decision tree for choosing between prod and dev repos, and standard directory paths.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-plugin-dev">plugin-dev.md</h3>
+            <span class="badge badge-auto">auto</span>
+            <p>High-level product overview of InsightConnect and the plugin SDK. Covers the core rules every plugin must follow, the version numbering scheme (semver table for major/minor/patch), key CLI commands, and the relationship between spec files and generated code.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-common-mistakes">common-mistakes.md</h3>
+            <span class="badge badge-auto">auto</span>
+            <p>A catalog of 38 anti-patterns observed in past plugin development sessions. Each entry describes the mistake, why it's wrong, and the correct approach. Also includes a pre-submission update checklist to verify before marking work as complete.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-structure">structure.md</h3>
+            <span class="badge badge-filematch">fileMatch: plugins/**</span>
+            <p>Project layout conventions, directory naming rules (snake_case, <span class="inline-code">icon_</span> prefix), and the three standard workflows: new plugin creation, adding actions/triggers, and updating existing plugins. Loaded whenever any file inside <span class="inline-code">plugins/</span> is open.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-implementation">implementation.md</h3>
+            <span class="badge badge-filematch">fileMatch: plugins/**/*.py</span>
+            <p>Detailed code patterns for connection classes, action/trigger implementations, API client utilities, pagination strategies, rate-limit handling, and input/output guards. Loaded when editing Python source files within plugins.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-exceptions">exceptions.md</h3>
+            <span class="badge badge-filematch">fileMatch: plugins/**/*.py</span>
+            <p>PluginException preset reference (Cause, Assistance, Data fields), ConnectionTestException patterns, and rules for when to raise vs. return errors. Ensures consistent error messaging across all plugin actions.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-plugin-spec">plugin-spec.md</h3>
+            <span class="badge badge-filematch">fileMatch: **/plugin.spec.yaml</span>
+            <p>Complete field reference for <span class="inline-code">plugin.spec.yaml</span> — all supported types, enum syntax, credential access patterns, action/trigger/task definitions, and version_history formatting. The authoritative guide for spec authoring.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-testing">testing.md</h3>
+            <span class="badge badge-filematch">fileMatch: **/unit_test/**</span>
+            <p>Unit test conventions: mock strategies (patching requests at the session level), test file structure, fixture organization in <span class="inline-code">responses/</span> and <span class="inline-code">payloads/</span> directories, coverage requirements, and parameterized test patterns.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-prospector">prospector.md</h3>
+            <span class="badge badge-manual">manual</span>
+            <p>Resolution guide for linter issues surfaced by Prospector. Covers mccabe complexity reduction, bandit security findings (B101, B105, etc.), pylint refactoring suggestions, and how to apply fixes without breaking plugin conventions.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-git-workflow">git-workflow.md</h3>
+            <span class="badge badge-manual">manual</span>
+            <p>Production release branch strategy for creating upstream PRs to <span class="inline-code">rapid7/insightconnect-plugins</span>. Covers branch naming, sync procedures, PR creation, and the review process for getting plugins into production.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-quick-actions-create">quick-actions-create.md</h3>
+            <span class="badge badge-manual">manual</span>
+            <p>Guide for creating InsightConnect analyst quick actions — lightweight, importable workflow snippets that analysts can run on-demand from the InsightConnect interface.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="steering-quick-actions-update">quick-actions-update.md</h3>
+            <span class="badge badge-manual">manual</span>
+            <p>Procedure for updating existing quick actions after a plugin version bump. Covers updating version references, re-testing, and resubmitting to the workflows repository.</p>
+        </div>
+
+        <!-- SKILLS -->
+        <h2 id="skills">Skills</h2>
+        <p>Skills define multi-step workflows that Kiro executes in sequence. Each skill is a complete procedure — from research through validation — that produces a specific deliverable.</p>
+
+        <div class="skill-item">
+            <h3 id="skill-plugin-dev">plugin-dev</h3>
+            <p>The master router skill. Classifies user intent (build, review, release, etc.), determines the correct repository (production vs. development), and delegates to the appropriate specialized skill. This is the entry point for most plugin-related requests.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-plugin-build-prep">plugin-build-prep</h3>
+            <p>Pre-build readiness checks. Verifies that tooling is installed and functional (<span class="inline-code">insight-plugin</span>, Python, Docker), resolves the latest SDK version from the upstream repository, confirms the correct Python version, and ensures the working directory is clean before starting a build.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-create-new-plugin">create-new-plugin</h3>
+            <p>Full new plugin workflow from zero to validated. Researches the target API, writes the <span class="inline-code">plugin.spec.yaml</span>, scaffolds the project with <span class="inline-code">insight-plugin create</span>, implements all actions and the connection, writes unit tests with mocked responses, and runs validation.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-create-plugin-action">create-plugin-action</h3>
+            <p>Adds a new action to an existing plugin. Edits the spec to add the action definition, bumps the version, runs <span class="inline-code">insight-plugin refresh</span> to generate scaffolding, implements the action logic, adds API methods if needed, writes tests, and validates.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-plugin-release">plugin-release</h3>
+            <p>Production release workflow. Syncs the local master with upstream, creates a properly-named release branch, stages changes, creates the PR against <span class="inline-code">rapid7/insightconnect-plugins</span>, and guides through the review process.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-plugin-review">plugin-review</h3>
+            <p>Read-only code review against the master upstream repository. Pulls the latest conventions and known issues, then analyzes the specified plugin for conformance, anti-patterns, missing tests, spec inconsistencies, and documentation gaps without modifying any files.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-refactor-plugin-auth">refactor-plugin-auth</h3>
+            <p>Auth migration workflow for converting plugins from user-delegated authentication to app-only (<span class="inline-code">client_credentials</span>) OAuth2 flows. Updates the connection spec, rewrites the auth logic, updates token handling, and verifies the migration with connection tests.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-generate-plugin-html-docs">generate-plugin-html-docs</h3>
+            <p>Generates self-contained HTML documentation for a plugin. Reads the spec and implementation, then produces a single-file doc page with sidebar navigation, setup instructions, permissions tables, action I/O documentation, custom types, and version history — matching the style of this docs site.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-workflow-builder">workflow-builder</h3>
+            <p>Builds importable <span class="inline-code">.icon</span> workflow files from plain-language descriptions. Translates natural language into the InsightConnect workflow JSON format with proper step wiring, variable references, and trigger configurations.</p>
+        </div>
+
+        <div class="skill-item">
+            <h3 id="skill-workflow-submission">workflow-submission</h3>
+            <p>Submits completed workflows to the <span class="inline-code">rapid7/insightconnect-workflows</span> repository. Validates the workflow structure, creates the PR with proper metadata, and ensures the submission meets the upstream repository's contribution requirements.</p>
+        </div>
+
+        <!-- HOOKS -->
+        <h2 id="hooks">Hooks</h2>
+        <p>Hooks run automatically in response to events, creating feedback loops that keep the configuration up to date and documentation fresh without manual intervention.</p>
+
+        <div class="steering-item">
+            <h3 id="hook-update-steering-on-fix">update-steering-on-fix</h3>
+            <span class="badge badge-manual">User-triggered</span>
+            <p>When activated, reviews the current session for mistakes that were caught and corrected. Extracts the lesson learned and updates the relevant steering file (typically <span class="inline-code">common-mistakes.md</span>) to prevent the same mistake from recurring in future sessions.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="hook-regenerate-docs">regenerate-docs</h3>
+            <span class="badge badge-auto">PostTaskExec</span>
+            <p>Triggers after a development build completes successfully. Regenerates the HTML documentation for the affected plugin and updates the <span class="inline-code">docs/index.html</span> navigation if a new plugin was added. Ensures docs always reflect the latest spec and implementation.</p>
+        </div>
+
+        <!-- SETTINGS -->
+        <h2 id="settings">Settings</h2>
+
+        <div class="steering-item">
+            <h3 id="settings-mcp">mcp.json</h3>
+            <p>MCP (Model Context Protocol) server configuration. Currently configures a fetch server that allows Kiro to retrieve web content — used for reading API documentation, checking upstream repository state, and resolving latest SDK versions from GitHub.</p>
+        </div>
+
+        <div class="steering-item">
+            <h3 id="settings-permissions">permissions.yaml</h3>
+            <p>Shell command allowlists that control what the agent can execute. Defines permitted commands (like <span class="inline-code">insight-plugin</span>, <span class="inline-code">git</span>, <span class="inline-code">python</span>, <span class="inline-code">docker</span>) and blocks potentially dangerous operations. Acts as a security boundary for autonomous execution.</p>
+        </div>
+
+        <!-- INCLUSION MODES -->
+        <h2 id="inclusion-modes">Inclusion Modes</h2>
+        <p>Each steering file declares an inclusion mode that determines when it's loaded into Kiro's context:</p>
+
+        <table>
+            <thead>
+                <tr><th>Mode</th><th>Behavior</th><th>Use Case</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-auto">auto</span></td>
+                    <td>Always loaded on every interaction</td>
+                    <td>Core rules that apply universally — routing, conventions, common mistakes</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-filematch">fileMatch</span></td>
+                    <td>Loaded when a file matching the glob pattern is open in the editor</td>
+                    <td>Context-specific rules — Python patterns when editing .py files, spec rules when editing YAML</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-manual">manual</span></td>
+                    <td>Only loaded when explicitly activated by the user or a skill</td>
+                    <td>Specialized guides used infrequently — linter fixes, release procedures</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box">
+            Auto-mode files consume context budget on every request, so they should be kept concise and high-signal. FileMatch files provide relevant depth without the cost. Manual files are unlimited in length since they're only loaded on demand.
+        </div>
+
+        <!-- FOR CONTRIBUTORS -->
+        <h2 id="for-contributors">For Contributors</h2>
+        <p>If you're new to this repository and want to understand the AI-assisted workflow:</p>
+
+        <ul>
+            <li><strong>Start with <span class="inline-code">steering/plugin-dev.md</span></strong> — gives you the product context and core rules</li>
+            <li><strong>Read <span class="inline-code">steering/structure.md</span></strong> — explains the project layout and standard workflows</li>
+            <li><strong>Review <span class="inline-code">steering/common-mistakes.md</span></strong> — learn from past mistakes before making new ones</li>
+            <li><strong>Check <span class="inline-code">skills/plugin-dev.md</span></strong> — understand how the master routing skill delegates work</li>
+        </ul>
+
+        <div class="warning-box">
+            Steering files are living documents. If you discover a new anti-pattern or convention, add it to the relevant file. The <strong>update-steering-on-fix</strong> hook can do this automatically during development sessions.
+        </div>
+
+        <p>When adding new steering files, choose the most restrictive inclusion mode that still covers your use case. Prefer <span class="inline-code">fileMatch</span> over <span class="inline-code">auto</span> when the content is only relevant to specific file types.</p>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            Rapid7 InsightConnect &middot; Kiro AI Development Configuration &middot; Plugins Repository
+        </div>
+    </main>
+</body>
+</html>
