@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Regenerate Plugin Docs After Dev Build",
+      "trigger": "PostTaskExec",
+      "description": "After a spec task completes on a dev plugin build, prompts the agent to regenerate the HTML documentation and update the docs site index.",
+      "action": {
+        "type": "agent",
+        "prompt": "A plugin build/update task just completed. If this was a dev build in the plugins repo (~/Documents/GitHub/plugins), do the following:\n\n1. Identify which plugin was modified (check recent git changes or the task context)\n2. Regenerate the HTML documentation for that plugin using the `generate-plugin-html-docs` skill:\n   - Read the plugin's plugin.spec.yaml\n   - Generate a self-contained HTML file at docs/<plugin_name>.html\n   - Follow the full style template (sidebar, setup, permissions, actions, types, version history)\n3. Update docs/index.html:\n   - Update the version number shown for the plugin in the sidebar and plugin cards\n   - If this is a new plugin, add it to both the sidebar navigation (with section dropdown) and the home page plugin grid\n4. Commit the doc changes: `git add docs/ && git commit -m \"docs: Regenerate <plugin_name> documentation\" && git push origin main`\n\nIf this was NOT a dev build (e.g., it was a prod build on insightconnect-plugins), skip this step entirely."
+      }
+    }
+  ]
+}
