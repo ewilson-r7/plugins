@@ -43,7 +43,7 @@ code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
 <nav class="sidebar">
 <div class="brand">
 <h2>Microsoft Office365 Email Security</h2>
-<div class="version">v4.1.0</div>
+<div class="version">v4.1.2</div>
 </div>
 <div class="section-label">Overview</div>
 <a href="#description">Description</a>
@@ -69,7 +69,7 @@ code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
 </nav>
 <div class="main">
 <h1>Microsoft Office365 Email Security</h1>
-<p>Rapid7 InsightConnect Plugin &mdash; v4.1.0</p>
+<p>Rapid7 InsightConnect Plugin &mdash; v4.1.2</p>
 <div style="margin: 8px 0 24px;">
 <span class="tag">Office365</span><span class="tag">Microsoft</span><span class="tag">Email</span><span class="tag">Phishing</span><span class="tag">Remediation</span>
 </div>
@@ -674,6 +674,8 @@ Export-PfxCertificate -Cert $cert -FilePath ".\InsightConnectO365.pfx" -Password
 <h2 id="version-history">Version History</h2>
 <table>
 <tr><th>Version</th><th>Changes</th></tr>
+<tr><td>4.1.2</td><td>Fix Tenant Allow/Block List scripts to use correct output marker for response parsing</td></tr>
+<tr><td>4.1.1</td><td>Fix Dockerfile to install PowerShell and ExchangeOnlineManagement module from public source</td></tr>
 <tr><td>4.1.0</td><td>Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0</td></tr>
 <tr><td>4.0.8</td><td>Fixed mass_purge action timing out due to backslash escape characters being injected into content_match_query | Improved error handling | Updated SDK to 6.5.0</td></tr>
 <tr><td>4.0.7</td><td>Updated Exchange Online module version to 3.9.2 | Updated SDK to 6.4.2</td></tr>
@@ -728,7 +730,7 @@ Export-PfxCertificate -Cert $cert -FilePath ".\InsightConnectO365.pfx" -Password
 </ul>
 
 <div class="footer">
-Rapid7 InsightConnect &middot; Microsoft Office365 Email Security Plugin v4.1.0 &middot; Supported Versions: Microsoft Office 365 2026-07-14
+Rapid7 InsightConnect &middot; Microsoft Office365 Email Security Plugin v4.1.2 &middot; Supported Versions: Microsoft Office 365 2026-07-14
 </div>
 </div>
 </body>
