@@ -6,7 +6,7 @@ from sys import argv
 
 Name = "Microsoft Office365 Email Security"
 Vendor = "rapid7_custom"
-Version = "4.1.0"
+Version = "4.1.1"
 Description = "The Microsoft Office 365 email security plugin adds utilities to help administrators manage their Office 365 instances. This plugin will allow administrators to take remediation actions across their organization"
 
 

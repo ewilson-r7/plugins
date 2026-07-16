@@ -4,7 +4,7 @@ products: ["insightconnect"]
 name: microsoft_office365_email_security
 title: Microsoft Office365 Email Security
 description: The Microsoft Office 365 email security plugin adds utilities to help administrators manage their Office 365 instances. This plugin will allow administrators to take remediation actions across their organization
-version: 4.1.0
+version: 4.1.1
 connection_version: 4
 supported_versions: ["Microsoft Office 365 2026-07-14"]
 vendor: rapid7_custom
@@ -63,6 +63,7 @@ requirements:
   - "Tenant Allow/Block List actions"
   - "Tenant AllowBlockList Manager role"
 version_history:
+  - "4.1.1 - Fix Dockerfile to install PowerShell and ExchangeOnlineManagement module from public source"
   - "4.1.0 - Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0"
   - "4.0.8 - Fixed `mass_purge` action timing out due to backslash escape characters being injected into `content_match_query` | Improved error handling | Updated SDK to the latest version (6.5.0)"
   - "4.0.7 - Updated `Exchange Online` module version to `3.9.2` | Updated SDK to the latest version (6.4.2)"

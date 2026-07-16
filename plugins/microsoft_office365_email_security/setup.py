@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="microsoft_office365_email_security-rapid7_custom-plugin",
-    version="4.1.0",
+    version="4.1.1",
     description="The Microsoft Office 365 email security plugin adds utilities to help administrators manage their Office 365 instances. This plugin will allow administrators to take remediation actions across their organization",
     author="rapid7_custom",
     author_email="",
