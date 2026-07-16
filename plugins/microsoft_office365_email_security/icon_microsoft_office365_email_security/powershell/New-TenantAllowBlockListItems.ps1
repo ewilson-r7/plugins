@@ -57,6 +57,6 @@ $cmd += ' -ErrorAction Stop | Select-Object -Property Identity, Value, Action, L
 
 Exec-Retry $cmd ([ref]$result)
 
-Write-Host "Success - entries follow:"
+Write-Host "Success - trace follows:"
 Write-Host ($result)
 Disconnect-ExchangeOnline -Confirm:$false

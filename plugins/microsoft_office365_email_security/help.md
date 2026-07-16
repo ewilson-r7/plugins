@@ -538,6 +538,7 @@ Example output:
 
 # Version History
 
+* 4.1.2 - Fix Tenant Allow/Block List scripts to use correct output marker for response parsing
 * 4.1.1 - Fix Dockerfile to install PowerShell and ExchangeOnlineManagement module from public source
 * 4.1.0 - Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0
 * 4.0.8 - Fixed `mass_purge` action timing out due to backslash escape characters being injected into `content_match_query` | Improved error handling | Updated SDK to the latest version (6.5.0)
