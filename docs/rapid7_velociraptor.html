@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapid7 Velociraptor Plugin Documentation</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; }
+.sidebar { position: fixed; width: 260px; height: 100vh; background: #1a1a2e; overflow-y: auto; }
+.sidebar a { color: #b0b0d0; padding: 8px 20px; display: block; text-decoration: none; font-size: 13px; }
+.sidebar a:hover { background: #2d2d4e; color: #fff; }
+.sidebar .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6c6c8c; padding: 16px 20px 6px; }
+.sidebar .brand { padding: 24px 20px; border-bottom: 1px solid #2d2d4e; }
+.sidebar .brand h2 { color: #fff; margin: 0; font-size: 16px; }
+.sidebar .brand span { color: #6c6c8c; font-size: 12px; }
+.main { margin-left: 260px; padding: 40px 60px; max-width: 960px; }
+h1 { font-size: 28px; color: #1a1a2e; }
+h2 { font-size: 22px; color: #1a1a2e; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0e0e8; }
+h3 { font-size: 17px; color: #333; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
+th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; }
+td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; }
+code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-required { background: #fee2e2; color: #b91c1c; }
+.badge-optional { background: #e0f2fe; color: #0369a1; }
+.info-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
+.perm-table td:first-child { font-weight: 600; white-space: nowrap; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
+p { line-height: 1.6; color: #374151; }
+ul { line-height: 1.8; color: #374151; }
+</style>
+</head>
+<body>
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="brand">
+    <h2>Rapid7 Velociraptor</h2>
+    <span>v1.0.0</span>
+  </div>
+  <div class="section-label">Overview</div>
+  <a href="#description">Description</a>
+  <a href="#key-features">Key Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#setup">Setup</a>
+  <a href="#permissions">Permissions</a>
+  <div class="section-label">Client Investigation</div>
+  <a href="#get_client">Get Client</a>
+  <a href="#list_clients">List Clients</a>
+  <div class="section-label">Incident Labeling</div>
+  <a href="#get_client_labels">Get Client Labels</a>
+  <a href="#add_label">Add Label</a>
+  <a href="#remove_label">Remove Label</a>
+  <div class="section-label">Artifact Collection</div>
+  <a href="#create_flow">Create Flow</a>
+  <a href="#get_flow">Get Flow</a>
+  <a href="#list_flows">List Flows</a>
+  <a href="#get_flow_results">Get Flow Results</a>
+  <div class="section-label">Threat Hunting</div>
+  <a href="#create_hunt">Create Hunt</a>
+  <a href="#get_hunt">Get Hunt</a>
+  <a href="#list_hunts">List Hunts</a>
+  <a href="#get_hunt_results">Get Hunt Results</a>
+  <div class="section-label">Artifact Discovery</div>
+  <a href="#list_artifacts">List Artifacts</a>
+  <div class="section-label">Reference</div>
+  <a href="#custom-types">Custom Types</a>
+  <a href="#version-history">Version History</a>
+  <a href="#links">Links</a>
+</nav>
+<!-- Main Content -->
+<div class="main">
+
+<h1 id="description">Rapid7 Velociraptor Plugin</h1>
+<p>Manage endpoint collections, hunts, and artifact deployments using the Rapid7 Velociraptor API.</p>
+<p>This InsightConnect plugin provides integration with Rapid7 Velociraptor, enabling security teams to automate endpoint forensics, threat hunting, and incident response workflows directly from their SOAR platform.</p>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li>Search and retrieve endpoint client information</li>
+  <li>Launch targeted artifact collections on specific endpoints</li>
+  <li>Create and monitor fleet-wide threat hunts</li>
+  <li>Retrieve collection and hunt results for investigation</li>
+  <li>Manage client labels for incident tracking</li>
+  <li>Browse available Velociraptor artifacts</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+  <li>Rapid7 Velociraptor API key</li>
+  <li>Organization ID from the Velociraptor platform</li>
+  <li>InsightConnect orchestrator with network access to the Rapid7 platform API</li>
+</ul>
+<h2 id="setup">Setup</h2>
+
+<h3>Vendor Side Configuration</h3>
+<p>To configure this plugin, you need credentials from the Rapid7 Insight Platform:</p>
+<ol>
+  <li><strong>API Key:</strong> Navigate to the Insight Platform settings at <strong>Administration &gt; API Keys</strong>. Generate a new Platform API key or use an existing one. This key authenticates all Velociraptor API requests made by the plugin.</li>
+  <li><strong>Organization ID:</strong> Locate your Organization ID from the Velociraptor organization settings. This identifies which Velociraptor deployment the plugin will communicate with.</li>
+</ol>
+
+<div class="info-box">
+  <strong>Tip:</strong> Use a dedicated service account API key rather than a personal key to avoid disruption when team members rotate credentials.
+</div>
+
+<h3>InsightConnect Side Configuration</h3>
+<p>When configuring the connection in InsightConnect, provide the following fields:</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>Region</code></td><td>String (enum)</td><td><span class="badge badge-required">Required</span></td><td>Rapid7 platform region. Options: <code>us</code>, <code>us2</code>, <code>us3</code>, <code>eu</code>, <code>au</code>, <code>ca</code>, <code>ap</code>, <code>jp</code></td></tr>
+  <tr><td><code>Org ID</code></td><td>String</td><td><span class="badge badge-required">Required</span></td><td>Velociraptor organization ID (e.g., <code>686a33ec-88b9-4f84-bddf-2a1fb0fecb85</code>)</td></tr>
+  <tr><td><code>API Key</code></td><td>Credential (Secret Key)</td><td><span class="badge badge-required">Required</span></td><td>Rapid7 Platform API key for authentication</td></tr>
+</table>
+
+<h3>Network Requirements</h3>
+<div class="warning-box">
+  <strong>Network Access:</strong> The InsightConnect orchestrator must be able to reach <code>https://{region}.api.insight.rapid7.com</code> on port <strong>443</strong> (HTTPS). Replace <code>{region}</code> with your configured region code (e.g., <code>us</code>, <code>eu</code>, <code>ap</code>).
+</div>
+<h2 id="permissions">Permissions</h2>
+<p>Rapid7 Velociraptor uses role-based access control (RBAC) to manage what actions users and API keys can perform. The three primary roles are:</p>
+<ul>
+  <li><strong>Reader:</strong> View-only access to clients, hunts, flows, and artifacts. Cannot create or modify resources.</li>
+  <li><strong>Investigator:</strong> Can create flows (collections) and hunts, manage labels, and view all resources. Suitable for active incident responders.</li>
+  <li><strong>Administrator:</strong> Full access to all Velociraptor functionality including configuration and user management.</li>
+</ul>
+
+<p>The table below maps each plugin action to the minimum required permission level:</p>
+<table class="perm-table">
+  <tr><th>Action</th><th>Minimum Role</th><th>Notes</th></tr>
+  <tr><td>Get Client</td><td>Reader</td><td>View client details</td></tr>
+  <tr><td>List Clients</td><td>Reader</td><td>Search/filter clients</td></tr>
+  <tr><td>Get Client Labels</td><td>Reader</td><td>View assigned labels</td></tr>
+  <tr><td>Add Label</td><td>Investigator</td><td>Modify client labels</td></tr>
+  <tr><td>Remove Label</td><td>Investigator</td><td>Modify client labels</td></tr>
+  <tr><td>Create Flow</td><td>Investigator</td><td>Launch artifact collections</td></tr>
+  <tr><td>Get Flow</td><td>Reader</td><td>View flow status</td></tr>
+  <tr><td>List Flows</td><td>Reader</td><td>View flows for a client</td></tr>
+  <tr><td>Get Flow Results</td><td>Reader</td><td>View collection results</td></tr>
+  <tr><td>Create Hunt</td><td>Investigator</td><td>Launch fleet-wide hunts</td></tr>
+  <tr><td>Get Hunt</td><td>Reader</td><td>View hunt details</td></tr>
+  <tr><td>List Hunts</td><td>Reader</td><td>Browse hunts</td></tr>
+  <tr><td>Get Hunt Results</td><td>Reader</td><td>View hunt results</td></tr>
+  <tr><td>List Artifacts</td><td>Reader</td><td>Browse artifact definitions</td></tr>
+</table>
+
+<div class="info-box">
+  <strong>Recommendation:</strong> For most automation workflows, use an API key associated with the <strong>Investigator</strong> role. This provides the ability to create collections and hunts without granting full administrative privileges.
+</div>
+<!-- CLIENT INVESTIGATION ACTIONS -->
+<h2 id="get_client">Get Client</h2>
+<p>Retrieve details for a specific Velociraptor client endpoint.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a <code>client</code> object containing the endpoint details.</p>
+<pre><code>{
+  "client": {
+    "client_id": "C.1234567890abcdef",
+    "hostname": "WORKSTATION-01",
+    "release": "10.0.19045",
+    "architecture": "amd64",
+    "client_version": "0.7.1",
+    "system": "windows",
+    "first_seen_at": 1700000000
+  }
+}</code></pre>
+
+<h2 id="list_clients">List Clients</h2>
+<p>Search and list Velociraptor client endpoints with optional filters.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>hostname</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by hostname substring</td></tr>
+  <tr><td><code>os</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by operating system</td></tr>
+  <tr><td><code>label</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by client label</td></tr>
+  <tr><td><code>status</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by client online status. Options: <code>ALL</code>, <code>ONLINE</code>, <code>OFFLINE</code>. Default: <code>ALL</code></td></tr>
+  <tr><td><code>limit</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of results to return. Default: 100</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a list of <code>client</code> objects matching the search criteria and a count of results.</p>
+<pre><code>{
+  "clients": [
+    {
+      "client_id": "C.1234567890abcdef",
+      "hostname": "WORKSTATION-01",
+      "system": "windows",
+      "first_seen_at": 1700000000
+    }
+  ],
+  "count": 1
+}</code></pre>
+<!-- INCIDENT LABELING ACTIONS -->
+<h2 id="get_client_labels">Get Client Labels</h2>
+<p>List all labels assigned to a specific client.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a list of label strings assigned to the client.</p>
+<pre><code>{
+  "labels": ["compromised", "under_investigation"]
+}</code></pre>
+
+<h2 id="add_label">Add Label</h2>
+<p>Add a label to a client for tracking during incident response.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+  <tr><td><code>label</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The label to add to the client</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a <code>label_response</code> object confirming the label addition.</p>
+<pre><code>{
+  "label_response": {
+    "client_id": "C.1234567890abcdef",
+    "label": "compromised"
+  }
+}</code></pre>
+
+<h2 id="remove_label">Remove Label</h2>
+<p>Remove a label from a client.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+  <tr><td><code>label</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The label to remove from the client</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a boolean indicating whether the label was successfully removed.</p>
+<pre><code>{
+  "success": true
+}</code></pre>
+<!-- ARTIFACT COLLECTION ACTIONS -->
+<h2 id="create_flow">Create Flow</h2>
+<p>Launch an artifact collection on a specific client endpoint.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client to collect from</td></tr>
+  <tr><td><code>artifacts</code></td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>List of artifact names to collect</td></tr>
+  <tr><td><code>urgent</code></td><td><code>boolean</code></td><td><span class="badge badge-optional">Optional</span></td><td>Whether to prioritize this collection. Default: false</td></tr>
+  <tr><td><code>timeout</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Collection timeout in seconds. Default: 600</td></tr>
+  <tr><td><code>max_rows</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of rows to collect per artifact</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns the unique identifier of the created flow.</p>
+<pre><code>{
+  "flow_id": "F.C8FJK2L3M"
+}</code></pre>
+
+<h2 id="get_flow">Get Flow</h2>
+<p>Retrieve the status and details of a specific flow collection.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+  <tr><td><code>flow_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the flow</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a <code>flow</code> object with collection details and status.</p>
+<pre><code>{
+  "flow": {
+    "client_id": "C.1234567890abcdef",
+    "session_id": "F.C8FJK2L3M",
+    "create_time": 1700000000,
+    "state": "FINISHED",
+    "total_requests": 2,
+    "outstanding_requests": 0
+  }
+}</code></pre>
+<h2 id="list_flows">List Flows</h2>
+<p>List artifact collection flows for a specific client.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+  <tr><td><code>creator</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by flow creator username</td></tr>
+  <tr><td><code>limit</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of results to return. Default: 50</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a list of <code>flow</code> objects for the client and a count.</p>
+<pre><code>{
+  "flows": [
+    {
+      "client_id": "C.1234567890abcdef",
+      "session_id": "F.C8FJK2L3M",
+      "create_time": 1700000000,
+      "state": "FINISHED",
+      "total_requests": 2,
+      "outstanding_requests": 0
+    }
+  ],
+  "count": 1
+}</code></pre>
+
+<h2 id="get_flow_results">Get Flow Results</h2>
+<p>Retrieve the results of a completed flow collection for a specific artifact.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the client</td></tr>
+  <tr><td><code>flow_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the flow</td></tr>
+  <tr><td><code>artifact</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The artifact name to retrieve results for</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns the collection result data rows and a count.</p>
+<pre><code>{
+  "results": [
+    {"Name": "svchost.exe", "Pid": 1234, "PPid": 680},
+    {"Name": "explorer.exe", "Pid": 4560, "PPid": 4320}
+  ],
+  "count": 25
+}</code></pre>
+<!-- THREAT HUNTING ACTIONS -->
+<h2 id="create_hunt">Create Hunt</h2>
+<p>Create a new fleet-wide threat hunt to collect artifacts across multiple endpoints.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>hunt_description</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>A description of the hunt purpose</td></tr>
+  <tr><td><code>artifacts</code></td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>List of artifact names to collect in this hunt</td></tr>
+  <tr><td><code>os_condition</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Target operating system. Options: <code>ALL</code>, <code>WINDOWS</code>, <code>LINUX</code>, <code>OSX</code>. Default: <code>ALL</code></td></tr>
+  <tr><td><code>include_labels</code></td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Only target clients with these labels</td></tr>
+  <tr><td><code>exclude_labels</code></td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Exclude clients with these labels</td></tr>
+  <tr><td><code>client_limit</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of clients to schedule the hunt on</td></tr>
+  <tr><td><code>expires</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Hunt expiration time as a Unix timestamp</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns the unique identifier of the created hunt.</p>
+<pre><code>{
+  "hunt_id": "H.abcdef1234"
+}</code></pre>
+
+<h2 id="get_hunt">Get Hunt</h2>
+<p>Retrieve details and status of a specific threat hunt.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>hunt_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the hunt</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a <code>hunt_details</code> object with configuration, state, and statistics.</p>
+<pre><code>{
+  "hunt_details": {
+    "hunt_id": "H.abcdef1234",
+    "state": "RUNNING",
+    "statistics": {
+      "total_clients_scheduled": 150,
+      "total_clients_with_results": 42
+    },
+    "configuration": {
+      "hunt_description": "Hunt for suspicious PowerShell activity",
+      "artifacts": ["Windows.System.PowerShell.ScriptBlockLog"]
+    }
+  }
+}</code></pre>
+<h2 id="list_hunts">List Hunts</h2>
+<p>List threat hunts with optional state filter.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>state</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter hunts by state. Options: <code>UNSET</code>, <code>PAUSED</code>, <code>RUNNING</code>, <code>STOPPED</code>, <code>ARCHIVED</code></td></tr>
+  <tr><td><code>limit</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of results to return. Default: 50</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a list of <code>hunt</code> objects and a count.</p>
+<pre><code>{
+  "hunts": [
+    {
+      "hunt_id": "H.abcdef1234",
+      "hunt_description": "Hunt for suspicious PowerShell activity",
+      "creator": "admin@example.com",
+      "state": "RUNNING",
+      "create_time": 1700000000,
+      "expires": 1735689600,
+      "artifacts": ["Windows.System.PowerShell.ScriptBlockLog"]
+    }
+  ],
+  "count": 5
+}</code></pre>
+
+<h2 id="get_hunt_results">Get Hunt Results</h2>
+<p>Retrieve results collected by a specific threat hunt.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>hunt_id</code></td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>The unique identifier of the hunt</td></tr>
+  <tr><td><code>limit</code></td><td><code>integer</code></td><td><span class="badge badge-optional">Optional</span></td><td>Maximum number of results to return. Default: 100</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a list of <code>hunt_result</code> objects from targeted clients and a count.</p>
+<pre><code>{
+  "results": [
+    {
+      "client_id": "C.1234567890abcdef",
+      "flow_id": "F.C8FJK2L3M",
+      "artifact": "Windows.System.PowerShell.ScriptBlockLog",
+      "rows": [
+        {"ScriptBlockText": "Invoke-WebRequest -Uri http://malicious.example.com"}
+      ],
+      "total_rows": 3
+    }
+  ],
+  "count": 10
+}</code></pre>
+<!-- ARTIFACT DISCOVERY ACTIONS -->
+<h2 id="list_artifacts">List Artifacts</h2>
+<p>Browse available Velociraptor artifact definitions for use in collections and hunts.</p>
+<h3>Input</h3>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>artifact_type</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by artifact type. Options: <code>ALL</code>, <code>CLIENT</code>, <code>CLIENT_EVENT</code>, <code>SERVER</code>, <code>SERVER_EVENT</code>, <code>NOTEBOOK</code>. Default: <code>ALL</code></td></tr>
+  <tr><td><code>os</code></td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by target operating system. Options: <code>ALL</code>, <code>LINUX</code>, <code>WINDOWS</code>, <code>DARWIN</code>. Default: <code>ALL</code></td></tr>
+  <tr><td><code>include_built_in</code></td><td><code>boolean</code></td><td><span class="badge badge-optional">Optional</span></td><td>Include built-in artifacts in results. Default: true</td></tr>
+  <tr><td><code>include_custom</code></td><td><code>boolean</code></td><td><span class="badge badge-optional">Optional</span></td><td>Include custom artifacts in results. Default: true</td></tr>
+</table>
+<h3>Output</h3>
+<p>Returns a list of <code>artifact_listing</code> objects and a count.</p>
+<pre><code>{
+  "artifacts": [
+    {
+      "name": "Windows.System.ProcessList",
+      "description": "List running processes",
+      "type": "CLIENT",
+      "built_in": true
+    },
+    {
+      "name": "Custom.Lateral.Movement",
+      "description": "Detect lateral movement indicators",
+      "type": "CLIENT",
+      "built_in": false
+    }
+  ],
+  "count": 150
+}</code></pre>
+<!-- CUSTOM TYPES REFERENCE -->
+<h2 id="custom-types">Custom Types</h2>
+<p>The following custom types are used throughout this plugin's actions:</p>
+
+<h3>client</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td>Unique client identifier</td></tr>
+  <tr><td><code>hostname</code></td><td><code>string</code></td><td>Client hostname</td></tr>
+  <tr><td><code>release</code></td><td><code>string</code></td><td>OS release version</td></tr>
+  <tr><td><code>architecture</code></td><td><code>string</code></td><td>CPU architecture (e.g., amd64)</td></tr>
+  <tr><td><code>client_version</code></td><td><code>string</code></td><td>Velociraptor agent version</td></tr>
+  <tr><td><code>system</code></td><td><code>string</code></td><td>Operating system (e.g., windows, linux)</td></tr>
+  <tr><td><code>first_seen_at</code></td><td><code>integer</code></td><td>Unix timestamp when client was first seen</td></tr>
+</table>
+
+<h3>hunt</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>hunt_id</code></td><td><code>string</code></td><td>Unique hunt identifier</td></tr>
+  <tr><td><code>hunt_description</code></td><td><code>string</code></td><td>Description of the hunt</td></tr>
+  <tr><td><code>creator</code></td><td><code>string</code></td><td>Username who created the hunt</td></tr>
+  <tr><td><code>state</code></td><td><code>string</code></td><td>Current hunt state</td></tr>
+  <tr><td><code>create_time</code></td><td><code>integer</code></td><td>Unix timestamp of creation</td></tr>
+  <tr><td><code>expires</code></td><td><code>integer</code></td><td>Unix timestamp of expiration</td></tr>
+  <tr><td><code>artifacts</code></td><td><code>[]string</code></td><td>List of artifacts collected by the hunt</td></tr>
+</table>
+
+<h3>hunt_details</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>hunt_id</code></td><td><code>string</code></td><td>Unique hunt identifier</td></tr>
+  <tr><td><code>state</code></td><td><code>string</code></td><td>Current hunt state</td></tr>
+  <tr><td><code>statistics</code></td><td><code>object</code></td><td>Hunt execution statistics (scheduled/completed clients)</td></tr>
+  <tr><td><code>configuration</code></td><td><code>object</code></td><td>Hunt configuration parameters</td></tr>
+</table>
+
+<h3>hunt_result</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td>Client that produced the result</td></tr>
+  <tr><td><code>flow_id</code></td><td><code>string</code></td><td>Flow ID that collected the result</td></tr>
+  <tr><td><code>artifact</code></td><td><code>string</code></td><td>Artifact name that was collected</td></tr>
+  <tr><td><code>rows</code></td><td><code>[]object</code></td><td>Result data rows</td></tr>
+  <tr><td><code>total_rows</code></td><td><code>integer</code></td><td>Total number of rows in the result set</td></tr>
+</table>
+<h3>flow</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td>Client the flow belongs to</td></tr>
+  <tr><td><code>session_id</code></td><td><code>string</code></td><td>Unique flow/session identifier</td></tr>
+  <tr><td><code>create_time</code></td><td><code>integer</code></td><td>Unix timestamp of creation</td></tr>
+  <tr><td><code>state</code></td><td><code>string</code></td><td>Current flow state (e.g., RUNNING, FINISHED, ERROR)</td></tr>
+  <tr><td><code>total_requests</code></td><td><code>integer</code></td><td>Total number of artifact requests</td></tr>
+  <tr><td><code>outstanding_requests</code></td><td><code>integer</code></td><td>Number of pending requests</td></tr>
+</table>
+
+<h3>artifact_listing</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td><code>string</code></td><td>Fully qualified artifact name</td></tr>
+  <tr><td><code>description</code></td><td><code>string</code></td><td>Human-readable description of the artifact</td></tr>
+  <tr><td><code>type</code></td><td><code>string</code></td><td>Artifact type (CLIENT, SERVER, etc.)</td></tr>
+  <tr><td><code>built_in</code></td><td><code>boolean</code></td><td>Whether this is a built-in or custom artifact</td></tr>
+</table>
+
+<h3>label_response</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>client_id</code></td><td><code>string</code></td><td>Client the label was applied to</td></tr>
+  <tr><td><code>label</code></td><td><code>string</code></td><td>The label that was added</td></tr>
+</table>
+<!-- VERSION HISTORY & LINKS -->
+<h2 id="version-history">Version History</h2>
+<table>
+  <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td><code>1.0.0</code></td><td>Initial plugin release</td></tr>
+</table>
+
+<h2 id="links">Links</h2>
+<ul>
+  <li><a href="https://www.rapid7.com/products/velociraptor/">Rapid7 Velociraptor</a></li>
+  <li><a href="https://docs.velociraptor.app/">Velociraptor API Documentation</a></li>
+  <li><a href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/rapid7_velociraptor">Plugin Source Code</a></li>
+  <li><a href="https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE">License</a></li>
+  <li><a href="https://www.rapid7.com">Rapid7</a></li>
+</ul>
+
+<div class="footer">
+  Rapid7 InsightConnect &middot; Rapid7 Velociraptor Plugin v1.0.0 &middot; Supported Versions: Velociraptor API v1 2025-07-22
+</div>
+
+</div><!-- end .main -->
+</body>
+</html>
