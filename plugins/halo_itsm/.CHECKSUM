@@ -1,7 +1,7 @@
 {
-	"spec": "e1c1b32c2bcdc48c58d1d483b5ae123a",
-	"manifest": "21c9eabb90e87d62d31888b83085a5b5",
-	"setup": "ddad1bb0a09956ecaa7ab9bb9b587c7b",
+	"spec": "2563ade1cafa461f9633e0912ead94e1",
+	"manifest": "c74938bbaf4beceadeaf9d8bd2c00e02",
+	"setup": "4ac14639e4c48d16d4159a8bcafca38a",
 	"schemas": [
 		{
 			"identifier": "add_action_to_ticket/schema.py",

@@ -2,10 +2,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="halo_itsm-rapid7-plugin",
+    name="halo_itsm-rapid7_custom-plugin",
     version="1.0.0",
     description="Halo ITSM is a cloud-based IT Service Management platform that provides ticket management, asset tracking, and service desk capabilities",
-    author="rapid7",
+    author="rapid7_custom",
     author_email="",
     url="",
     packages=find_packages(),

@@ -5,7 +5,7 @@ import json
 from sys import argv
 
 Name = "Halo ITSM"
-Vendor = "rapid7"
+Vendor = "rapid7_custom"
 Version = "1.0.0"
 Description = "Halo ITSM is a cloud-based IT Service Management platform that provides ticket management, asset tracking, and service desk capabilities"
 
