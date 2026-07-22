@@ -1,0 +1,67 @@
+{
+	"spec": "5127ee44aa41ca0990752a02b9d9202a",
+	"manifest": "4d85f65d99c6e1dc5fc0b5f741ffc2ea",
+	"setup": "d50827915ecb5fdebe9d6db6d5a51297",
+	"schemas": [
+		{
+			"identifier": "add_label/schema.py",
+			"hash": "6fe843223013abc7c7817dca6a2a362c"
+		},
+		{
+			"identifier": "create_flow/schema.py",
+			"hash": "7b7c0205bbaa2b0ac566066814f7e699"
+		},
+		{
+			"identifier": "create_hunt/schema.py",
+			"hash": "15edb7f391ea860986b6c3c8140a7b32"
+		},
+		{
+			"identifier": "get_client/schema.py",
+			"hash": "e526b92f96415cf84564b0e887258382"
+		},
+		{
+			"identifier": "get_client_labels/schema.py",
+			"hash": "0affb3f3fbd8f1cdfaeeda27f54b790b"
+		},
+		{
+			"identifier": "get_flow/schema.py",
+			"hash": "859a53ac217bfbdf91af6814ffe7e0f5"
+		},
+		{
+			"identifier": "get_flow_results/schema.py",
+			"hash": "55f39be6d081faedc24be42763d0e9c9"
+		},
+		{
+			"identifier": "get_hunt/schema.py",
+			"hash": "6001d12879fe8448973f2f7a0ab8249f"
+		},
+		{
+			"identifier": "get_hunt_results/schema.py",
+			"hash": "47d72b13ba6bd88d17a5d15d55e30024"
+		},
+		{
+			"identifier": "list_artifacts/schema.py",
+			"hash": "ad8d22273b7b093d7749f8315980410d"
+		},
+		{
+			"identifier": "list_clients/schema.py",
+			"hash": "e6fefccf7dc41d4e448b18cfa8fef79c"
+		},
+		{
+			"identifier": "list_flows/schema.py",
+			"hash": "0e5c54b23e2dfcb9aec7098ac91191e2"
+		},
+		{
+			"identifier": "list_hunts/schema.py",
+			"hash": "fa48735bd3d04244aec583bcc50c9647"
+		},
+		{
+			"identifier": "remove_label/schema.py",
+			"hash": "204546246f9cd4f1bc77fbca81a8376a"
+		},
+		{
+			"identifier": "connection/schema.py",
+			"hash": "512bee4ac74e6f00c3a18382ba21ae5c"
+		}
+	]
+}

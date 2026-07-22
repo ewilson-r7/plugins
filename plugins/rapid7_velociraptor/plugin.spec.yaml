@@ -1,0 +1,762 @@
+plugin_spec_version: v2
+extension: plugin
+products: [insightconnect]
+name: rapid7_velociraptor
+title: Rapid7 Velociraptor
+description: Manage endpoint collections, hunts, and artifact deployments using the Rapid7 Velociraptor API
+version: 1.0.0
+connection_version: 1
+supported_versions: ["Velociraptor API v1 2025-07-22"]
+vendor: rapid7
+support: rapid7
+status: []
+cloud_ready: false
+sdk:
+  type: slim
+  version: 6.6.0
+  user: nobody
+key_features:
+  - Search and retrieve endpoint client information
+  - Launch targeted artifact collections on specific endpoints
+  - Create and monitor fleet-wide threat hunts
+  - Retrieve collection and hunt results for investigation
+  - Manage client labels for incident tracking
+  - Browse available Velociraptor artifacts
+requirements:
+  - Rapid7 Velociraptor API key
+  - Organization ID from the Velociraptor platform
+version_history:
+  - "1.0.0 - Initial plugin release"
+resources:
+  source_url: https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/rapid7_velociraptor
+  license_url: https://github.com/rapid7/insightconnect-plugins/blob/master/LICENSE
+  vendor_url: https://www.rapid7.com
+links:
+  - "[Rapid7 Velociraptor](https://www.rapid7.com/products/velociraptor/)"
+references:
+  - "[Velociraptor API Documentation](https://docs.velociraptor.app/)"
+tags:
+  - rapid7
+  - velociraptor
+  - endpoint
+  - forensics
+  - hunt
+  - collection
+hub_tags:
+  use_cases: [threat_detection_and_response]
+  keywords: [velociraptor, endpoint, forensics, rapid7]
+  features: []
+
+types:
+  client:
+    client_id:
+      title: Client ID
+      type: string
+      required: false
+    hostname:
+      title: Hostname
+      type: string
+      required: false
+    release:
+      title: Release
+      type: string
+      required: false
+    architecture:
+      title: Architecture
+      type: string
+      required: false
+    client_version:
+      title: Client Version
+      type: string
+      required: false
+    system:
+      title: System
+      type: string
+      required: false
+    first_seen_at:
+      title: First Seen At
+      type: integer
+      required: false
+  hunt:
+    hunt_id:
+      title: Hunt ID
+      type: string
+      required: false
+    hunt_description:
+      title: Hunt Description
+      type: string
+      required: false
+    creator:
+      title: Creator
+      type: string
+      required: false
+    state:
+      title: State
+      type: string
+      required: false
+    create_time:
+      title: Create Time
+      type: integer
+      required: false
+    expires:
+      title: Expires
+      type: integer
+      required: false
+    artifacts:
+      title: Artifacts
+      type: "[]string"
+      required: false
+  hunt_details:
+    hunt_id:
+      title: Hunt ID
+      type: string
+      required: false
+    state:
+      title: State
+      type: string
+      required: false
+    statistics:
+      title: Statistics
+      type: object
+      required: false
+    configuration:
+      title: Configuration
+      type: object
+      required: false
+  hunt_result:
+    client_id:
+      title: Client ID
+      type: string
+      required: false
+    flow_id:
+      title: Flow ID
+      type: string
+      required: false
+    artifact:
+      title: Artifact
+      type: string
+      required: false
+    rows:
+      title: Rows
+      type: "[]object"
+      required: false
+    total_rows:
+      title: Total Rows
+      type: integer
+      required: false
+  flow:
+    client_id:
+      title: Client ID
+      type: string
+      required: false
+    session_id:
+      title: Session ID
+      type: string
+      required: false
+    create_time:
+      title: Create Time
+      type: integer
+      required: false
+    state:
+      title: State
+      type: string
+      required: false
+    total_requests:
+      title: Total Requests
+      type: integer
+      required: false
+    outstanding_requests:
+      title: Outstanding Requests
+      type: integer
+      required: false
+  artifact_listing:
+    name:
+      title: Name
+      type: string
+      required: false
+    description:
+      title: Description
+      type: string
+      required: false
+    type:
+      title: Type
+      type: string
+      required: false
+    built_in:
+      title: Built In
+      type: boolean
+      required: false
+  label_response:
+    client_id:
+      title: Client ID
+      type: string
+      required: false
+    label:
+      title: Label
+      type: string
+      required: false
+
+connection:
+  region:
+    title: Region
+    description: Rapid7 platform region
+    type: string
+    required: true
+    enum:
+      - us
+      - us2
+      - us3
+      - eu
+      - au
+      - ca
+      - ap
+      - jp
+    example: us
+    order: 1
+  org_id:
+    title: Organization ID
+    description: Velociraptor organization ID
+    type: string
+    required: true
+    placeholder: "686a33ec-88b9-4f84-bddf-2a1fb0fecb85"
+    example: 686a33ec-88b9-4f84-bddf-2a1fb0fecb85
+    order: 2
+  api_key:
+    title: API Key
+    description: Rapid7 Platform API key
+    type: credential_secret_key
+    required: true
+    example: '{"secretKey": "abc123-def456-ghi789"}'
+    order: 3
+
+actions:
+  get_client:
+    title: Get Client
+    description: Retrieve details for a specific Velociraptor client endpoint
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+    output:
+      client:
+        title: Client
+        description: Client endpoint details
+        type: client
+        required: false
+        example: '{"client_id": "C.1234567890abcdef", "hostname": "WORKSTATION-01", "system": "windows"}'
+
+  list_clients:
+    title: List Clients
+    description: Search and list Velociraptor client endpoints with optional filters
+    input:
+      hostname:
+        title: Hostname
+        description: Filter by hostname substring
+        type: string
+        required: false
+        placeholder: WORKSTATION-01
+        example: WORKSTATION-01
+        order: 1
+      os:
+        title: Operating System
+        description: Filter by operating system
+        type: string
+        required: false
+        placeholder: windows
+        example: windows
+        order: 2
+      label:
+        title: Label
+        description: Filter by client label
+        type: string
+        required: false
+        placeholder: compromised
+        example: compromised
+        order: 3
+      status:
+        title: Status
+        description: Filter by client online status
+        type: string
+        required: false
+        enum:
+          - ALL
+          - ONLINE
+          - OFFLINE
+        default: ALL
+        example: ALL
+        order: 4
+      limit:
+        title: Limit
+        description: Maximum number of results to return
+        type: integer
+        required: false
+        default: 100
+        example: 100
+        order: 5
+    output:
+      clients:
+        title: Clients
+        description: List of client endpoints matching the search criteria
+        type: "[]client"
+        required: false
+        example: '[{"client_id": "C.1234567890abcdef", "hostname": "WORKSTATION-01"}]'
+      count:
+        title: Count
+        description: Number of clients returned
+        type: integer
+        required: false
+        example: 1
+
+  get_client_labels:
+    title: Get Client Labels
+    description: List all labels assigned to a specific client
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+    output:
+      labels:
+        title: Labels
+        description: List of labels assigned to the client
+        type: "[]string"
+        required: false
+        example: '["compromised", "under_investigation"]'
+
+  add_label:
+    title: Add Label
+    description: Add a label to a client for tracking during incident response
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+      label:
+        title: Label
+        description: The label to add to the client
+        type: string
+        required: true
+        placeholder: compromised
+        example: compromised
+        order: 2
+    output:
+      label_response:
+        title: Label Response
+        description: Confirmation of the label addition
+        type: label_response
+        required: false
+        example: '{"client_id": "C.1234567890abcdef", "label": "compromised"}'
+
+  remove_label:
+    title: Remove Label
+    description: Remove a label from a client
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+      label:
+        title: Label
+        description: The label to remove from the client
+        type: string
+        required: true
+        placeholder: compromised
+        example: compromised
+        order: 2
+    output:
+      success:
+        title: Success
+        description: Whether the label was successfully removed
+        type: boolean
+        required: true
+        example: true
+
+  create_flow:
+    title: Create Flow
+    description: Launch an artifact collection on a specific client endpoint
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client to collect from
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+      artifacts:
+        title: Artifacts
+        description: List of artifact names to collect
+        type: "[]string"
+        required: true
+        example: '["Windows.System.ProcessList", "Windows.Network.Netstat"]'
+        order: 2
+      urgent:
+        title: Urgent
+        description: Whether to prioritize this collection
+        type: boolean
+        required: false
+        default: false
+        example: false
+        order: 3
+      timeout:
+        title: Timeout
+        description: Collection timeout in seconds
+        type: integer
+        required: false
+        default: 600
+        example: 600
+        order: 4
+      max_rows:
+        title: Max Rows
+        description: Maximum number of rows to collect per artifact
+        type: integer
+        required: false
+        example: 10000
+        order: 5
+    output:
+      flow_id:
+        title: Flow ID
+        description: The unique identifier of the created flow
+        type: string
+        required: false
+        example: F.C8FJK2L3M
+
+  get_flow:
+    title: Get Flow
+    description: Retrieve the status and details of a specific flow collection
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+      flow_id:
+        title: Flow ID
+        description: The unique identifier of the flow
+        type: string
+        required: true
+        example: F.C8FJK2L3M
+        order: 2
+    output:
+      flow:
+        title: Flow
+        description: Flow collection details and status
+        type: flow
+        required: false
+        example: '{"client_id": "C.1234567890abcdef", "session_id": "F.C8FJK2L3M", "state": "FINISHED"}'
+
+  list_flows:
+    title: List Flows
+    description: List artifact collection flows for a specific client
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+      creator:
+        title: Creator
+        description: Filter by flow creator username
+        type: string
+        required: false
+        placeholder: admin@example.com
+        example: admin@example.com
+        order: 2
+      limit:
+        title: Limit
+        description: Maximum number of results to return
+        type: integer
+        required: false
+        default: 50
+        example: 50
+        order: 3
+    output:
+      flows:
+        title: Flows
+        description: List of flows for the client
+        type: "[]flow"
+        required: false
+        example: '[{"session_id": "F.C8FJK2L3M", "state": "FINISHED"}]'
+      count:
+        title: Count
+        description: Number of flows returned
+        type: integer
+        required: false
+        example: 1
+
+  get_flow_results:
+    title: Get Flow Results
+    description: Retrieve the results of a completed flow collection for a specific artifact
+    input:
+      client_id:
+        title: Client ID
+        description: The unique identifier of the client
+        type: string
+        required: true
+        example: C.1234567890abcdef
+        order: 1
+      flow_id:
+        title: Flow ID
+        description: The unique identifier of the flow
+        type: string
+        required: true
+        example: F.C8FJK2L3M
+        order: 2
+      artifact:
+        title: Artifact
+        description: The artifact name to retrieve results for
+        type: string
+        required: true
+        placeholder: Windows.System.ProcessList
+        example: Windows.System.ProcessList
+        order: 3
+    output:
+      results:
+        title: Results
+        description: Collection result data rows
+        type: "[]object"
+        required: false
+        example: '[{"Name": "svchost.exe", "Pid": 1234}]'
+      count:
+        title: Count
+        description: Number of result rows returned
+        type: integer
+        required: false
+        example: 25
+
+  create_hunt:
+    title: Create Hunt
+    description: Create a new fleet-wide threat hunt to collect artifacts across multiple endpoints
+    input:
+      hunt_description:
+        title: Hunt Description
+        description: A description of the hunt purpose
+        type: string
+        required: true
+        placeholder: Hunt for suspicious PowerShell activity
+        example: Hunt for suspicious PowerShell activity
+        order: 1
+      artifacts:
+        title: Artifacts
+        description: List of artifact names to collect in this hunt
+        type: "[]string"
+        required: true
+        example: '["Windows.System.PowerShell.ScriptBlockLog"]'
+        order: 2
+      os_condition:
+        title: OS Condition
+        description: Target operating system for the hunt
+        type: string
+        required: false
+        enum:
+          - ALL
+          - WINDOWS
+          - LINUX
+          - OSX
+        default: ALL
+        example: WINDOWS
+        order: 3
+      include_labels:
+        title: Include Labels
+        description: Only target clients with these labels
+        type: "[]string"
+        required: false
+        example: '["under_investigation"]'
+        order: 4
+      exclude_labels:
+        title: Exclude Labels
+        description: Exclude clients with these labels
+        type: "[]string"
+        required: false
+        example: '["decommissioned"]'
+        order: 5
+      client_limit:
+        title: Client Limit
+        description: Maximum number of clients to schedule the hunt on
+        type: integer
+        required: false
+        example: 500
+        order: 6
+      expires:
+        title: Expires
+        description: Hunt expiration time as a Unix timestamp
+        type: integer
+        required: false
+        example: 1735689600
+        order: 7
+    output:
+      hunt_id:
+        title: Hunt ID
+        description: The unique identifier of the created hunt
+        type: string
+        required: false
+        example: H.abcdef1234
+
+  get_hunt:
+    title: Get Hunt
+    description: Retrieve details and status of a specific threat hunt
+    input:
+      hunt_id:
+        title: Hunt ID
+        description: The unique identifier of the hunt
+        type: string
+        required: true
+        example: H.abcdef1234
+        order: 1
+    output:
+      hunt_details:
+        title: Hunt Details
+        description: Hunt configuration, state, and statistics
+        type: hunt_details
+        required: false
+        example: '{"hunt_id": "H.abcdef1234", "state": "RUNNING"}'
+
+  list_hunts:
+    title: List Hunts
+    description: List threat hunts with optional state filter
+    input:
+      state:
+        title: State
+        description: Filter hunts by state
+        type: string
+        required: false
+        enum:
+          - UNSET
+          - PAUSED
+          - RUNNING
+          - STOPPED
+          - ARCHIVED
+        example: RUNNING
+        order: 1
+      limit:
+        title: Limit
+        description: Maximum number of results to return
+        type: integer
+        required: false
+        default: 50
+        example: 50
+        order: 2
+    output:
+      hunts:
+        title: Hunts
+        description: List of hunts
+        type: "[]hunt"
+        required: false
+        example: '[{"hunt_id": "H.abcdef1234", "state": "RUNNING"}]'
+      count:
+        title: Count
+        description: Number of hunts returned
+        type: integer
+        required: false
+        example: 5
+
+  get_hunt_results:
+    title: Get Hunt Results
+    description: Retrieve results collected by a specific threat hunt
+    input:
+      hunt_id:
+        title: Hunt ID
+        description: The unique identifier of the hunt
+        type: string
+        required: true
+        example: H.abcdef1234
+        order: 1
+      limit:
+        title: Limit
+        description: Maximum number of results to return
+        type: integer
+        required: false
+        default: 100
+        example: 100
+        order: 2
+    output:
+      results:
+        title: Results
+        description: Hunt result sets from targeted clients
+        type: "[]hunt_result"
+        required: false
+        example: '[{"client_id": "C.1234567890abcdef", "artifact": "Windows.System.ProcessList"}]'
+      count:
+        title: Count
+        description: Number of result sets returned
+        type: integer
+        required: false
+        example: 10
+
+  list_artifacts:
+    title: List Artifacts
+    description: Browse available Velociraptor artifact definitions for use in collections and hunts
+    input:
+      artifact_type:
+        title: Artifact Type
+        description: Filter by artifact type
+        type: string
+        required: false
+        enum:
+          - ALL
+          - CLIENT
+          - CLIENT_EVENT
+          - SERVER
+          - SERVER_EVENT
+          - NOTEBOOK
+        default: ALL
+        example: CLIENT
+        order: 1
+      os:
+        title: Operating System
+        description: Filter by target operating system
+        type: string
+        required: false
+        enum:
+          - ALL
+          - LINUX
+          - WINDOWS
+          - DARWIN
+        default: ALL
+        example: WINDOWS
+        order: 2
+      include_built_in:
+        title: Include Built-In
+        description: Include built-in artifacts in results
+        type: boolean
+        required: false
+        default: true
+        example: true
+        order: 3
+      include_custom:
+        title: Include Custom
+        description: Include custom artifacts in results
+        type: boolean
+        required: false
+        default: true
+        example: true
+        order: 4
+    output:
+      artifacts:
+        title: Artifacts
+        description: List of available artifact definitions
+        type: "[]artifact_listing"
+        required: false
+        example: '[{"name": "Windows.System.ProcessList", "type": "CLIENT", "built_in": true}]'
+      count:
+        title: Count
+        description: Number of artifacts returned
+        type: integer
+        required: false
+        example: 150
