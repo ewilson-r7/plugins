@@ -108,6 +108,8 @@ URL_CATEGORORIES_NAMES = {
 
 URL_CATEGORY_UPDATE_ACTIONS = {"Add to the list": "ADD_TO_LIST", "Remove from the list": "REMOVE_FROM_LIST"}
 
+TIMEOUT = 60
+
 
 class Cause:
     INVALID_DETAILS = "Invalid details provided."

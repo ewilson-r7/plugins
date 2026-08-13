@@ -71,13 +71,13 @@ class TestGetVpnGatewayBypasses(TestCase):
         result = client.get_vpn_gateway_bypasses()
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["profileId"], "profile-001")
-        self.assertEqual(result[0]["profileName"], "Default Profile")
-        self.assertEqual(len(result[0]["vpnGateways"]), 2)
-        self.assertEqual(result[0]["vpnGateways"][0]["hostname"], "vpn1.example.com")
-        self.assertEqual(result[0]["vpnGateways"][0]["ip"], "10.0.0.1")
-        self.assertEqual(result[0]["vpnGateways"][0]["type"], "hostname")
-        self.assertEqual(result[0]["vpnGateways"][1]["hostname"], "vpn2.example.com")
+        self.assertEqual(result[0]["profile_id"], "profile-001")
+        self.assertEqual(result[0]["profile_name"], "Default Profile")
+        self.assertEqual(len(result[0]["vpn_gateways"]), 2)
+        self.assertEqual(result[0]["vpn_gateways"][0]["hostname"], "vpn1.example.com")
+        self.assertEqual(result[0]["vpn_gateways"][0]["ip"], "10.0.0.1")
+        self.assertEqual(result[0]["vpn_gateways"][0]["type"], "hostname")
+        self.assertEqual(result[0]["vpn_gateways"][1]["hostname"], "vpn2.example.com")
 
     @patch("requests.request")
     def test_skips_profiles_with_empty_vpn_gateways(self, mock_request):
@@ -104,7 +104,7 @@ class TestGetVpnGatewayBypasses(TestCase):
         result = client.get_vpn_gateway_bypasses()
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["profileId"], "profile-001")
+        self.assertEqual(result[0]["profile_id"], "profile-001")
 
     @patch("requests.request")
     def test_skips_profiles_missing_policy_extension(self, mock_request):
@@ -127,7 +127,7 @@ class TestGetVpnGatewayBypasses(TestCase):
         result = client.get_vpn_gateway_bypasses()
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["profileId"], "profile-001")
+        self.assertEqual(result[0]["profile_id"], "profile-001")
 
     @patch("requests.request")
     def test_handles_list_response_format(self, mock_request):
@@ -147,7 +147,7 @@ class TestGetVpnGatewayBypasses(TestCase):
         result = client.get_vpn_gateway_bypasses()
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["profileName"], "Profile A")
+        self.assertEqual(result[0]["profile_name"], "Profile A")
 
 
 # ---------------------------------------------------------------------------

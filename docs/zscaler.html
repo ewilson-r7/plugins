@@ -46,7 +46,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Zscaler</h2>
-    <span>Plugin v2.0.0 &middot; OneAPI</span>
+    <span>Plugin v2.2.0 &middot; OneAPI</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -54,6 +54,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <a href="#requirements">Requirements</a>
   <a href="#setup">Setup &amp; Configuration</a>
   <a href="#permissions">Permissions &amp; Scopes</a>
+  <a href="#troubleshooting">Troubleshooting</a>
   <span class="section-label">ZIA Actions</span>
   <a href="#lookup-url">Lookup URL</a>
   <a href="#blacklist-url">Blacklist URL</a>
@@ -80,6 +81,8 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <span class="section-label">ZCC Actions</span>
   <a href="#get-vpn-gateway-bypasses">Get VPN Bypasses</a>
   <a href="#remove-vpn-gateway-bypass">Remove VPN Bypass</a>
+  <span class="section-label">Diagnostics</span>
+  <a href="#custom-api-request">Custom API Request</a>
   <span class="section-label">Reference</span>
   <a href="#custom-types">Custom Types</a>
   <a href="#version-history">Version History</a>
@@ -88,7 +91,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Zscaler Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.0.0 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.2.0 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
 
 <h2 id="description">Description</h2>
 <p>Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network. This plugin uses the Zscaler OneAPI unified gateway (<code>api.zsapi.net</code>) with OAuth 2.0 Client Credentials authentication to manage security policies across three Zscaler product lines:</p>
@@ -110,6 +113,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <li>Submit threat feed IoCs (IPs, domains, URLs)</li>
   <li>Manage ZPA application segments and server groups</li>
   <li>Audit and manage ZCC VPN gateway bypass entries</li>
+  <li>Send custom API requests for troubleshooting</li>
 </ul>
 
 <h2 id="requirements">Requirements</h2>
@@ -117,24 +121,31 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <li>A Zscaler OneAPI OAuth 2.0 Client ID from ZIdentity</li>
   <li>A PEM RSA private key for JWT signing (RS256)</li>
   <li>The customer vanity domain (e.g., <code>mycompany</code>)</li>
-  <li>Network connectivity from InsightConnect orchestrator to <code>*.zsapi.net</code> on HTTPS (port 443)</li>
+  <li>The ZIdentity cloud domain, which is the domain of your ZIdentity login URL (commonly <code>zslogin.net</code> or <code>zsapi.net</code>)</li>
+  <li>An API Resource role assigned for each Zscaler service you intend to use (ZIA, ZPA, ZCC)</li>
+  <li>Network connectivity from InsightConnect orchestrator to the ZIdentity domain and to <code>api.zsapi.net</code> on HTTPS (port 443)</li>
 </ul>
 <h2 id="setup">Setup &amp; Configuration</h2>
 
 <h3>Step 1: Create an API Client in ZIdentity</h3>
 <ol>
-  <li>Log in to ZIdentity at <code>https://{vanity_domain}.zsapi.net</code></li>
+  <li>Log in to ZIdentity. Note the domain of your login URL, as it is needed for the Cloud connection field. It is commonly <code>https://{vanity_domain}.zslogin.net</code> but may differ by tenant.</li>
   <li>Navigate to <strong>Administration &gt; API Clients</strong></li>
   <li>Click <strong>Add API Client</strong></li>
   <li>Configure:
     <ul>
       <li><strong>Name:</strong> Descriptive name (e.g., <code>InsightConnect-SOAR</code>)</li>
       <li><strong>Description:</strong> Purpose of the integration</li>
-      <li><strong>Scopes:</strong> Assign the minimum scopes needed (see Permissions section below)</li>
+      <li><strong>Validation Type:</strong> Select <strong>Certificates/Public Keys</strong>. This plugin authenticates with a private key JWT assertion and does not support the <strong>Secret</strong> validation type.</li>
+      <li><strong>Resources:</strong> On the Resources tab, assign an API Resource role for each service you intend to use (see Permissions section below)</li>
     </ul>
   </li>
-  <li>Save and note the <strong>Client ID</strong></li>
+  <li>Save and note the <strong>Client ID</strong>. Copy the full value — it is easy to capture only part of it.</li>
 </ol>
+
+<div class="warning-box">
+  <strong>Validation type matters:</strong> If the API client is created with the <strong>Secret</strong> validation type, the token endpoint will reject the plugin's JWT assertion with <code>HTTP 400 invalid_request</code>. The client must be configured with an uploaded public key.
+</div>
 
 <h3>Step 2: Generate and Upload an RSA Key Pair</h3>
 <ol>
@@ -158,23 +169,40 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
   <tr><td>Client ID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>OAuth Client ID from the ZIdentity API Client</td></tr>
   <tr><td>Private Key</td><td><code>credential_asymmetric_key</code></td><td><span class="badge badge-required">Required</span></td><td>PEM-encoded RSA private key for JWT signing. Paste the full content of <code>zscaler_private.pem</code></td></tr>
-  <tr><td>Vanity Domain</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Your Zscaler vanity domain (e.g., <code>mycompany</code>). This is the prefix in <code>mycompany.zsapi.net</code></td></tr>
-  <tr><td>Cloud</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Zscaler cloud domain. Default: <code>zsapi.net</code>. Most customers use the default.</td></tr>
+  <tr><td>Vanity Domain</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Your Zscaler vanity domain (e.g., <code>mycompany</code>). This is the prefix in your ZIdentity login URL.</td></tr>
+  <tr><td>Cloud</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>The domain of your ZIdentity login URL, used to build the token endpoint. Set this to <code>zslogin.net</code> if you sign in at <code>https://mycompany.zslogin.net</code>. Default: <code>zsapi.net</code>.</td></tr>
 </table>
 
-<div class="info-box">
-  <strong>How authentication works:</strong> The plugin builds a JWT assertion (signed with your private key), sends it to <code>https://{vanity_domain}.{cloud}/oauth2/v1/token</code> to obtain an access token, then uses that token as a Bearer header for all API requests through <code>api.zsapi.net</code>. Tokens are cached and auto-refreshed before expiry.
+<div class="warning-box">
+  <strong>Set Cloud to match your login URL:</strong> The Cloud value is used for the <em>identity</em> endpoint, not the API endpoint. Combined with the vanity domain it forms <code>https://{vanity_domain}.{cloud}/oauth2/v1/token</code>. If it does not match your ZIdentity login domain the connection fails with a DNS resolution error such as <code>Failed to resolve 'mycompany.zsapi.net'</code>. The default of <code>zsapi.net</code> is not correct for every tenant.
 </div>
+
+<div class="info-box">
+  <strong>How authentication works:</strong> The plugin builds a JWT assertion (signed with your private key, RS256), sends it to <code>https://{vanity_domain}.{cloud}/oauth2/v1/token</code> to obtain an access token, then uses that token as a Bearer header for all API requests through <code>api.zsapi.net</code>. A single token is shared across the ZIA, ZPA and ZCC clients, and is cached and auto-refreshed before expiry.
+</div>
+
+<h3>Connection Test Behavior</h3>
+<p>The connection test validates in two tiers, which lets it distinguish a credential problem from a permissions problem:</p>
+<ul>
+  <li><strong>Authentication is fatal.</strong> If an access token cannot be obtained, the test fails. This indicates the client ID, private key, vanity domain or cloud is incorrect.</li>
+  <li><strong>Per-service authorization is informational.</strong> Each of ZIA, ZPA and ZCC is probed and the result is written to the job log. The test succeeds as long as at least one service is authorized, so a tenant licensed for only some Zscaler products passes without over-scoping its API client. The test fails only when no service is authorized.</li>
+</ul>
+<p>Review the job log after a successful test to confirm which services are available. Actions for an unauthorized service will fail with <code>HTTP 401</code> until a role is assigned in ZIdentity.</p>
+
 <h3>Network Requirements</h3>
 <ul>
-  <li>Outbound HTTPS to <code>{vanity_domain}.zsapi.net</code> (token endpoint)</li>
+  <li>Outbound HTTPS to <code>{vanity_domain}.{cloud}</code> (token endpoint, e.g. <code>mycompany.zslogin.net</code>)</li>
   <li>Outbound HTTPS to <code>api.zsapi.net</code> (unified API gateway for all ZIA/ZPA/ZCC requests)</li>
   <li>No inbound connections required</li>
-  <li>If using an HTTP proxy, ensure it allows connections to <code>*.zsapi.net</code></li>
+  <li>If using an HTTP proxy, ensure it allows connections to your ZIdentity domain and to <code>api.zsapi.net</code></li>
 </ul>
 
 <h2 id="permissions">Permissions &amp; OAuth Scopes</h2>
 <p>Zscaler OneAPI uses OAuth 2.0 scopes to control what the API client can access. Assign the minimum scopes needed for your workflows in the ZIdentity API Client configuration.</p>
+
+<div class="warning-box">
+  <strong>Authorization is per service.</strong> A token is issued from a single API client but each service enforces its own API Resource role. A client scoped only to ZCC authenticates successfully and still returns <code>HTTP 401</code> with <code>{"detail": "unauthorized"}</code> for every ZIA and ZPA action. If some actions work and others return 401, open the API client in ZIdentity and check the <strong>Resources</strong> tab for a role covering each service you use. API Resource roles are derived from the RBAC roles defined within each product, so a role may need to be created in the product admin portal first and then synced in ZIdentity.
+</div>
 
 <h3>Scope Matrix by Use Case</h3>
 
@@ -531,6 +559,58 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   ]
 }</code></pre>
 
+<h2 id="custom-api-request">Custom API Request</h2>
+<p><span class="product-badge badge-zia">ZIA</span><span class="product-badge badge-zpa">ZPA</span><span class="product-badge badge-zcc">ZCC</span> Send an authenticated request to any OneAPI endpoint and return the raw status code and response body. Unlike other actions this does not raise on a non-2xx response and does not retry on 401, so the exact response is visible. That makes it useful for reproducing a request from Postman or vendor documentation and confirming whether a failure is a plugin issue or a permissions issue.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Service</td><td><code>enum</code></td><td><span class="badge badge-required">Required</span></td><td><code>ZIA</code>, <code>ZPA</code> or <code>ZCC</code>. Determines the path prefix that is prepended to the path.</td></tr>
+  <tr><td>Method</td><td><code>enum</code></td><td><span class="badge badge-required">Required</span></td><td><code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code> or <code>DELETE</code>. Default: <code>GET</code></td></tr>
+  <tr><td>Path</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Endpoint path relative to the service prefix, without a leading slash</td></tr>
+  <tr><td>Body</td><td><code>object</code></td><td><span class="badge badge-optional">Optional</span></td><td>JSON body to send. Ignored for GET requests.</td></tr>
+</table>
+<h4>Service Prefixes</h4>
+<table>
+  <tr><th>Service</th><th>Resulting URL</th></tr>
+  <tr><td>ZIA</td><td><code>https://api.zsapi.net/zia/api/v1/{path}</code></td></tr>
+  <tr><td>ZPA</td><td><code>https://api.zsapi.net/zpa/api/v1/{path}</code></td></tr>
+  <tr><td>ZCC</td><td><code>https://api.zsapi.net/zcc/papi/public/v1/{path}</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "status_code": 200,
+  "url": "https://api.zsapi.net/zcc/papi/public/v1/web/policy/listByCompany",
+  "response": "[{\"profileName\": \"Default Profile\"}]"
+}</code></pre>
+
+<div class="warning-box">
+  <strong>Write methods modify configuration:</strong> POST, PUT, PATCH and DELETE will change the target tenant. The action is bounded by the permissions already granted to the connection's API client, so it cannot exceed that scope, but it is a passthrough with no validation of the path or body. Prefer GET when diagnosing.
+</div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3>Connection fails with a DNS resolution error</h3>
+<p>An error such as <code>Failed to resolve 'mycompany.zsapi.net'</code> or <code>Name or service not known</code> means the token endpoint hostname does not exist. The <strong>Cloud</strong> field must match the domain of your ZIdentity login URL. If you sign in at <code>https://mycompany.zslogin.net</code> then set Cloud to <code>zslogin.net</code> rather than leaving the <code>zsapi.net</code> default.</p>
+
+<h3>Token endpoint returns HTTP 400 invalid_request</h3>
+<p>Authentication reached ZIdentity but the assertion was rejected. Check, in order:</p>
+<ul>
+  <li>The API client's <strong>Validation Type</strong> is <strong>Certificates/Public Keys</strong>, not <strong>Secret</strong>. This plugin only supports private key JWT.</li>
+  <li>The <strong>Client ID</strong> is the complete value from ZIdentity, not a truncated copy.</li>
+  <li>The private key pasted into the connection is the counterpart of the public key uploaded to the API client. If the key pair was regenerated, both sides must be updated.</li>
+</ul>
+
+<h3>Some actions return HTTP 401 while others succeed</h3>
+<p>A response of <code>{"detail": "unauthorized"}</code> from one service while another service works is an authorization problem, not a credential problem. The token is valid, but the API client has no API Resource role for that service. Open the API client in ZIdentity, go to the <strong>Resources</strong> tab, and assign a role for each of ZIA, ZPA and ZCC that you intend to use.</p>
+<p>To confirm this, run <strong>Custom API Request</strong> against a service you know works and compare it against the failing one. Differing status codes for the same credentials point to scope.</p>
+
+<h3>Confirming which services are authorized</h3>
+<p>Run the connection test and review the job log. Each service is probed and reported individually, for example:</p>
+<pre><code>ZIA: not authorized (OAuth 2.0 bearer token has expired or is invalid.)
+ZPA: not authorized (OAuth 2.0 bearer token has expired or is invalid.)
+ZCC: authorized
+Connection test succeeded. Authorized services: ZCC.</code></pre>
+
 <h2 id="custom-types">Custom Types</h2>
 
 <h3>vpn_gateway_entry</h3>
@@ -580,6 +660,14 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>2.2.0</td><td>Connection test now treats authentication as fatal and per-service authorization as informational, so it reports the state of every service and only fails when none are authorized | Share a single OAuth token across the ZIA, ZPA and ZCC clients so a token is obtained once per connection instead of once per service</td></tr>
+  <tr><td>2.1.2</td><td>Fix profile ID being returned with a trailing decimal, which produced an invalid request path when passed to Remove VPN Gateway Bypass</td></tr>
+  <tr><td>2.1.1</td><td>Fix Get VPN Gateway Bypasses and Remove VPN Gateway Bypass to handle a vpnGateways value returned as a comma separated string | Fix Get VPN Gateway Bypasses output keys to match the vpn_gateway_profile type</td></tr>
+  <tr><td>2.1.0</td><td>Add Custom API Request action for reproducing vendor requests exactly when troubleshooting | Fix Get VPN Gateway Bypasses and Remove VPN Gateway Bypass to handle vpnGateways entries returned as plain strings</td></tr>
+  <tr><td>2.0.4</td><td>Restore api.zsapi.net as the API base URL | Send the OAuth token request as form-encoded fields so the audience is percent-encoded | Add jti claim and typ header to the JWT assertion | Add request timeouts</td></tr>
+  <tr><td>2.0.3</td><td>Fix API base URL to use api.zscaler.com to match OAuth audience</td></tr>
+  <tr><td>2.0.2</td><td>Fix OAuth token request to include audience parameter required for API authorization</td></tr>
+  <tr><td>2.0.1</td><td>Fix OAuth token request to include client_id in form body as required by ZIdentity token endpoint</td></tr>
   <tr><td>2.0.0</td><td>Major version bump: migrate to Zscaler OneAPI with OAuth 2.0 Private Key authentication | Add DLP, firewall, logs, threat feed, ZPA, and ZCC VPN gateway bypass actions | SDK bump to 6.6.0</td></tr>
   <tr><td>1.5.2</td><td>SDK Bump to 6.3.10 | Update connection test</td></tr>
   <tr><td>1.5.1</td><td>Requirements.txt bumped | SDK Bump to 6.1.4</td></tr>
@@ -604,7 +692,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Zscaler Plugin v2.0.0 &middot; Supported Versions: Zscaler OneAPI 2024
+  Rapid7 InsightConnect &middot; Zscaler Plugin v2.2.0 &middot; Supported Versions: Zscaler OneAPI 2024
 </div>
 </div>
 </body>

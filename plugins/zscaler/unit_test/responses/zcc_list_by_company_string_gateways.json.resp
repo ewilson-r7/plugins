@@ -1,0 +1,15 @@
+{
+  "profiles": [
+    {
+      "profileId": "profile-101",
+      "profileName": "String Gateways Profile",
+      "policyExtension": {
+        "vpnGateways": [
+          "vpn1.example.com",
+          "10.0.0.1",
+          "10.0.0.0/24"
+        ]
+      }
+    }
+  ]
+}

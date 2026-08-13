@@ -14,8 +14,16 @@ class ZIAClient(BaseClient):
     sandbox reports, user management, URL categories, DLP, firewall, logs, and threat feeds.
     """
 
-    def __init__(self, client_id: str, private_key: str, vanity_domain: str, cloud: str, logger: object):
-        super().__init__(client_id, private_key, vanity_domain, cloud, logger)
+    def __init__(
+        self,
+        client_id: str,
+        private_key: str,
+        vanity_domain: str,
+        cloud: str,
+        logger: object,
+        token_provider: object = None,
+    ):
+        super().__init__(client_id, private_key, vanity_domain, cloud, logger, token_provider)
         self.service_prefix = "/zia/api/v1"
 
     # -------------------------------------------------------------------------

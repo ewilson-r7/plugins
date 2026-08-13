@@ -1,101 +1,106 @@
 import time
 from abc import ABC, abstractmethod
 
-import jwt
 import requests
 from insightconnect_plugin_runtime.exceptions import PluginException
 
 from icon_zscaler.util.constants import (
     HTTP_ERROR_MAP,
+    TIMEOUT,
     Assistance,
     Cause,
 )
+from icon_zscaler.util.token_provider import TokenProvider
 
 
 class BaseClient(ABC):
     """Base client for Zscaler OneAPI with OAuth 2.0 Client Credentials (Private Key) authentication."""
 
     BASE_URL = "https://api.zsapi.net"
-    TOKEN_EXPIRY_BUFFER = 30  # seconds before expiry to trigger refresh
 
-    def __init__(self, client_id: str, private_key: str, vanity_domain: str, cloud: str, logger: object):
-        self.client_id = client_id
-        self.private_key = private_key
-        self.vanity_domain = vanity_domain
-        self.cloud = cloud
+    def __init__(
+        self,
+        client_id: str,
+        private_key: str,
+        vanity_domain: str,
+        cloud: str,
+        logger: object,
+        token_provider: TokenProvider = None,
+    ):
         self.logger = logger
         self.base_url = self.BASE_URL
         self.service_prefix = ""  # Set by subclasses (e.g., "/zia/api/v1", "/zpa/api/v1")
-        self._token = None
-        self._token_expiry = 0
+        # A provider is shared across service clients so the token is fetched once per
+        # connection. One is created here when a client is used standalone.
+        self.token_provider = token_provider or TokenProvider(client_id, private_key, vanity_domain, cloud, logger)
+
+    # Credentials live on the token provider so the shared instance is the single
+    # source of truth. These delegate rather than holding a second copy.
+    @property
+    def client_id(self):
+        return self.token_provider.client_id
+
+    @client_id.setter
+    def client_id(self, value) -> None:
+        self.token_provider.client_id = value
+
+    @property
+    def private_key(self):
+        return self.token_provider.private_key
+
+    @private_key.setter
+    def private_key(self, value) -> None:
+        self.token_provider.private_key = value
+
+    @property
+    def vanity_domain(self):
+        return self.token_provider.vanity_domain
+
+    @vanity_domain.setter
+    def vanity_domain(self, value) -> None:
+        self.token_provider.vanity_domain = value
+
+    @property
+    def cloud(self):
+        return self.token_provider.cloud
+
+    @cloud.setter
+    def cloud(self, value) -> None:
+        self.token_provider.cloud = value
 
     @property
     def token_endpoint(self) -> str:
-        return f"https://{self.vanity_domain}.{self.cloud}/oauth2/v1/token"
+        return self.token_provider.token_endpoint
+
+    @property
+    def _token(self):
+        return self.token_provider.token
+
+    @_token.setter
+    def _token(self, value) -> None:
+        self.token_provider.token = value
+
+    @property
+    def _token_expiry(self):
+        return self.token_provider.expiry
+
+    @_token_expiry.setter
+    def _token_expiry(self, value) -> None:
+        self.token_provider.expiry = value
+
+    def authenticate(self) -> None:
+        """Obtain an access token, proving the credentials are valid.
+
+        Exposed for the connection test, which validates authentication separately
+        from per-service authorization.
+        """
+        self.token_provider.authenticate()
 
     def _authenticate(self) -> None:
-        """Authenticate via OAuth 2.0 Client Credentials with Private Key JWT assertion."""
-        now = int(time.time())
-        claims = {
-            "iss": self.client_id,
-            "sub": self.client_id,
-            "aud": self.token_endpoint,
-            "iat": now,
-            "exp": now + 300,  # 5 minutes
-        }
-
-        self.logger.info("Building JWT assertion for OAuth 2.0 authentication...")
-        assertion = jwt.encode(claims, self.private_key, algorithm="RS256")
-
-        body = (
-            "grant_type=client_credentials"
-            "&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-            f"&client_assertion={assertion}"
-        )
-
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-
-        self.logger.info(f"Requesting OAuth token from {self.token_endpoint}")
-        try:
-            response = requests.request(
-                method="POST",
-                url=self.token_endpoint,
-                data=body,
-                headers=headers,
-            )
-        except requests.exceptions.Timeout:
-            raise PluginException(
-                cause="Timeout while requesting OAuth token.",
-                assistance="Verify network connectivity and that the Zscaler identity provider is reachable.",
-            )
-        except requests.exceptions.ConnectionError:
-            raise PluginException(
-                cause="Connection error while requesting OAuth token.",
-                assistance="Verify the vanity_domain and cloud settings are correct and the identity provider is reachable.",
-            )
-
-        if response.status_code != 200:
-            raise PluginException(
-                cause="Failed to obtain OAuth 2.0 access token.",
-                assistance=(
-                    f"Token endpoint returned HTTP {response.status_code}. "
-                    "Verify that client_id, private_key, vanity_domain, and cloud are correct."
-                ),
-                data=response.text,
-            )
-
-        token_data = response.json()
-        self._token = token_data.get("access_token")
-        expires_in = token_data.get("expires_in", 3600)
-        self._token_expiry = int(time.time()) + expires_in
-        self.logger.info("OAuth 2.0 token obtained successfully.")
+        self.token_provider.authenticate()
 
     def _get_token(self) -> str:
-        """Return cached token or refresh if expired/near-expiry (30s buffer)."""
-        if self._token is None or time.time() >= (self._token_expiry - self.TOKEN_EXPIRY_BUFFER):
-            self.logger.info("Token missing or near expiry, refreshing...")
-            self._authenticate()
-        return self._token
+        return self.token_provider.get_token()
 
     def _make_request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
         """Build full URL with service prefix and make an authenticated API request."""
@@ -105,8 +110,42 @@ class BaseClient(ABC):
         headers["Authorization"] = f"Bearer {token}"
         return self._call_api(method, url, headers=headers, **kwargs)
 
+    def raw_request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
+        """Send an authenticated request and return the response without status handling.
+
+        Unlike _make_request, this does not raise on non-2xx responses and does not
+        retry on 401. Callers observe the exact status code and body returned by the
+        API, which is what makes it useful for reproducing a request for comparison.
+
+        Args:
+            method: HTTP method to use.
+            endpoint: Endpoint path relative to the service prefix.
+
+        Returns:
+            The raw requests.Response, whatever its status code.
+        """
+        url = f"{self.base_url}{self.service_prefix}/{endpoint.lstrip('/')}"
+        headers = kwargs.pop("headers", {})
+        headers["Authorization"] = f"Bearer {self._get_token()}"
+        kwargs.setdefault("timeout", TIMEOUT)
+
+        self.logger.info(f"Sending {method} request to {url}")
+        try:
+            return requests.request(method=method, url=url, headers=headers, **kwargs)
+        except requests.exceptions.Timeout:
+            raise PluginException(
+                cause="Request timed out.",
+                assistance="The Zscaler API did not respond in time. Retry the request or check network connectivity.",
+            )
+        except requests.exceptions.ConnectionError:
+            raise PluginException(
+                cause="Connection error occurred.",
+                assistance="Unable to reach the Zscaler API. Verify network connectivity and API availability.",
+            )
+
     def _call_api(self, method: str, url: str, **kwargs) -> requests.Response:
         """Execute HTTP request using requests.request() (no Session). Handle transport errors."""
+        kwargs.setdefault("timeout", TIMEOUT)
         try:
             response = requests.request(method=method, url=url, **kwargs)
         except requests.exceptions.Timeout:

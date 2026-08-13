@@ -84,16 +84,28 @@ class TestAuthenticate(TestCase):
 
         call_kwargs = mock_request.call_args[1]
         self.assertEqual(call_kwargs["url"], "https://mycompany.zsapi.net/oauth2/v1/token")
-        self.assertIn("grant_type=client_credentials", call_kwargs["data"])
-        self.assertIn("client_assertion=", call_kwargs["data"])
+
+        # Body must be a dict so requests percent-encodes the audience URI
+        body = call_kwargs["data"]
+        self.assertIsInstance(body, dict)
+        self.assertEqual(body["grant_type"], "client_credentials")
+        self.assertEqual(body["client_id"], "test-client-id")
+        self.assertEqual(
+            body["client_assertion_type"],
+            "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+        )
+        self.assertEqual(body["audience"], "https://api.zscaler.com")
 
         import jwt
 
-        assertion = call_kwargs["data"].split("client_assertion=")[1]
+        assertion = body["client_assertion"]
+        self.assertEqual(jwt.get_unverified_header(assertion)["typ"], "JWT")
         decoded = jwt.decode(assertion, options={"verify_signature": False})
         self.assertEqual(decoded["iss"], "test-client-id")
         self.assertEqual(decoded["sub"], "test-client-id")
+        self.assertEqual(decoded["aud"], "https://mycompany.zsapi.net/oauth2/v1/token")
         self.assertEqual(decoded["exp"] - decoded["iat"], 300)
+        self.assertIn("jti", decoded)
 
     @patch("requests.request")
     def test_raises_on_failed_token_response(self, mock_request):

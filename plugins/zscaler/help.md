@@ -17,6 +17,7 @@ Zscaler is a SaaS security platform that provides fast, secure connections betwe
 * Submit threat feed IoCs
 * Manage ZPA application segments and server groups
 * Audit and manage ZCC VPN gateway bypass entries
+* Send custom API requests for troubleshooting
 
 # Requirements
 
@@ -209,6 +210,54 @@ Example output:
     "name": "Sample user",
     "tempAuthEmail": "user@example.com"
   }
+}
+```
+
+#### Custom API Request
+
+This action is used to send an authenticated request to a Zscaler OneAPI service and return the raw status code and 
+response body without error handling, which allows a vendor request to be reproduced exactly when troubleshooting 
+connectivity or permissions
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|body|object|None|False|Optional JSON body to send with the request. Ignored for GET requests|None|{'urls': ['facebook.com']}|None|None|
+|method|string|GET|True|The HTTP method to use. Write methods such as POST, PUT, PATCH and DELETE are able to modify configuration in the target tenant|["GET", "POST", "PUT", "PATCH", "DELETE"]|GET|None|None|
+|path|string|None|True|The endpoint path relative to the service prefix, specified without a leading slash|None|web/policy/listByCompany|web/policy/listByCompany|None|
+|service|string|None|True|The Zscaler OneAPI service to target, which determines the API path prefix that is prepended to the path|["ZIA", "ZPA", "ZCC"]|ZCC|None|None|
+  
+Example input:
+
+```
+{
+  "body": {
+    "urls": [
+      "facebook.com"
+    ]
+  },
+  "method": "GET",
+  "path": "web/policy/listByCompany",
+  "service": "ZCC"
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|response|string|False|The raw response body returned by the Zscaler API|[]|
+|status_code|integer|True|The HTTP status code returned by the Zscaler API|200|
+|url|string|True|The full URL that was requested, for comparison against a known working request|https://api.zsapi.net/zcc/papi/public/v1/web/policy/listByCompany|
+  
+Example output:
+
+```
+{
+  "response": [],
+  "status_code": 200,
+  "url": "https://api.zsapi.net/zcc/papi/public/v1/web/policy/listByCompany"
 }
 ```
 
@@ -1478,9 +1527,19 @@ Example output:
  2. Navigate to **Administration > API Clients** and create a new OAuth client.
  3. Generate an RSA private key and upload the corresponding public key to the API client.
 * Ensure the OAuth client has the required scopes for the actions you intend to use (ZIA, ZPA). For more information see the [Zscaler OneAPI documentation](https://help.zscaler.com/oneapi/understanding-oneapi).
+* The Cloud value must match the domain of your ZIdentity login URL. If you sign in at https://mycompany.zslogin.net then set Cloud to zslogin.net rather than the default zsapi.net.
+* If a specific service returns HTTP 401 while others succeed, the API client is likely missing the API Resource role for that service. In ZIdentity, open the API client and review the Resources tab to confirm a role is assigned for each of ZIA, ZPA and ZCC that you intend to use. The Custom API Request action can be used to reproduce a known working vendor request and confirm whether the failure is scope related.
 
 # Version History
 
+* 2.2.0 - Connection test now treats authentication as fatal and per-service authorization as informational, so it reports the state of every service and only fails when none are authorized | Share a single OAuth token across the ZIA, ZPA and ZCC clients so a token is obtained once per connection instead of once per service
+* 2.1.2 - Fix profile ID being returned with a trailing decimal, which produced an invalid request path when passed to Remove VPN Gateway Bypass
+* 2.1.1 - Fix Get VPN Gateway Bypasses and Remove VPN Gateway Bypass to handle a vpnGateways value returned as a comma separated string | Fix Get VPN Gateway Bypasses output keys to match the vpn_gateway_profile type
+* 2.1.0 - Add Custom API Request action for reproducing vendor requests exactly when troubleshooting | Fix Get VPN Gateway Bypasses and Remove VPN Gateway Bypass to handle vpnGateways entries returned as plain strings
+* 2.0.4 - Restore api.zsapi.net as the API base URL | Send the OAuth token request as form-encoded fields so the audience is percent-encoded | Add jti claim and typ header to the JWT assertion | Add request timeouts
+* 2.0.3 - Fix API base URL to use api.zscaler.com to match OAuth audience
+* 2.0.2 - Fix OAuth token request to include audience parameter required for API authorization
+* 2.0.1 - Fix OAuth token request to include client_id in form body as required by ZIdentity token endpoint
 * 2.0.0 - Major version bump: migrate to Zscaler OneAPI with OAuth 2.0 Private Key authentication | Add DLP, firewall, logs, threat feed, ZPA, and ZCC VPN gateway bypass actions | SDK bump to 6.6.0
 * 1.5.2 - SDK Bump to 6.3.10 | Update connection test
 * 1.5.1 - Requirements.txt bumped | SDK Bump to 6.1.4

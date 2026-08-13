@@ -44,4 +44,6 @@ from .get_server_group.action import GetServerGroup
 
 from .get_vpn_gateway_bypasses.action import GetVpnGatewayBypasses
 
+from .custom_api_request.action import CustomApiRequest
+
 from .remove_vpn_gateway_bypass.action import RemoveVpnGatewayBypass

@@ -4,8 +4,16 @@ from icon_zscaler.util.base_client import BaseClient
 class ZPAClient(BaseClient):
     """Zscaler Private Access (ZPA) client using OneAPI OAuth 2.0 authentication."""
 
-    def __init__(self, client_id: str, private_key: str, vanity_domain: str, cloud: str, logger: object):
-        super().__init__(client_id, private_key, vanity_domain, cloud, logger)
+    def __init__(
+        self,
+        client_id: str,
+        private_key: str,
+        vanity_domain: str,
+        cloud: str,
+        logger: object,
+        token_provider: object = None,
+    ):
+        super().__init__(client_id, private_key, vanity_domain, cloud, logger, token_provider)
         self.service_prefix = "/zpa/api/v1"
 
     def list_application_segments(self, next_link: str = None) -> dict:
