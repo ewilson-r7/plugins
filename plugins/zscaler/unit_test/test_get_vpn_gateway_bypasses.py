@@ -13,7 +13,11 @@ from unittest.mock import patch, MagicMock
 from jsonschema import validate
 from util import Util
 from icon_zscaler.actions.get_vpn_gateway_bypasses import GetVpnGatewayBypasses
-from icon_zscaler.actions.get_vpn_gateway_bypasses.schema import GetVpnGatewayBypassesOutput, Output
+from icon_zscaler.actions.get_vpn_gateway_bypasses.schema import (
+    GetVpnGatewayBypassesOutput,
+    Input,
+    Output,
+)
 
 
 def profile(**overrides) -> dict:
@@ -27,53 +31,104 @@ def profile(**overrides) -> dict:
     return base
 
 
+MULTI_PROFILES = [
+    profile(profile_id="14729", profile_name="Stepan Test"),
+    profile(profile_id="10649", profile_name="MNP Z-Tunnel 2.0 Canada Proxy"),
+    profile(profile_id="19253", profile_name="MNP Z-Tunnel 2.0 Disableable"),
+    profile(profile_id="1007", profile_name="MNP Z-Tunnel 2.0 General"),
+]
+
+
 @patch("requests.request", side_effect=Util.mock_request)
 class TestGetVpnGatewayBypassesAction(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.action = Util.default_connector(GetVpnGatewayBypasses())
-        # Also set ZCC token since default_connector doesn't set it
         cls.action.connection.zcc_client._token = "mock-access-token-12345"
         cls.action.connection.zcc_client._token_expiry = 9999999999
 
-    def test_calls_zcc_client_get_vpn_gateway_bypasses(self, _mock_request):
-        """Test action handler calls self.connection.zcc_client.get_vpn_gateway_bypasses()."""
-        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=[profile()])
+    # ------------------------------------------------------------------
+    # No inputs (existing behavior)
+    # ------------------------------------------------------------------
 
-        self.action.run({})
-
-        self.action.connection.zcc_client.get_vpn_gateway_bypasses.assert_called_once()
-
-    def test_output_uses_profiles_constant(self, _mock_request):
-        """Test output uses Output.PROFILES constant."""
-        profiles = [profile(profile_name="Test Profile")]
-        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=profiles)
+    def test_returns_all_profiles_when_no_inputs(self, _mock_request) -> None:
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=MULTI_PROFILES)
 
         result = self.action.run({})
 
-        self.assertIn(Output.PROFILES, result)
-        self.assertEqual(result[Output.PROFILES], profiles)
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses.assert_called_once_with(profile_id=None)
+        self.assertEqual(len(result[Output.PROFILES]), 4)
 
-    def test_output_conforms_to_schema(self, _mock_request):
-        """Guards against key naming drift between the client and the output type."""
-        profiles = [
-            profile(),
-            profile(
-                profile_id="1007.0",
-                profile_name="MNP Z-Tunnel 2.0 General",
-                vpn_gateways=[{"hostname": "", "ip": "172.16.0.0/12", "type": "ip"}],
-            ),
-        ]
-        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=profiles)
+    def test_output_conforms_to_schema(self, _mock_request) -> None:
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=MULTI_PROFILES)
 
         validate(self.action.run({}), GetVpnGatewayBypassesOutput.schema)
 
-    def test_clean_dict_removes_none_values(self, _mock_request):
-        """Test that clean_dict is applied (None values removed from output)."""
+    # ------------------------------------------------------------------
+    # Profile ID input (server-side single-profile fetch)
+    # ------------------------------------------------------------------
+
+    def test_passes_profile_id_to_client(self, _mock_request) -> None:
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(
+            return_value=[profile(profile_id="14729", profile_name="Stepan Test")]
+        )
+
+        result = self.action.run({Input.PROFILE_ID: "14729"})
+
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses.assert_called_once_with(profile_id="14729")
+        self.assertEqual(len(result[Output.PROFILES]), 1)
+        self.assertEqual(result[Output.PROFILES][0]["profile_id"], "14729")
+
+    def test_profile_id_skips_search_filter(self, _mock_request) -> None:
+        """When profile_id is provided, search is ignored — the API already narrows to one profile."""
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(
+            return_value=[profile(profile_id="14729", profile_name="Stepan Test")]
+        )
+
+        result = self.action.run({Input.PROFILE_ID: "14729", Input.SEARCH: "nonexistent"})
+
+        # Result still contains the profile even though search wouldn't match its name
+        self.assertEqual(len(result[Output.PROFILES]), 1)
+
+    # ------------------------------------------------------------------
+    # Search input (client-side name filter)
+    # ------------------------------------------------------------------
+
+    def test_search_filters_by_profile_name(self, _mock_request) -> None:
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=MULTI_PROFILES)
+
+        result = self.action.run({Input.SEARCH: "Z-Tunnel 2.0"})
+
+        # "Stepan Test" should be excluded
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses.assert_called_once_with(profile_id=None)
+        self.assertEqual(len(result[Output.PROFILES]), 3)
+        names = [p["profile_name"] for p in result[Output.PROFILES]]
+        self.assertNotIn("Stepan Test", names)
+
+    def test_search_is_case_insensitive(self, _mock_request) -> None:
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=MULTI_PROFILES)
+
+        result = self.action.run({Input.SEARCH: "stepan"})
+
+        self.assertEqual(len(result[Output.PROFILES]), 1)
+        self.assertEqual(result[Output.PROFILES][0]["profile_name"], "Stepan Test")
+
+    def test_search_no_match_returns_empty(self, _mock_request) -> None:
+        self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=MULTI_PROFILES)
+
+        result = self.action.run({Input.SEARCH: "nonexistent"})
+
+        # clean_dict removes empty lists, so profiles key may be absent
+        self.assertEqual(result.get(Output.PROFILES, []), [])
+
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    def test_clean_dict_removes_none_values(self, _mock_request) -> None:
         profiles = [profile(vpn_gateways=[{"hostname": "gw.example.com", "ip": None, "type": "hostname"}])]
         self.action.connection.zcc_client.get_vpn_gateway_bypasses = MagicMock(return_value=profiles)
 
         result = self.action.run({})
 
-        # clean_dict should have been applied — the result should exist
         self.assertIn(Output.PROFILES, result)

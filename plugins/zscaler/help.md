@@ -784,8 +784,20 @@ This action is used to retrieve VPN gateway bypass entries from ZCC application 
 hosting/CDN IP conflicts
 
 ##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|profile_id|string|None|False|Return only the profile matching this ID|None|14729|14729|None|
+|search|string|None|False|Filter profiles by name (case-insensitive partial match). Ignored when Profile ID is provided|None|Z-Tunnel 2.0|Z-Tunnel 2.0 General|None|
   
-*This action does not contain any inputs.*
+Example input:
+
+```
+{
+  "profile_id": 14729,
+  "search": "Z-Tunnel 2.0"
+}
+```
 
 ##### Output
 
@@ -1532,6 +1544,8 @@ Example output:
 
 # Version History
 
+* 2.3.1 - Fix Profile ID input to filter client-side. The listByCompany endpoint does not support a profileId query parameter
+* 2.3.0 - Add optional Profile ID and Search inputs to Get VPN Gateway Bypasses. Profile ID filters results to a single profile, Search filters by profile name client-side
 * 2.2.0 - Connection test now treats authentication as fatal and per-service authorization as informational, so it reports the state of every service and only fails when none are authorized | Share a single OAuth token across the ZIA, ZPA and ZCC clients so a token is obtained once per connection instead of once per service
 * 2.1.2 - Fix profile ID being returned with a trailing decimal, which produced an invalid request path when passed to Remove VPN Gateway Bypass
 * 2.1.1 - Fix Get VPN Gateway Bypasses and Remove VPN Gateway Bypass to handle a vpnGateways value returned as a comma separated string | Fix Get VPN Gateway Bypasses output keys to match the vpn_gateway_profile type

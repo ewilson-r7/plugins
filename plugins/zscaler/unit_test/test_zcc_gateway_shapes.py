@@ -158,6 +158,49 @@ class TestGetVpnGatewayBypassesStringShape(TestCase):
             ],
         )
 
+    def test_profile_id_sends_query_parameter(self) -> None:
+        """When profile_id is provided, only the matching profile is returned."""
+        fixture = json.dumps(
+            {
+                "profiles": [
+                    {
+                        "profileId": 14729.0,
+                        "profileName": "Stepan Test",
+                        "policyExtension": {"vpnGateways": "calgary.vpn.mnp.ca"},
+                    },
+                    {
+                        "profileId": 1007.0,
+                        "profileName": "General",
+                        "policyExtension": {"vpnGateways": "vpn.example.com"},
+                    },
+                ]
+            }
+        )
+
+        with patch.object(requests, "request", return_value=MockResponse(200, fixture)):
+            result = create_client().get_vpn_gateway_bypasses(profile_id="14729")
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["profile_id"], "14729")
+        self.assertEqual(result[0]["profile_name"], "Stepan Test")
+
+    def test_profile_id_with_decimal_is_normalized(self) -> None:
+        """profile_id='14729.0' should match profile with profileId 14729."""
+        fixture = json.dumps(
+            {
+                "profiles": [
+                    {"profileId": 14729.0, "profileName": "X", "policyExtension": {"vpnGateways": "a.com"}},
+                    {"profileId": 1007.0, "profileName": "Y", "policyExtension": {"vpnGateways": "b.com"}},
+                ]
+            }
+        )
+
+        with patch.object(requests, "request", return_value=MockResponse(200, fixture)):
+            result = create_client().get_vpn_gateway_bypasses(profile_id="14729.0")
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["profile_id"], "14729")
+
     def test_strips_trailing_decimal_from_profile_id(self) -> None:
         """The API returns profileId as a number, which must not surface as 14729.0."""
         fixture = json.dumps(

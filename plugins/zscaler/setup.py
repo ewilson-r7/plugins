@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="zscaler-rapid7_mnp-plugin",
-    version="2.2.0",
+    version="2.3.1",
     description="Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network",
     author="rapid7_mnp",
     author_email="",

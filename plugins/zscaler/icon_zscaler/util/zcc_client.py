@@ -120,11 +120,11 @@ class ZCCClient(BaseClient):
         super().__init__(client_id, private_key, vanity_domain, cloud, logger, token_provider)
         self.service_prefix = "/zcc/papi/public/v1"
 
-    def get_vpn_gateway_bypasses(self) -> list:
-        """Get VPN gateway bypass entries from all application profiles.
+    def get_vpn_gateway_bypasses(self, profile_id: str = None) -> list:
+        """Get VPN gateway bypass entries from application profiles.
 
-        Calls GET web/policy/listByCompany, iterates application profiles,
-        and extracts policyExtension.vpnGateways from each profile.
+        Args:
+            profile_id: Optional profile ID to filter results to a single profile.
 
         Returns:
             List of dicts keyed to match the vpn_gateway_profile output type:
@@ -137,7 +137,15 @@ class ZCCClient(BaseClient):
         # Handle both list responses and dict responses with a list field
         profiles = profiles_data if isinstance(profiles_data, list) else profiles_data.get("profiles", [])
 
+        normalized_id = normalize_profile_id(profile_id) if profile_id else None
+
         for profile in profiles:
+            current_id = normalize_profile_id(profile.get("profileId", profile.get("id", "")))
+
+            # Skip non-matching profiles when filtering by ID
+            if normalized_id and current_id != normalized_id:
+                continue
+
             policy_extension = profile.get("policyExtension")
             if not policy_extension:
                 continue
@@ -148,7 +156,7 @@ class ZCCClient(BaseClient):
 
             results.append(
                 {
-                    "profile_id": normalize_profile_id(profile.get("profileId", profile.get("id", ""))),
+                    "profile_id": current_id,
                     "profile_name": profile.get("profileName", profile.get("name", "")),
                     "vpn_gateways": [normalize_gateway_entry(entry) for entry in raw_entries],
                 }

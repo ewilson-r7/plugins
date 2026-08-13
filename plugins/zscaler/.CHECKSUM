@@ -1,7 +1,7 @@
 {
-	"spec": "d0545e5c4b2f8943f7396ed262135519",
-	"manifest": "820a7ea835be885982ed81313228306e",
-	"setup": "b621c475a3edb643d1a4f00a4250fb47",
+	"spec": "470f183136e8eaef1a527693286517f8",
+	"manifest": "3a5979b1d0d7839e0f0c30a40b404984",
+	"setup": "0380222bb2d882051da8420c6a8043fc",
 	"schemas": [
 		{
 			"identifier": "blacklist_url/schema.py",
@@ -61,7 +61,7 @@
 		},
 		{
 			"identifier": "get_vpn_gateway_bypasses/schema.py",
-			"hash": "c9c675f3754ba4e94d2f1803506334fc"
+			"hash": "97047328feb8dd3f7cdba61035009614"
 		},
 		{
 			"identifier": "get_web_logs/schema.py",

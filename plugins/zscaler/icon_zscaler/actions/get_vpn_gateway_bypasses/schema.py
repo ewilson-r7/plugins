@@ -10,7 +10,8 @@ class Component:
 
 
 class Input:
-    pass
+    PROFILE_ID = "profile_id"
+    SEARCH = "search"
 
 
 class Output:
@@ -19,7 +20,27 @@ class Output:
 
 class GetVpnGatewayBypassesInput(insightconnect_plugin_runtime.Input):
     schema = json.loads(r"""
-   {}
+   {
+  "type": "object",
+  "title": "Variables",
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "title": "Profile ID",
+      "description": "Return only the profile matching this ID",
+      "placeholder": "14729",
+      "order": 1
+    },
+    "search": {
+      "type": "string",
+      "title": "Search",
+      "description": "Filter profiles by name (case-insensitive partial match). Ignored when Profile ID is provided",
+      "placeholder": "Z-Tunnel 2.0 General",
+      "order": 2
+    }
+  },
+  "definitions": {}
+}
     """)
 
     def __init__(self):
