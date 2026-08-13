@@ -64,10 +64,6 @@ class FortiManagerAPI:
         self.session_token: Optional[str] = None
         self.request_id: int = 1
 
-        # Set up requests session
-        self._session = requests.Session()
-        self._session.verify = self.ssl_verify
-
     def login(self) -> str:
         """Authenticate using session-based auth and store the session token.
 
@@ -94,10 +90,11 @@ class FortiManagerAPI:
         self._log_request(METHOD_EXEC, URL_LOGIN, payload)
 
         try:
-            response = self._session.post(
+            response = requests.post(
                 self.base_url,
                 json=payload,
                 timeout=self.REQUEST_TIMEOUT,
+                verify=self.ssl_verify,
             )
             response.raise_for_status()
             response_data = response.json()
@@ -171,10 +168,11 @@ class FortiManagerAPI:
         self._log_request(METHOD_EXEC, URL_LOGOUT, payload)
 
         try:
-            response = self._session.post(
+            response = requests.post(
                 self.base_url,
                 json=payload,
                 timeout=self.REQUEST_TIMEOUT,
+                verify=self.ssl_verify,
             )
             response_data = response.json()
             self._log_response(response_data)
@@ -342,11 +340,12 @@ class FortiManagerAPI:
         headers = {"Authorization": f"Bearer {self.api_key}"}
 
         try:
-            response = self._session.post(
+            response = requests.post(
                 self.base_url,
                 json=payload,
                 headers=headers,
                 timeout=self.REQUEST_TIMEOUT,
+                verify=self.ssl_verify,
             )
             response.raise_for_status()
             response_data = response.json()
@@ -397,10 +396,11 @@ class FortiManagerAPI:
         self._log_request(method, url, payload)
 
         try:
-            response = self._session.post(
+            response = requests.post(
                 self.base_url,
                 json=payload,
                 timeout=self.REQUEST_TIMEOUT,
+                verify=self.ssl_verify,
             )
             response.raise_for_status()
             response_data = response.json()
@@ -497,8 +497,10 @@ class FortiManagerAPI:
         if code == ERROR_CODE_SESSION_EXPIRED:
             raise SessionExpiredError()
 
-        # Map known error codes to descriptive messages
-        error_message = ERROR_MESSAGES.get(code, status.get("message", "Unknown error"))
+        # Map known error codes to descriptive messages — prefer the API's own message
+        api_message = status.get("message", "")
+        fallback_message = ERROR_MESSAGES.get(code, "Unknown error")
+        error_message = api_message if api_message else fallback_message
 
         raise PluginException(
             cause=f"FortiManager API error (code {code}): {error_message}",

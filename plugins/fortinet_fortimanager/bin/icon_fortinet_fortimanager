@@ -5,8 +5,8 @@ import json
 from sys import argv
 
 Name = "Fortinet FortiManager"
-Vendor = "rapid7"
-Version = "1.0.0"
+Vendor = "rapid7_mnp"
+Version = "2.0.2"
 Description = "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
 
 

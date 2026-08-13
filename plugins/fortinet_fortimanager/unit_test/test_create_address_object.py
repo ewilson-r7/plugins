@@ -22,7 +22,7 @@ class TestCreateAddressObject(TestCase):
         self.mock_success_response = load_payload("create_address_object.json.resp")
         self.mock_error_conflict = load_payload("error_conflict.json.resp")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_create_ipmask_from_bare_ip(self, mock_post):
         """Test creating ipmask object from a bare IP (should become /32)."""
         mock_post.return_value = MockResponse(self.mock_success_response)
@@ -39,7 +39,7 @@ class TestCreateAddressObject(TestCase):
         self.assertEqual(result[Output.ADDRESS_OBJECT]["type"], "ipmask")
         self.assertEqual(result[Output.ADDRESS_OBJECT]["subnet"], "10.20.30.40/32")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_create_ipmask_from_cidr(self, mock_post):
         """Test creating ipmask object from CIDR notation."""
         mock_post.return_value = MockResponse(self.mock_success_response)
@@ -56,7 +56,7 @@ class TestCreateAddressObject(TestCase):
         self.assertEqual(result[Output.ADDRESS_OBJECT]["type"], "ipmask")
         self.assertEqual(result[Output.ADDRESS_OBJECT]["subnet"], "192.168.10.0/24")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_create_fqdn_object(self, mock_post):
         """Test creating fqdn object from a domain name."""
         mock_post.return_value = MockResponse(self.mock_success_response)
@@ -85,7 +85,7 @@ class TestCreateAddressObject(TestCase):
 
         self.assertIn("Invalid address format", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_whitelist_skip_returns_success_false(self, mock_post):
         """Test that whitelisted address skips creation and returns success=false."""
         result = self.action.run(
@@ -101,7 +101,7 @@ class TestCreateAddressObject(TestCase):
         # Verify no API call was made
         mock_post.assert_not_called()
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_rfc1918_skip_returns_success_false(self, mock_post):
         """Test that RFC 1918 address skips creation and returns success=false when skip_rfc1918 is enabled."""
         result = self.action.run(
@@ -116,7 +116,7 @@ class TestCreateAddressObject(TestCase):
         # Verify no API call was made
         mock_post.assert_not_called()
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_naming_conflict_raises_plugin_exception(self, mock_post):
         """Test that a naming conflict (error -6) raises PluginException."""
         mock_post.return_value = MockResponse(self.mock_error_conflict)
@@ -131,7 +131,7 @@ class TestCreateAddressObject(TestCase):
 
         self.assertIn("-6", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_custom_name_input(self, mock_post):
         """Test that a custom address object name is used when provided."""
         mock_post.return_value = MockResponse(self.mock_success_response)

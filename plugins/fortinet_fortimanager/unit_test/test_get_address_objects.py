@@ -21,7 +21,7 @@ class TestGetAddressObjects(TestCase):
         # Load payload for mocking
         self.mock_response_data = load_payload("get_address_objects.json.resp")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_all_address_objects(self, mock_post):
         """Test retrieving all address objects without filters."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -31,7 +31,7 @@ class TestGetAddressObjects(TestCase):
         self.assertIsInstance(result[Output.ADDRESS_OBJECTS], list)
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 4)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_name_filter(self, mock_post):
         """Test retrieving address objects filtered by name."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -41,7 +41,7 @@ class TestGetAddressObjects(TestCase):
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 1)
         self.assertEqual(result[Output.ADDRESS_OBJECTS][0]["name"], "google-dns")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_name_filter_case_insensitive(self, mock_post):
         """Test that name filter is case-insensitive."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -51,7 +51,7 @@ class TestGetAddressObjects(TestCase):
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 1)
         self.assertEqual(result[Output.ADDRESS_OBJECTS][0]["name"], "google-dns")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_subnet_filter(self, mock_post):
         """Test retrieving address objects filtered by subnet."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -61,7 +61,7 @@ class TestGetAddressObjects(TestCase):
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 1)
         self.assertEqual(result[Output.ADDRESS_OBJECTS][0]["name"], "internal-net")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_fqdn_filter(self, mock_post):
         """Test retrieving address objects filtered by FQDN."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -71,7 +71,7 @@ class TestGetAddressObjects(TestCase):
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 1)
         self.assertEqual(result[Output.ADDRESS_OBJECTS][0]["name"], "example-fqdn")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_multiple_filters_and_logic(self, mock_post):
         """Test that multiple filters use AND logic."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -87,7 +87,7 @@ class TestGetAddressObjects(TestCase):
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 1)
         self.assertEqual(result[Output.ADDRESS_OBJECTS][0]["name"], "internal-net")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_conflicting_filters_returns_empty(self, mock_post):
         """Test that conflicting filters return empty list."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -102,7 +102,7 @@ class TestGetAddressObjects(TestCase):
 
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 0)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_no_matches_returns_empty(self, mock_post):
         """Test that non-matching filter returns empty list without exception."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -111,7 +111,7 @@ class TestGetAddressObjects(TestCase):
 
         self.assertEqual(result[Output.ADDRESS_OBJECTS], [])
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_with_adom_override(self, mock_post):
         """Test that ADOM input overrides connection default."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -126,7 +126,7 @@ class TestGetAddressObjects(TestCase):
         request_url = payload["params"][0]["url"]
         self.assertIn("custom-adom", request_url)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_uses_default_adom(self, mock_post):
         """Test that connection default ADOM is used when no override provided."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -139,7 +139,7 @@ class TestGetAddressObjects(TestCase):
         request_url = payload["params"][0]["url"]
         self.assertIn("root", request_url)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_address_objects_adom_not_found(self, mock_post):
         """Test that PluginException is raised when ADOM does not exist."""
         error_response = {"id": 1, "result": [{"status": {"code": -3, "message": "Object does not exist"}}]}

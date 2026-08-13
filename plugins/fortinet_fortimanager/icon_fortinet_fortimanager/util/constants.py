@@ -24,12 +24,12 @@ ERROR_CODE_OBJECT_NOT_EXIST = -3
 ERROR_CODE_OBJECT_ALREADY_EXISTS = -6
 ERROR_CODE_SESSION_EXPIRED = -10
 
-# Human-readable error code meanings
+# Human-readable error code meanings (fallback when API message is empty)
 ERROR_MESSAGES = {
     ERROR_CODE_SUCCESS: "Success",
     ERROR_CODE_NO_PERMISSION: "No permission",
     ERROR_CODE_INVALID_PARAMS: "Invalid parameters",
     ERROR_CODE_OBJECT_NOT_EXIST: "Object does not exist",
-    ERROR_CODE_OBJECT_ALREADY_EXISTS: "Object already exists (naming conflict)",
+    ERROR_CODE_OBJECT_ALREADY_EXISTS: "Object already exists or invalid URL",
     ERROR_CODE_SESSION_EXPIRED: "Session expired",
 }

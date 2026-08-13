@@ -2,10 +2,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="fortinet_fortimanager-rapid7-plugin",
-    version="1.0.0",
+    name="fortinet_fortimanager-rapid7_mnp-plugin",
+    version="2.0.2",
     description="Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API",
-    author="rapid7",
+    author="rapid7_mnp",
     author_email="",
     url="",
     packages=find_packages(),

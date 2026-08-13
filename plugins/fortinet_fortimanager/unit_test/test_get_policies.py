@@ -21,7 +21,7 @@ class TestGetPolicies(TestCase):
         # Load payload for mocking
         self.mock_response_data = load_payload("get_policies.json.resp")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_all_policies(self, mock_post):
         """Test retrieving all policies without filters."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -31,7 +31,7 @@ class TestGetPolicies(TestCase):
         self.assertIsInstance(result[Output.POLICIES], list)
         self.assertEqual(len(result[Output.POLICIES]), 3)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_with_name_filter(self, mock_post):
         """Test retrieving policies filtered by name."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -47,7 +47,7 @@ class TestGetPolicies(TestCase):
         self.assertEqual(result[Output.POLICIES][0]["name"], "Allow-Internal")
         self.assertEqual(result[Output.POLICIES][0]["policyid"], 1)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_name_filter_case_insensitive(self, mock_post):
         """Test that name filter is case-insensitive."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -62,7 +62,7 @@ class TestGetPolicies(TestCase):
         self.assertEqual(len(result[Output.POLICIES]), 1)
         self.assertEqual(result[Output.POLICIES][0]["name"], "Allow-Internal")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_no_matches_returns_empty(self, mock_post):
         """Test that non-matching filter returns empty list without exception."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -76,7 +76,7 @@ class TestGetPolicies(TestCase):
 
         self.assertEqual(result[Output.POLICIES], [])
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_with_adom_override(self, mock_post):
         """Test that ADOM input overrides connection default."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -94,7 +94,7 @@ class TestGetPolicies(TestCase):
         request_url = payload["params"][0]["url"]
         self.assertIn("custom-adom", request_url)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_uses_default_adom(self, mock_post):
         """Test that connection default ADOM is used when no override provided."""
         mock_post.return_value = MockResponse(self.mock_response_data)
@@ -107,7 +107,7 @@ class TestGetPolicies(TestCase):
         request_url = payload["params"][0]["url"]
         self.assertIn("root", request_url)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_adom_not_found(self, mock_post):
         """Test that PluginException is raised when ADOM does not exist."""
         error_response = {"id": 1, "result": [{"status": {"code": -3, "message": "Object does not exist"}}]}
@@ -123,7 +123,7 @@ class TestGetPolicies(TestCase):
 
         self.assertIn("-3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_package_not_found(self, mock_post):
         """Test that PluginException is raised when policy package does not exist."""
         error_response = {"id": 1, "result": [{"status": {"code": -3, "message": "Object does not exist"}}]}
@@ -138,7 +138,7 @@ class TestGetPolicies(TestCase):
 
         self.assertIn("-3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_get_policies_empty_name_filter_returns_all(self, mock_post):
         """Test that empty string name filter returns all policies."""
         mock_post.return_value = MockResponse(self.mock_response_data)

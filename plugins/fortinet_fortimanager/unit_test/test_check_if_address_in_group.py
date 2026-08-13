@@ -19,7 +19,7 @@ class TestCheckIfAddressInGroup(TestCase):
         self.action.connection = create_mock_connection()
         self.action.logger = self.action.connection.logger
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_name_match_found(self, mock_post):
         """Test name-based match when address matches a member name."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -39,7 +39,7 @@ class TestCheckIfAddressInGroup(TestCase):
         self.assertTrue(result[Output.FOUND])
         self.assertEqual(result[Output.ADDRESS_OBJECTS], ["google-dns"])
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_name_match_not_found(self, mock_post):
         """Test name-based match when address does not match any member name."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -59,7 +59,7 @@ class TestCheckIfAddressInGroup(TestCase):
         self.assertFalse(result[Output.FOUND])
         self.assertEqual(result[Output.ADDRESS_OBJECTS], [])
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_value_search_subnet_match(self, mock_post):
         """Test value-based search matching a stored subnet value."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -81,7 +81,7 @@ class TestCheckIfAddressInGroup(TestCase):
         self.assertTrue(result[Output.FOUND])
         self.assertEqual(result[Output.ADDRESS_OBJECTS], ["google-dns"])
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_value_search_no_match(self, mock_post):
         """Test value-based search when no member values match."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -103,7 +103,7 @@ class TestCheckIfAddressInGroup(TestCase):
         self.assertFalse(result[Output.FOUND])
         self.assertEqual(result[Output.ADDRESS_OBJECTS], [])
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_group_not_found_raises_exception(self, mock_post):
         """Test PluginException is raised when the group does not exist."""
         error_response = load_payload("error_object_not_exist.json.resp")
@@ -123,7 +123,7 @@ class TestCheckIfAddressInGroup(TestCase):
 
         self.assertIn("-3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_adom_override(self, mock_post):
         """Test that ADOM override from input is used."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -149,7 +149,7 @@ class TestCheckIfAddressInGroup(TestCase):
             url_in_params = first_call_payload.get("params", [{}])[0].get("url", "")
             self.assertIn("custom-adom", url_in_params)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_value_search_case_insensitive(self, mock_post):
         """Test value-based search is case-insensitive."""
         get_group_response = load_payload("get_address_group.json.resp")

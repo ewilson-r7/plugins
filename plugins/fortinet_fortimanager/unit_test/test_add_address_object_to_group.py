@@ -19,7 +19,7 @@ class TestAddAddressObjectToGroup(TestCase):
         self.action.connection = create_mock_connection()
         self.action.logger = self.action.connection.logger
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_add_address_object_to_group_success(self, mock_post):
         """Test successfully adding a new address object to a group."""
         # First call: get_address_group returns existing group
@@ -45,7 +45,7 @@ class TestAddAddressObjectToGroup(TestCase):
         self.assertIn("cloudflare-dns", result[Output.ADDRESS_OBJECTS])
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 3)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_add_address_object_to_group_idempotent(self, mock_post):
         """Test that adding an object already in the group returns current list without duplicate."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -68,7 +68,7 @@ class TestAddAddressObjectToGroup(TestCase):
         # update_address_group should NOT have been called (only 1 mock call consumed)
         self.assertEqual(mock_post.call_count, 1)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_add_address_object_to_group_not_found(self, mock_post):
         """Test that PluginException is raised when group does not exist."""
         error_response = load_payload("error_object_not_exist.json.resp")
@@ -87,7 +87,7 @@ class TestAddAddressObjectToGroup(TestCase):
 
         self.assertIn("-3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_add_address_object_to_group_with_adom_override(self, mock_post):
         """Test ADOM override from action input."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -116,7 +116,7 @@ class TestAddAddressObjectToGroup(TestCase):
             url_in_params = first_call_payload.get("params", [{}])[0].get("url", "")
             self.assertIn("custom-adom", url_in_params)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_add_address_object_to_group_update_fails(self, mock_post):
         """Test PluginException raised when update fails (e.g., address object doesn't exist)."""
         get_group_response = load_payload("get_address_group.json.resp")

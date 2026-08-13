@@ -4,10 +4,10 @@ products: [insightconnect]
 name: fortinet_fortimanager
 title: Fortinet FortiManager
 description: "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
-version: 1.0.0
+version: 2.0.2
 connection_version: 1
 supported_versions: ["7.0.x", "7.2.x", "7.4.x"]
-vendor: rapid7
+vendor: rapid7_mnp
 support: rapid7
 status: []
 sdk:
@@ -25,6 +25,9 @@ requirements:
   - "An API token (FortiManager 7.2.2+ recommended) or admin username and password"
   - "Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)"
 version_history:
+  - "2.0.2 - Improve error messages to show actual API response instead of static error code mapping"
+  - "2.0.1 - Fix file permission issues"
+  - "2.0.0 - Fix SSL verification not being honored when set to false"
   - "1.0.0 - Initial plugin release"
 links:
   - "[Fortinet FortiManager](https://www.fortinet.com/products/management/fortimanager)"

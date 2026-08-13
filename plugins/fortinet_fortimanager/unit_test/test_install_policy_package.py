@@ -19,7 +19,7 @@ class TestInstallPolicyPackage(TestCase):
         self.action.connection = create_mock_connection()
         self.action.logger = self.action.connection.logger
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_install_policy_package_with_devices(self, mock_post):
         """Test successfully installing a policy package to target devices."""
         install_response = load_payload("install_policy_package.json.resp")
@@ -35,7 +35,7 @@ class TestInstallPolicyPackage(TestCase):
 
         self.assertEqual(result[Output.TASK_ID], 247)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_install_policy_package_with_device_groups(self, mock_post):
         """Test successfully installing a policy package to target device groups."""
         install_response = load_payload("install_policy_package.json.resp")
@@ -51,7 +51,7 @@ class TestInstallPolicyPackage(TestCase):
 
         self.assertEqual(result[Output.TASK_ID], 247)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_install_policy_package_with_both_targets(self, mock_post):
         """Test installing a policy package to both devices and device groups."""
         install_response = load_payload("install_policy_package.json.resp")
@@ -91,7 +91,7 @@ class TestInstallPolicyPackage(TestCase):
 
         self.assertIn("No target devices or device groups provided", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_install_policy_package_with_adom_override(self, mock_post):
         """Test ADOM override from action input."""
         install_response = load_payload("install_policy_package.json.resp")
@@ -114,7 +114,7 @@ class TestInstallPolicyPackage(TestCase):
             data = call_payload.get("params", [{}])[0].get("data", {})
             self.assertEqual(data.get("adom"), "custom-adom")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_install_policy_package_api_error(self, mock_post):
         """Test PluginException raised when API returns an error (e.g., package not found)."""
         error_response = load_payload("error_object_not_exist.json.resp")
@@ -131,7 +131,7 @@ class TestInstallPolicyPackage(TestCase):
 
         self.assertIn("-3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_install_policy_package_builds_correct_scope(self, mock_post):
         """Test that targets are built with correct scope format."""
         install_response = load_payload("install_policy_package.json.resp")

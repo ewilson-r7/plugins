@@ -19,7 +19,7 @@ class TestRemoveAddressObjectFromGroup(TestCase):
         self.action.connection = create_mock_connection()
         self.action.logger = self.action.connection.logger
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_remove_address_object_from_group_success(self, mock_post):
         """Test successfully removing an address object from a group."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -43,7 +43,7 @@ class TestRemoveAddressObjectFromGroup(TestCase):
         self.assertNotIn("google-dns", result[Output.ADDRESS_OBJECTS])
         self.assertEqual(len(result[Output.ADDRESS_OBJECTS]), 1)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_remove_address_object_not_in_group(self, mock_post):
         """Test that PluginException is raised when address object is not in the group."""
         get_group_response = load_payload("get_address_group.json.resp")
@@ -63,7 +63,7 @@ class TestRemoveAddressObjectFromGroup(TestCase):
 
         self.assertIn("not a member", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_remove_address_object_group_not_found(self, mock_post):
         """Test that PluginException is raised when the group does not exist."""
         error_response = load_payload("error_object_not_exist.json.resp")
@@ -83,7 +83,7 @@ class TestRemoveAddressObjectFromGroup(TestCase):
 
         self.assertIn("code -3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_remove_address_object_with_adom_override(self, mock_post):
         """Test that the ADOM input overrides the connection default."""
         get_group_response = load_payload("get_address_group.json.resp")

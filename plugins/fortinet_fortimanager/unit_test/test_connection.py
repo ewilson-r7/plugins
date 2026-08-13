@@ -24,7 +24,7 @@ class TestConnection(TestCase):
         self.login_failure_response = load_payload("login_failure.json.resp")
         self.session_expired_response = load_payload("error_session_expired.json.resp")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_connection_test_api_token_success(self, mock_post):
         """Test successful connection test with API Token authentication."""
         connection = create_mock_connection()
@@ -35,7 +35,7 @@ class TestConnection(TestCase):
         self.assertEqual(result, {"success": True})
         mock_post.assert_called_once()
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_connection_test_session_based_success(self, mock_post):
         """Test successful connection test with Session-Based authentication."""
         connection = create_mock_session_connection()
@@ -55,7 +55,7 @@ class TestConnection(TestCase):
         self.assertEqual(result, {"success": True})
         self.assertEqual(mock_post.call_count, 2)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_connection_test_invalid_credentials_raises_exception(self, mock_post):
         """Test that invalid credentials raise ConnectionTestException."""
         connection = create_mock_session_connection()
@@ -66,7 +66,7 @@ class TestConnection(TestCase):
 
         self.assertIn("failed", context.exception.cause.lower())
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_connection_test_unreachable_host_raises_exception(self, mock_post):
         """Test that an unreachable host raises ConnectionTestException."""
         connection = create_mock_connection()
@@ -75,7 +75,7 @@ class TestConnection(TestCase):
         with self.assertRaises(ConnectionTestException):
             connection.test()
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_connection_test_ssl_validation_failure_raises_exception(self, mock_post):
         """Test that SSL validation failure raises ConnectionTestException."""
         connection = create_mock_connection()
@@ -84,7 +84,7 @@ class TestConnection(TestCase):
         with self.assertRaises(ConnectionTestException):
             connection.test()
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_session_expiry_and_reauthentication(self, mock_post):
         """Test that session expiry triggers re-authentication and retry."""
         connection = create_mock_session_connection()

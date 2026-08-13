@@ -22,7 +22,7 @@ class TestDeleteAddressObject(TestCase):
         self.mock_success_response = load_payload("delete_address_object.json.resp")
         self.mock_error_not_found = load_payload("error_object_not_exist.json.resp")
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_delete_address_object_success(self, mock_post):
         """Test successful deletion of an address object."""
         mock_post.return_value = MockResponse(self.mock_success_response)
@@ -32,7 +32,7 @@ class TestDeleteAddressObject(TestCase):
         self.assertTrue(result[Output.SUCCESS])
         mock_post.assert_called_once()
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_delete_object_not_found_raises_plugin_exception(self, mock_post):
         """Test that deleting a non-existent object raises PluginException."""
         mock_post.return_value = MockResponse(self.mock_error_not_found)
@@ -42,7 +42,7 @@ class TestDeleteAddressObject(TestCase):
 
         self.assertIn("-3", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_delete_object_in_use_raises_plugin_exception(self, mock_post):
         """Test that deleting an object referenced by a group/policy raises PluginException."""
         # Simulate a "referenced object" error — FortiManager returns a specific error
@@ -66,7 +66,7 @@ class TestDeleteAddressObject(TestCase):
 
         self.assertIn("-10015", context.exception.cause)
 
-    @patch("requests.Session.post")
+    @patch("requests.post")
     def test_delete_address_object_with_adom_override(self, mock_post):
         """Test that ADOM input overrides connection default."""
         mock_post.return_value = MockResponse(self.mock_success_response)

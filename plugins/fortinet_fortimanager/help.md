@@ -463,6 +463,9 @@ Example output:
 
 # Version History
 
+* 2.0.2 - Improve error messages to show actual API response instead of static error code mapping
+* 2.0.1 - Fix file permission issues
+* 2.0.0 - Fix SSL verification not being honored when set to false
 * 1.0.0 - Initial plugin release
 
 # Links
