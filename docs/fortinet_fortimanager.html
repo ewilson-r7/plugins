@@ -25,12 +25,9 @@ li { margin-bottom: 4px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 24px; }
 th { background: #f4f4f8; padding: 10px 12px; border: 1px solid #e0e0e8; text-align: left; font-weight: 600; }
 td { padding: 8px 12px; border: 1px solid #e0e0e8; vertical-align: top; }
-</style>
-</head>
-<body>
-<style>
 pre { background: #1e1e2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 8px 0 20px; }
 code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
+td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
 .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
 .badge-required { background: #fee2e2; color: #b91c1c; }
 .badge-optional { background: #e0f2fe; color: #0369a1; }
@@ -38,13 +35,15 @@ code { font-family: 'SF Mono', Menlo, Monaco, monospace; font-size: 12px; }
 .warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0 20px; font-size: 13px; }
 .perm-table td:first-child { font-weight: 600; white-space: nowrap; }
 .footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e0e0e8; font-size: 12px; color: #6c6c8c; text-align: center; }
-td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
 </style>
+</head>
+<body>
+
 <!-- Sidebar -->
 <nav class="sidebar">
   <div class="brand">
     <h2>Fortinet FortiManager</h2>
-    <span>Plugin v1.0.0</span>
+    <span>Plugin v2.0.2</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -66,10 +65,11 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <a href="#version-history">Version History</a>
   <a href="#links">Links &amp; References</a>
 </nav>
+
 <!-- Main Content -->
 <div class="main">
 <h1>Fortinet FortiManager Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v1.0.0 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.0.2 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
 
 <h2 id="description">Description</h2>
 <p>Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API.</p>
@@ -93,6 +93,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <li>Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)</li>
   <li>JSON-RPC API access enabled for the admin account</li>
 </ul>
+
 <h2 id="setup">Setup &amp; Configuration</h2>
 
 <h3>FortiManager Side — API Token Authentication (Recommended)</h3>
@@ -131,6 +132,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <div class="warning-box">
   <strong>Security Note:</strong> Session-based auth transmits credentials with each login request. Always use HTTPS and restrict trusted hosts to minimize exposure.
 </div>
+
 <h3>InsightConnect Side — Connection Configuration</h3>
 <table>
   <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
@@ -144,6 +146,10 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </table>
 
 <div class="info-box">
+  <strong>SSL Verify:</strong> This defaults to <code>false</code> to accommodate self-signed certificates common in lab and internal deployments. For production environments with valid CA-signed certificates, set this to <code>true</code>.
+</div>
+
+<div class="info-box">
   <strong>ADOM Override:</strong> Every action supports an optional <code>adom</code> input parameter. If provided, it overrides the connection-level ADOM for that specific action execution. This is useful in multi-tenant environments where a single connection serves multiple ADOMs.
 </div>
 
@@ -154,6 +160,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <li>If FortiManager uses a self-signed certificate, set SSL Verify to <code>false</code> (not recommended for production)</li>
   <li>Ensure any intermediate firewalls allow the orchestrator's IP to reach FortiManager's management interface</li>
 </ul>
+
 <h2 id="permissions">Permissions &amp; Least Privilege</h2>
 <p>FortiManager uses <strong>Admin Profiles</strong> to control access. Create a dedicated profile for the InsightConnect integration at System Settings &gt; Admin &gt; Admin Profiles &gt; Create New. Below are recommended least-privilege configurations for different use cases.</p>
 
@@ -180,6 +187,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <tr><td>JSON API Access</td><td>Read-Write</td><td>Required for all API operations</td></tr>
 </table>
 <p><strong>Supported actions:</strong> All object actions (Get, Create, Delete, Add to Group, Remove from Group, Check if in Group, Get Policies)</p>
+
 <h3>Profile: Full Automation (Object Management + Policy Install)</h3>
 <p>Use this profile when workflows need to push changes to FortiGate devices after modifying objects. This is the most privileged level required by the plugin.</p>
 <table class="perm-table">
@@ -203,6 +211,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <li>An ADOM-scoped admin cannot see or modify objects in other ADOMs</li>
   <li>Use the per-action <code>adom</code> parameter to target specific ADOMs at runtime</li>
 </ul>
+
 <h2 id="get-address-objects">Get Address Objects</h2>
 <p>Retrieve address objects from a FortiManager ADOM with optional filtering by name, subnet, or FQDN.</p>
 <h4>Input</h4>
@@ -215,13 +224,15 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </table>
 <h4>Output</h4>
 <p>Returns a list of address objects matching the specified filters.</p>
-<pre><code>[
-  {
-    "name": "MaliciousHost",
-    "type": "ipmask",
-    "subnet": "198.51.100.100/32"
-  }
-]</code></pre>
+<pre><code>{
+  "address_objects": [
+    {
+      "name": "MaliciousHost",
+      "type": "ipmask",
+      "subnet": "198.51.100.100/32"
+    }
+  ]
+}</code></pre>
 
 <h2 id="create-address-object">Create Address Object</h2>
 <p>Create a new address object in a FortiManager ADOM. Automatically detects address type (IP, CIDR, FQDN) and applies whitelist/RFC 1918 filtering.</p>
@@ -235,7 +246,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
 </table>
 <h4>Output</h4>
-<p>Returns a boolean indicating success and the created object details.</p>
+<p>Returns a boolean indicating success and the created object details. Returns <code>success: false</code> if the address was skipped due to whitelist or RFC 1918 filtering.</p>
 <pre><code>{
   "success": true,
   "address_object": {
@@ -244,8 +255,14 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
     "subnet": "198.51.100.100/32"
   }
 }</code></pre>
+
 <h2 id="delete-address-object">Delete Address Object</h2>
 <p>Delete an address object from a FortiManager ADOM by name.</p>
+
+<div class="warning-box">
+  <strong>Caution:</strong> This is a destructive action. Deleting an address object that is referenced by a policy or address group may cause errors. Verify the object is not in use before deleting.
+</div>
+
 <h4>Input</h4>
 <table>
   <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
@@ -286,6 +303,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   "success": true,
   "address_objects": ["AnotherHost"]
 }</code></pre>
+
 <h2 id="check-if-address-in-group">Check if Address in Group</h2>
 <p>Check if an address exists in an address group. Supports matching by object name or by searching the stored value (subnet/FQDN) of each member.</p>
 <h4>Input</h4>
@@ -329,11 +347,14 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
     }
   ]
 }</code></pre>
+
 <h2 id="install-policy-package">Install Policy Package</h2>
 <p>Install a policy package to managed FortiGate devices or device groups. This pushes the current ADOM configuration (including any address object changes) to the specified targets.</p>
+
 <div class="warning-box">
-  <strong>Caution:</strong> This action deploys configuration changes to production devices. Ensure changes are validated before triggering this in automated workflows.
+  <strong>Caution:</strong> This action deploys configuration changes to production FortiGate devices. Ensure changes are validated before triggering this in automated workflows. A misconfigured policy can disrupt network traffic.
 </div>
+
 <h4>Input</h4>
 <table>
   <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
@@ -362,6 +383,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <tr><td>comment</td><td><code>string</code></td><td>Optional comment</td><td><code>Blocked by SOAR</code></td></tr>
   <tr><td>associated_interface</td><td><code>string</code></td><td>Associated network interface</td><td><code>any</code></td></tr>
 </table>
+
 <h3>address_group</h3>
 <table>
   <tr><th>Field</th><th>Type</th><th>Description</th><th>Example</th></tr>
@@ -390,6 +412,9 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>2.0.2</td><td>Improve error messages to show actual API response instead of static error code mapping</td></tr>
+  <tr><td>2.0.1</td><td>Fix file permission issues</td></tr>
+  <tr><td>2.0.0</td><td>Fix SSL verification not being honored when set to false</td></tr>
   <tr><td>1.0.0</td><td>Initial plugin release</td></tr>
 </table>
 
@@ -399,10 +424,11 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <li><a href="https://fndn.fortinet.net/" target="_blank">FortiManager JSON-RPC API (Fortinet Developer Network)</a></li>
   <li><a href="https://docs.fortinet.com/document/fortimanager/7.2.0/new-features/47777/fortimanager-supports-authentication-token-for-api-administrators-7-2-2" target="_blank">FortiManager API Token Authentication (7.2.2+)</a></li>
   <li><a href="https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/675151" target="_blank">Creating Administrator Profiles</a></li>
+  <li><a href="https://github.com/rapid7/insightconnect-plugins/tree/master/plugins/fortinet_fortimanager" target="_blank">Plugin Source Code (GitHub)</a></li>
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v1.0.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
+  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v2.0.2 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
 </div>
 </div>
 </body>
