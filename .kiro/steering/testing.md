@@ -102,7 +102,7 @@ class TestGetItem(unittest.TestCase):
         self.action = default_connector(GetItem())
 
     @parameterized.expand([("case_name", {input}, "fixture.json")])
-    @patch("requests.Session.request")
+    @patch("requests.request")
     def test_success(self, _name, params, fixture, mock_req):
         mock_req.return_value = MockResponse(200, fixture)
         result = self.action.run(params)

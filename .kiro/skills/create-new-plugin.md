@@ -131,13 +131,16 @@ class VendorApiClient:
         self._api_key = api_key
         self._base_url = base_url.rstrip("/")
         self._logger = logger
-        self._session = requests.Session()
-        self._session.headers.update({"Authorization": f"Bearer {api_key}"})
+
+    def _get_headers(self):
+        return {"Authorization": f"Bearer {self._api_key}"}
 
     def _make_request(self, method, endpoint, **kwargs):
         url = f"{self._base_url}{endpoint}"
         try:
-            response = self._session.request(method, url, timeout=TIMEOUT, **kwargs)
+            response = requests.request(
+                method, url, headers=self._get_headers(), timeout=TIMEOUT, **kwargs
+            )
         except requests.exceptions.Timeout as error:
             raise PluginException(cause="Request timed out", ...) from error
         except requests.exceptions.ConnectionError as error:
@@ -156,6 +159,7 @@ class VendorApiClient:
 ```
 
 Rules:
+- Use plain `requests.request()` — never store a `requests.Session` in the class (stored sessions cause issues with long-lived plugin processes; see `common-mistakes.md` #25)
 - Central `_make_request()` with timeout + connection error handling
 - `_handle_response()` maps HTTP status codes via `HTTP_ERROR_MAP`
 - Domain-specific public methods (actions call these, not `_make_request`)
