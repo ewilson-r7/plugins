@@ -54,3 +54,5 @@ inclusion: auto
 - [ ] Run `prospector` on modified files (fix all issues before pushing)
 - [ ] Run `insight-plugin validate`
 - [ ] Verify no `[0]` access without empty-list guards
+- [ ] Update `docs/<plugin_name>.html` with new/changed actions, inputs, outputs, and version number
+- [ ] Update README plugin table with new version and latest change description
