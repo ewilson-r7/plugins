@@ -3,6 +3,7 @@
     {
       "profileId": "profile-001",
       "profileName": "Default Profile",
+      "deviceType": "DEVICE_TYPE_WINDOWS",
       "policyExtension": {
         "vpnGateways": [
           {"hostname": "vpn1.example.com", "ip": "10.0.0.1", "type": "hostname"},
@@ -13,13 +14,15 @@
     {
       "profileId": "profile-002",
       "profileName": "Empty VPN Profile",
+      "deviceType": "DEVICE_TYPE_MACOS",
       "policyExtension": {
         "vpnGateways": []
       }
     },
     {
       "profileId": "profile-003",
-      "profileName": "No Extension Profile"
+      "profileName": "No Extension Profile",
+      "deviceType": "DEVICE_TYPE_IOS"
     }
   ]
 }

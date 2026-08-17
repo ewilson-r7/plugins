@@ -211,10 +211,18 @@ class ZCCClient(BaseClient):
 
         # Write back in the same shape the tenant uses, joining if it was a string
         patch_value = ",".join(remaining) if was_string else remaining
+
+        # The application-profiles PATCH endpoint requires deviceType in the body.
+        # This field identifies the platform (1=iOS, 2=Android, 3=Windows, 4=macOS, 5=Linux).
+        patch_body = {"vpnGateways": patch_value}
+        device_type = target_profile.get("deviceType")
+        if device_type:
+            patch_body["deviceType"] = device_type
+
         self._make_request(
             "PATCH",
             f"application-profiles/{target_id}",
-            data=json.dumps({"vpnGateways": patch_value}),
+            data=json.dumps(patch_body),
             headers=JSON_HEADERS.copy(),
         )
 

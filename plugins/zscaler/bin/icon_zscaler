@@ -6,7 +6,7 @@ from sys import argv
 
 Name = "Zscaler"
 Vendor = "rapid7_mnp"
-Version = "2.4.0"
+Version = "2.4.1"
 Description = "Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network"
 
 

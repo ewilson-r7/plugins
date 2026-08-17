@@ -165,6 +165,7 @@ class TestRemoveVpnGatewayBypass(TestCase):
                 {
                     "profileId": "profile-001",
                     "profileName": "Default Profile",
+                    "deviceType": "DEVICE_TYPE_WINDOWS",
                     "policyExtension": {
                         "vpnGateways": [
                             {"hostname": "vpn1.example.com", "ip": "10.0.0.1", "type": "hostname"},
@@ -203,6 +204,7 @@ class TestRemoveVpnGatewayBypass(TestCase):
                 {
                     "profileId": "profile-001",
                     "profileName": "Default Profile",
+                    "deviceType": "DEVICE_TYPE_WINDOWS",
                     "policyExtension": {
                         "vpnGateways": [
                             {"hostname": "vpn1.example.com", "ip": "10.0.0.1", "type": "hostname"},
@@ -225,13 +227,14 @@ class TestRemoveVpnGatewayBypass(TestCase):
         self.assertEqual(result["vpn_gateways"][0]["ip"], "10.0.0.2")
 
     @patch("requests.request")
-    def test_constructs_patch_payload_with_only_vpn_gateways_field(self, mock_request):
-        """Test that PATCH payload only contains the vpnGateways field."""
+    def test_constructs_patch_payload_with_device_type(self, mock_request):
+        """Test that PATCH payload includes deviceType from the original profile."""
         list_response = {
             "profiles": [
                 {
                     "profileId": "profile-001",
                     "profileName": "Default Profile",
+                    "deviceType": "DEVICE_TYPE_WINDOWS",
                     "policyExtension": {
                         "vpnGateways": [
                             {"hostname": "vpn1.example.com", "ip": "10.0.0.1", "type": "hostname"},
@@ -251,8 +254,10 @@ class TestRemoveVpnGatewayBypass(TestCase):
         patch_call = mock_request.call_args_list[1]
         patch_kwargs = patch_call[1]
         patch_data = json.loads(patch_kwargs["data"])
-        # Only vpnGateways field should be in payload
-        self.assertEqual(list(patch_data.keys()), ["vpnGateways"])
+        # PATCH must include deviceType alongside vpnGateways
+        self.assertIn("vpnGateways", patch_data)
+        self.assertIn("deviceType", patch_data)
+        self.assertEqual(patch_data["deviceType"], "DEVICE_TYPE_WINDOWS")
 
     @patch("requests.request")
     def test_entry_not_found_is_idempotent(self, mock_request):
@@ -262,6 +267,7 @@ class TestRemoveVpnGatewayBypass(TestCase):
                 {
                     "profileId": "profile-001",
                     "profileName": "Default Profile",
+                    "deviceType": "DEVICE_TYPE_WINDOWS",
                     "policyExtension": {
                         "vpnGateways": [
                             {"hostname": "vpn1.example.com", "ip": "10.0.0.1", "type": "hostname"},

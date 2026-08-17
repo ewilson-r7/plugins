@@ -28,9 +28,16 @@ class TestGetOneTimePassword(TestCase):
         result = self.action.run({"udid": "abc123-def456-ghi789"})
         otp_bundle = result["otp"]
         expected_fields = [
-            "logout_otp", "exit_otp", "uninstall_otp", "revert_otp",
-            "zia_disable_otp", "zpa_disable_otp", "zdx_disable_otp",
-            "zdp_disable_otp", "anti_tempering_disable_otp", "otp",
+            "logout_otp",
+            "exit_otp",
+            "uninstall_otp",
+            "revert_otp",
+            "zia_disable_otp",
+            "zpa_disable_otp",
+            "zdx_disable_otp",
+            "zdp_disable_otp",
+            "anti_tempering_disable_otp",
+            "otp",
         ]
         for field in expected_fields:
             self.assertIn(field, otp_bundle)

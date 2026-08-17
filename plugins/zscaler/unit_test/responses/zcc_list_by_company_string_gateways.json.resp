@@ -3,6 +3,7 @@
     {
       "profileId": "profile-101",
       "profileName": "String Gateways Profile",
+      "deviceType": "DEVICE_TYPE_WINDOWS",
       "policyExtension": {
         "vpnGateways": [
           "vpn1.example.com",

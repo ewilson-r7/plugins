@@ -69,7 +69,9 @@ class UpdateUrlsOfUrlCategory(insightconnect_plugin_runtime.Action):
             self.connection.zia_client.activate_configuration()
             status = self.connection.zia_client.get_status().json().get("status")
 
-        return clean({
-            Output.URLCATEGORY: updated_category,
-            Output.STATUS: status,
-        })
+        return clean(
+            {
+                Output.URLCATEGORY: updated_category,
+                Output.STATUS: status,
+            }
+        )

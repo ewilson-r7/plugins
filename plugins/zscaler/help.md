@@ -1633,6 +1633,7 @@ Example output:
 
 # Version History
 
+* 2.4.1 - Fix Remove VPN Gateway Bypass failing with 'deviceType is mandatory' by including the profile's deviceType in the PATCH request body
 * 2.4.0 - Add Get Enrolled Devices and Get One-Time Password actions for ZCC device OTP workflows | Enhance Update URLs of URL Category with URLs Retaining Parent Category input, Activate Configuration option, and rename URL List to Custom URLs
 * 2.3.1 - Fix Profile ID input to filter client-side. The listByCompany endpoint does not support a profileId query parameter
 * 2.3.0 - Add optional Profile ID and Search inputs to Get VPN Gateway Bypasses. Profile ID filters results to a single profile, Search filters by profile name client-side
