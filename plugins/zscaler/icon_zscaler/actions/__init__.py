@@ -47,3 +47,7 @@ from .get_vpn_gateway_bypasses.action import GetVpnGatewayBypasses
 from .custom_api_request.action import CustomApiRequest
 
 from .remove_vpn_gateway_bypass.action import RemoveVpnGatewayBypass
+
+from .get_enrolled_devices.action import GetEnrolledDevices
+
+from .get_one_time_password.action import GetOneTimePassword

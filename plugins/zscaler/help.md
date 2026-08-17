@@ -412,6 +412,49 @@ Example output:
 }
 ```
 
+#### Get Enrolled Devices
+
+This action is used to list enrolled devices from Zscaler Client Connector with an optional username filter to locate a
+ specific user's device. Returns device details including the UDID needed for OTP generation
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|os_type|string|None|False|Filter devices by operating system type|["Windows", "macOS", "iOS", "Android", "Linux"]|Windows|None|None|
+|username|string|None|False|Filter devices by username (email address). If provided, only devices belonging to this user are returned|None|user@example.com|user@example.com|None|
+  
+Example input:
+
+```
+{
+  "os_type": "Windows",
+  "username": "user@example.com"
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|devices|[]object|False|List of enrolled devices matching the filter criteria|[{"udid": "abc123", "user": "user@example.com", "machineHostname": "USER-LAPTOP", "osType": "Windows", "state": "active"}]|
+  
+Example output:
+
+```
+{
+  "devices": [
+    {
+      "machineHostname": "USER-LAPTOP",
+      "osType": "Windows",
+      "state": "active",
+      "udid": "abc123",
+      "user": "user@example.com"
+    }
+  ]
+}
+```
+
 #### Get Firewall Logs
 
 This action is used to retrieve firewall logs from Zscaler with time range filtering and pagination support
@@ -492,6 +535,43 @@ Example output:
     "name": "Block Malware",
     "order": 1,
     "state": "ENABLED"
+  }
+}
+```
+
+#### Get One-Time Password
+
+This action is used to retrieve the one-time password (OTP) bundle for a specific enrolled device identified by its 
+UDID. The OTP can be used for logout, exit, uninstall, or service disable operations
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|udid|string|None|True|The unique device identifier (UDID) of the enrolled device. Obtain this from the Get Enrolled Devices action|None|abc123-def456-ghi789|abc123-def456-ghi789|None|
+  
+Example input:
+
+```
+{
+  "udid": "abc123-def456-ghi789"
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|otp|object|True|The one-time password bundle for the device containing passwords for various operations|{'logout_otp': '123456', 'exit_otp': '654321', 'uninstall_otp': '111222'}|
+  
+Example output:
+
+```
+{
+  "otp": {
+    "exit_otp": "654321",
+    "logout_otp": "123456",
+    "uninstall_otp": "111222"
   }
 }
 ```
@@ -1181,27 +1261,34 @@ Example output:
 
 #### Update URLs of URL Category
 
-This action is used to adds or removes URLs for the specified URL category. Supports both predefined Zscaler categories
- and custom categories
+This action is used to adds or removes URLs for the specified URL category. Supports both custom URLs and URLs 
+retaining parent category. Supports both predefined Zscaler categories and custom categories
 
 ##### Input
 
 |Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 |action|string|None|True|The action applied to the URLs|["Add to the list", "Remove from the list"]|Add to the list|None|None|
+|activate_configuration|boolean|False|True|Set to true to activate configuration changes after updating the URL category|None|False|None|None|
+|customUrls|[]string|None|False|List of custom URLs to be updated. These URLs are assigned exclusively to this category|None|["example.com", "example1.com"]|None|None|
+|dbCategorizedUrls|[]string|None|False|List of URLs to be updated that retain their parent category classification. These URLs are covered by policies referencing both the original parent category and this custom category|None|["news.example.com", "media.example.com"]|None|None|
 |urlCategoryName|string|None|True|Name of the URL category to update. Can be a predefined Zscaler category name or a custom category name|None|News and Media|None|None|
-|urlList|[]string|None|True|List of the URLs to be updated|None|["example.com", "example1.com"]|None|None|
   
 Example input:
 
 ```
 {
   "action": "Add to the list",
-  "urlCategoryName": "News and Media",
-  "urlList": [
+  "activate_configuration": false,
+  "customUrls": [
     "example.com",
     "example1.com"
-  ]
+  ],
+  "dbCategorizedUrls": [
+    "news.example.com",
+    "media.example.com"
+  ],
+  "urlCategoryName": "News and Media"
 }
 ```
 
@@ -1209,12 +1296,14 @@ Example input:
 
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
+|status|string|False|Activation status. Only present when Activate Configuration is true|ACTIVE|
 |urlCategory|urlCategory|False|Information about the updated URL category|{'id': 'CUSTOM_01', 'configuredName': 'Custom Category Example', 'superCategory': 'USER_DEFINED', 'keywords': ['key1'], 'keywordsRetainingParentCategory': ['test1'], 'urls': ['example.com'], 'dbCategorizedUrls': [], 'customCategory': True, 'scopes': [{'type': 'ORGANIZATION'}, {'type': 'DEPARTMENT', 'scopeEntities': [{'id': 12345678, 'name': 'Test Department'}]}, {'type': 'LOCATION', 'scopeEntities': [{'id': 12345678, 'name': 'Location Example'}]}, {'scopeGroupMemberEntities': [], 'type': 'LOCATION_GROUP', 'scopeEntities': [{'id': 12345678, 'name': 'Location Group Example'}]}], 'editable': True, 'description': 'Example Description', 'type': 'URL_CATEGORY', 'val': 123, 'customUrlsCount': 1, 'urlsRetainingParentCategoryCount': 0, 'customIpRangesCount': 0, 'ipRangesRetainingParentCategoryCount': 0}|
   
 Example output:
 
 ```
 {
+  "status": "ACTIVE",
   "urlCategory": {
     "configuredName": "Custom Category Example",
     "customCategory": true,
@@ -1544,6 +1633,7 @@ Example output:
 
 # Version History
 
+* 2.4.0 - Add Get Enrolled Devices and Get One-Time Password actions for ZCC device OTP workflows | Enhance Update URLs of URL Category with URLs Retaining Parent Category input, Activate Configuration option, and rename URL List to Custom URLs
 * 2.3.1 - Fix Profile ID input to filter client-side. The listByCompany endpoint does not support a profileId query parameter
 * 2.3.0 - Add optional Profile ID and Search inputs to Get VPN Gateway Bypasses. Profile ID filters results to a single profile, Search filters by profile name client-side
 * 2.2.0 - Connection test now treats authentication as fatal and per-service authorization as informational, so it reports the state of every service and only fails when none are authorized | Share a single OAuth token across the ZIA, ZPA and ZCC clients so a token is obtained once per connection instead of once per service

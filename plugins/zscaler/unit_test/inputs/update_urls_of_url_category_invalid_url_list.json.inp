@@ -1,5 +1,6 @@
 {
   "action": "Add to the list",
   "urlCategoryName": "Test Category",
-  "urlList": ["example"]
+  "customUrls": ["example"],
+  "activate_configuration": false
 }

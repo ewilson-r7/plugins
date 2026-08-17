@@ -248,3 +248,39 @@ class ZCCClient(BaseClient):
         """
         self._make_request("GET", "web/policy/listByCompany")
         return {"success": True}
+
+    def get_enrolled_devices(self, username: str = "", os_type: str = "") -> list:
+        """List enrolled devices, optionally filtered by username and/or OS type.
+
+        Args:
+            username: Filter by user email address.
+            os_type: Filter by OS type code (1=Windows, 2=macOS, 3=iOS, 4=Android, 5=Linux).
+
+        Returns:
+            List of device dicts from the API response.
+        """
+        params = {}
+        if username:
+            params["username"] = username
+        if os_type:
+            params["osType"] = os_type
+
+        response = self._make_request("GET", "getDevices", params=params)
+        result = response.json()
+
+        # API may return a list directly or a dict with a "devices" key
+        if isinstance(result, list):
+            return result
+        return result.get("devices", [])
+
+    def get_device_otp(self, udid: str) -> dict:
+        """Get the one-time password bundle for a specific device.
+
+        Args:
+            udid: The unique device identifier.
+
+        Returns:
+            Dict containing OTP fields (logout_otp, exit_otp, uninstall_otp, etc.)
+        """
+        response = self._make_request("GET", "getOtp", params={"udid": udid})
+        return response.json()

@@ -81,6 +81,10 @@ class Util:
             return MockResponse(200, "zcc_list_by_company.json.resp")
         if "/zcc/papi/public/v1/application-profiles/" in url and method == "PATCH":
             return MockResponse(200, "zcc_patch_profile.json.resp")
+        if "/zcc/papi/public/v1/getDevices" in url and method == "GET":
+            return MockResponse(200, "zcc_get_devices.json.resp")
+        if "/zcc/papi/public/v1/getOtp" in url and method == "GET":
+            return MockResponse(200, "zcc_get_otp.json.resp")
 
         if method == "DELETE" and url.endswith("users/12345"):
             return MockResponse(204)
@@ -88,6 +92,8 @@ class Util:
             return MockResponse(404, "")
 
         if method == "GET" and url.endswith("/status"):
+            return MockResponse(200, "get_status.json.resp")
+        if method == "POST" and url.endswith("/status/activate"):
             return MockResponse(200, "get_status.json.resp")
 
         if method == "GET" and url.endswith("users"):

@@ -1,0 +1,24 @@
+[
+  {
+    "udid": "abc123-def456-ghi789",
+    "user": "jdoe@example.com",
+    "machineHostname": "JDOE-LAPTOP-01",
+    "osType": "Windows",
+    "osVersion": "11 22H2",
+    "state": "active",
+    "enrollmentTime": "2024-06-15T10:30:00Z",
+    "lastSeenTime": "2026-08-17T12:00:00Z",
+    "zccVersion": "4.5.0.123"
+  },
+  {
+    "udid": "xyz789-abc123-def456",
+    "user": "jdoe@example.com",
+    "machineHostname": "JDOE-PHONE",
+    "osType": "iOS",
+    "osVersion": "17.5",
+    "state": "active",
+    "enrollmentTime": "2024-08-20T14:00:00Z",
+    "lastSeenTime": "2026-08-16T09:30:00Z",
+    "zccVersion": "1.9.0.456"
+  }
+]

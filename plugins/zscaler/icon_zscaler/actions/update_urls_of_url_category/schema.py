@@ -4,21 +4,25 @@ import json
 
 
 class Component:
-    DESCRIPTION = "Adds or removes URLs for the specified URL category. Supports both predefined Zscaler categories and custom categories"
+    DESCRIPTION = "Adds or removes URLs for the specified URL category. Supports both custom URLs and URLs retaining parent category. Supports both predefined Zscaler categories and custom categories"
 
 
 class Input:
     ACTION = "action"
+    ACTIVATE_CONFIGURATION = "activate_configuration"
+    CUSTOMURLS = "customUrls"
+    DBCATEGORIZEDURLS = "dbCategorizedUrls"
     URLCATEGORYNAME = "urlCategoryName"
-    URLLIST = "urlList"
 
 
 class Output:
+    STATUS = "status"
     URLCATEGORY = "urlCategory"
 
 
 class UpdateUrlsOfUrlCategoryInput(insightconnect_plugin_runtime.Input):
-    schema = json.loads(r"""
+    schema = json.loads(
+        r"""
    {
   "type": "object",
   "title": "Variables",
@@ -33,41 +37,65 @@ class UpdateUrlsOfUrlCategoryInput(insightconnect_plugin_runtime.Input):
       ],
       "order": 2
     },
+    "activate_configuration": {
+      "type": "boolean",
+      "title": "Activate Configuration",
+      "description": "Set to true to activate configuration changes after updating the URL category",
+      "default": false,
+      "order": 5
+    },
+    "customUrls": {
+      "type": "array",
+      "title": "Custom URLs",
+      "description": "List of custom URLs to be updated. These URLs are assigned exclusively to this category",
+      "items": {
+        "type": "string"
+      },
+      "order": 3
+    },
+    "dbCategorizedUrls": {
+      "type": "array",
+      "title": "URLs Retaining Parent Category",
+      "description": "List of URLs to be updated that retain their parent category classification. These URLs are covered by policies referencing both the original parent category and this custom category",
+      "items": {
+        "type": "string"
+      },
+      "order": 4
+    },
     "urlCategoryName": {
       "type": "string",
       "title": "URL Category Name",
       "description": "Name of the URL category to update. Can be a predefined Zscaler category name or a custom category name",
       "order": 1
-    },
-    "urlList": {
-      "type": "array",
-      "title": "URL List",
-      "description": "List of the URLs to be updated",
-      "items": {
-        "type": "string"
-      },
-      "order": 3
     }
   },
   "required": [
     "action",
-    "urlCategoryName",
-    "urlList"
+    "activate_configuration",
+    "urlCategoryName"
   ],
   "definitions": {}
 }
-    """)
+    """
+    )
 
     def __init__(self):
         super(self.__class__, self).__init__(self.schema)
 
 
 class UpdateUrlsOfUrlCategoryOutput(insightconnect_plugin_runtime.Output):
-    schema = json.loads(r"""
+    schema = json.loads(
+        r"""
    {
   "type": "object",
   "title": "Variables",
   "properties": {
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "description": "Activation status. Only present when Activate Configuration is true",
+      "order": 2
+    },
     "urlCategory": {
       "$ref": "#/definitions/urlCategory",
       "title": "URL Category",
@@ -303,7 +331,8 @@ class UpdateUrlsOfUrlCategoryOutput(insightconnect_plugin_runtime.Output):
     }
   }
 }
-    """)
+    """
+    )
 
     def __init__(self):
         super(self.__class__, self).__init__(self.schema)

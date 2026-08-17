@@ -1,5 +1,6 @@
 {
   "action": "Remove from the list",
   "urlCategoryName": "Category Example",
-  "urlList": ["example.com"]
+  "customUrls": ["example.com"],
+  "activate_configuration": false
 }

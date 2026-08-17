@@ -1,5 +1,6 @@
 {
   "action": "Add to the list",
   "urlCategoryName": "Radio",
-  "urlList": ["example11.com"]
+  "customUrls": ["example11.com"],
+  "activate_configuration": false
 }

@@ -3,7 +3,7 @@ extension: plugin
 products: [insightconnect]
 name: zscaler
 title: Zscaler
-version: 2.3.1
+version: 2.4.0
 connection_version: 2
 supported_versions: ["Zscaler OneAPI 2024"]
 description: Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network
@@ -65,6 +65,7 @@ troubleshooting:
     Custom API Request action can be used to reproduce a known working vendor request and confirm
     whether the failure is scope related."
 version_history:
+  - "2.4.0 - Add Get Enrolled Devices and Get One-Time Password actions for ZCC device OTP workflows | Enhance Update URLs of URL Category with URLs Retaining Parent Category input, Activate Configuration option, and rename URL List to Custom URLs"
   - "2.3.1 - Fix Profile ID input to filter client-side. The listByCompany endpoint does not support a profileId query parameter"
   - "2.3.0 - Add optional Profile ID and Search inputs to Get VPN Gateway Bypasses. Profile ID filters results to a single profile, Search filters by profile name client-side"
   - "2.2.0 - Connection test now treats authentication as fatal and per-service authorization as informational, so it reports the state of every service and only fails when none are authorized | Share a single OAuth token across the ZIA, ZPA and ZCC clients so a token is obtained once per connection instead of once per service"
@@ -1124,7 +1125,7 @@ actions:
         example: {"id":"CUSTOM_01","configuredName":"Custom Category Example","superCategory":"USER_DEFINED","keywords":["key1"],"keywordsRetainingParentCategory":["test1"],"urls":["example.com"],"dbCategorizedUrls":[],"customCategory":true,"scopes":[{"type":"ORGANIZATION"},{"type":"DEPARTMENT","scopeEntities":[{"id":12345678,"name":"Test Department"}]},{"type":"LOCATION","scopeEntities":[{"id":12345678,"name":"Location Example"}]},{"scopeGroupMemberEntities":[],"type":"LOCATION","scopeEntities":[{"id":12345678,"name":"Location Group Example"}]}],"editable":true,"description":"Example Description","type":"URL_CATEGORY","val":123,"customUrlsCount":1,"urlsRetainingParentCategoryCount":0,"customIpRangesCount":0,"ipRangesRetainingParentCategoryCount":0}
   update_urls_of_url_category:
     title: Update URLs of URL Category
-    description: Adds or removes URLs for the specified URL category. Supports both predefined Zscaler categories and custom categories
+    description: Adds or removes URLs for the specified URL category. Supports both custom URLs and URLs retaining parent category. Supports both predefined Zscaler categories and custom categories
     input:
       urlCategoryName:
         title: URL Category Name
@@ -1132,6 +1133,7 @@ actions:
         type: string
         required: true
         example: "News and Media"
+        order: 1
       action:
         title: Action
         description: The action applied to the URLs
@@ -1141,12 +1143,29 @@ actions:
           - "Remove from the list"
         required: true
         example: Add to the list
-      urlList:
-        title: URL List
-        description: List of the URLs to be updated
+        order: 2
+      customUrls:
+        title: Custom URLs
+        description: List of custom URLs to be updated. These URLs are assigned exclusively to this category
         type: "[]string"
-        required: true
+        required: false
         example: [ "example.com", "example1.com" ]
+        order: 3
+      dbCategorizedUrls:
+        title: URLs Retaining Parent Category
+        description: List of URLs to be updated that retain their parent category classification. These URLs are covered by policies referencing both the original parent category and this custom category
+        type: "[]string"
+        required: false
+        example: [ "news.example.com", "media.example.com" ]
+        order: 4
+      activate_configuration:
+        title: Activate Configuration
+        description: Set to true to activate configuration changes after updating the URL category
+        type: boolean
+        required: true
+        default: false
+        example: false
+        order: 5
     output:
       urlCategory:
         title: URL Category
@@ -1154,6 +1173,12 @@ actions:
         type: urlCategory
         required: false
         example: {"id":"CUSTOM_01","configuredName":"Custom Category Example","superCategory":"USER_DEFINED","keywords":["key1"],"keywordsRetainingParentCategory":["test1"],"urls":["example.com"],"dbCategorizedUrls":[],"customCategory":true,"scopes":[{"type":"ORGANIZATION"},{"type":"DEPARTMENT","scopeEntities":[{"id":12345678,"name":"Test Department"}]},{"type":"LOCATION","scopeEntities":[{"id":12345678,"name":"Location Example"}]},{"scopeGroupMemberEntities":[],"type":"LOCATION_GROUP","scopeEntities":[{"id":12345678,"name":"Location Group Example"}]}],"editable":true,"description":"Example Description","type":"URL_CATEGORY","val":123,"customUrlsCount":1,"urlsRetainingParentCategoryCount":0,"customIpRangesCount":0,"ipRangesRetainingParentCategoryCount":0}
+      status:
+        title: Status
+        description: Activation status. Only present when Activate Configuration is true
+        type: string
+        required: false
+        example: ACTIVE
   get_dlp_incidents:
     title: Get DLP Incidents
     description: Retrieve DLP incident data from Zscaler OneAPI with time range filtering and pagination support
@@ -1583,3 +1608,53 @@ actions:
         type: "[]vpn_gateway_entry"
         required: true
         example: [{"hostname": "other-gateway.example.com", "type": "hostname"}]
+  get_enrolled_devices:
+    title: Get Enrolled Devices
+    description: List enrolled devices from Zscaler Client Connector with an optional username filter to locate a specific user's device. Returns device details including the UDID needed for OTP generation
+    input:
+      username:
+        title: Username
+        description: Filter devices by username (email address). If provided, only devices belonging to this user are returned
+        type: string
+        required: false
+        example: "user@example.com"
+        placeholder: "user@example.com"
+        order: 1
+      os_type:
+        title: OS Type
+        description: Filter devices by operating system type
+        type: string
+        required: false
+        enum:
+          - "Windows"
+          - "macOS"
+          - "iOS"
+          - "Android"
+          - "Linux"
+        example: "Windows"
+        order: 2
+    output:
+      devices:
+        title: Devices
+        description: List of enrolled devices matching the filter criteria
+        type: "[]object"
+        required: false
+        example: [{"udid": "abc123", "user": "user@example.com", "machineHostname": "USER-LAPTOP", "osType": "Windows", "state": "active"}]
+  get_one_time_password:
+    title: Get One-Time Password
+    description: Retrieve the one-time password (OTP) bundle for a specific enrolled device identified by its UDID. The OTP can be used for logout, exit, uninstall, or service disable operations
+    input:
+      udid:
+        title: UDID
+        description: The unique device identifier (UDID) of the enrolled device. Obtain this from the Get Enrolled Devices action
+        type: string
+        required: true
+        example: "abc123-def456-ghi789"
+        placeholder: "abc123-def456-ghi789"
+    output:
+      otp:
+        title: OTP
+        description: The one-time password bundle for the device containing passwords for various operations
+        type: object
+        required: true
+        example: {"logout_otp": "123456", "exit_otp": "654321", "uninstall_otp": "111222"}
