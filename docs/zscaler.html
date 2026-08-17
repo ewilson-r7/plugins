@@ -46,7 +46,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Zscaler</h2>
-    <span>Plugin v2.2.0 &middot; OneAPI</span>
+    <span>Plugin v2.4.1 &middot; OneAPI</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -81,6 +81,8 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <span class="section-label">ZCC Actions</span>
   <a href="#get-vpn-gateway-bypasses">Get VPN Bypasses</a>
   <a href="#remove-vpn-gateway-bypass">Remove VPN Bypass</a>
+  <a href="#get-enrolled-devices">Get Enrolled Devices</a>
+  <a href="#get-one-time-password">Get One-Time Password</a>
   <span class="section-label">Diagnostics</span>
   <a href="#custom-api-request">Custom API Request</a>
   <span class="section-label">Reference</span>
@@ -91,14 +93,14 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Zscaler Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.2.0 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.4.1 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
 
 <h2 id="description">Description</h2>
 <p>Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network. This plugin uses the Zscaler OneAPI unified gateway (<code>api.zsapi.net</code>) with OAuth 2.0 Client Credentials authentication to manage security policies across three Zscaler product lines:</p>
 <ul>
   <li><strong>ZIA (Zscaler Internet Access)</strong> — URL categorization, blacklisting, DLP, firewall rules, logs, users, threat feeds</li>
   <li><strong>ZPA (Zscaler Private Access)</strong> — Application segments and server groups</li>
-  <li><strong>ZCC (Zscaler Client Connector)</strong> — VPN gateway bypass auditing and management</li>
+  <li><strong>ZCC (Zscaler Client Connector)</strong> — VPN gateway bypass auditing and management, enrolled device lookup, one-time password (OTP) generation for logout/exit/uninstall</li>
 </ul>
 
 <h2 id="key-features">Key Features</h2>
@@ -368,16 +370,21 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 }</code></pre>
 
 <h2 id="update-urls-of-url-category">Update URLs of URL Category</h2>
-<p><span class="product-badge badge-zia">ZIA</span> Add or remove URLs from a URL category.</p>
+<p><span class="product-badge badge-zia">ZIA</span> Add or remove URLs from a URL category. Supports both custom URLs (exclusive to this category) and URLs retaining parent category classification. Optionally activates configuration changes immediately.</p>
 <h4>Input</h4>
 <table>
   <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-  <tr><td>URL Category Name</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Category name to update</td></tr>
+  <tr><td>URL Category Name</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Category name to update (predefined or custom)</td></tr>
   <tr><td>Action</td><td><code>enum</code></td><td><span class="badge badge-required">Required</span></td><td><code>Add to the list</code> or <code>Remove from the list</code></td></tr>
-  <tr><td>URL List</td><td><code>[]string</code></td><td><span class="badge badge-required">Required</span></td><td>URLs to add or remove</td></tr>
+  <tr><td>Custom URLs</td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>URLs assigned exclusively to this category (maps to API <code>urls</code> field)</td></tr>
+  <tr><td>URLs Retaining Parent Category</td><td><code>[]string</code></td><td><span class="badge badge-optional">Optional</span></td><td>URLs that retain their original parent category classification (maps to API <code>dbCategorizedUrls</code> field)</td></tr>
+  <tr><td>Activate Configuration</td><td><code>boolean</code></td><td><span class="badge badge-required">Required</span></td><td>Set to true to activate changes immediately. Default: false</td></tr>
 </table>
+<div class="info-box">
+  At least one of Custom URLs or URLs Retaining Parent Category must be provided. Both can be used together in a single action step.
+</div>
 <h4>Output</h4>
-<p>Returns the updated URL category object.</p>
+<p>Returns the updated URL category object, plus an activation <code>status</code> field when Activate Configuration is enabled.</p>
 
 <h2 id="get-dlp-incidents">Get DLP Incidents</h2>
 <p><span class="product-badge badge-zia">ZIA</span> Retrieve DLP incident data with time range filtering and pagination.</p>
@@ -558,6 +565,56 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
     {"hostname": "other-gateway.example.com", "type": "hostname"}
   ]
 }</code></pre>
+
+<h2 id="get-enrolled-devices">Get Enrolled Devices</h2>
+<p><span class="product-badge badge-zcc">ZCC</span> List enrolled devices from Zscaler Client Connector with optional filters. Returns device details including the UDID needed for OTP generation. Use this to locate a specific user's device before calling Get One-Time Password.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Username</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Filter by username (email address). Returns only devices belonging to this user.</td></tr>
+  <tr><td>OS Type</td><td><code>enum</code></td><td><span class="badge badge-optional">Optional</span></td><td><code>Windows</code>, <code>macOS</code>, <code>iOS</code>, <code>Android</code>, or <code>Linux</code></td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "devices": [
+    {
+      "udid": "abc123-def456-ghi789",
+      "user": "jdoe@example.com",
+      "machineHostname": "JDOE-LAPTOP-01",
+      "osType": "Windows",
+      "osVersion": "11 22H2",
+      "state": "active",
+      "lastSeenTime": "2026-08-17T12:00:00Z"
+    }
+  ]
+}</code></pre>
+<div class="info-box">
+  <strong>Workflow tip:</strong> Use this action to find a user's UDID, then pass it to <a href="#get-one-time-password">Get One-Time Password</a> to retrieve OTPs for logout, exit, uninstall, or service disable operations.
+</div>
+
+<h2 id="get-one-time-password">Get One-Time Password</h2>
+<p><span class="product-badge badge-zcc">ZCC</span> Retrieve the one-time password (OTP) bundle for a specific enrolled device. OTPs are single-use and short-lived. The bundle contains passwords for multiple operations — use only the one appropriate for your workflow.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>UDID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Unique device identifier. Obtain from the Get Enrolled Devices action.</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "otp": {
+    "logout_otp": "482916",
+    "exit_otp": "739205",
+    "uninstall_otp": "158473",
+    "revert_otp": "604829",
+    "zia_disable_otp": "291046",
+    "zpa_disable_otp": "817365",
+    "zdx_disable_otp": "503927",
+    "zdp_disable_otp": "642081"
+  }
+}</code></pre>
+<div class="warning-box">
+  <strong>Security:</strong> OTPs should be delivered via a secure out-of-band channel (helpdesk ticket, encrypted message). They are single-use and expire within minutes. Generate a new one if the first expires unused.
+</div>
 
 <h2 id="custom-api-request">Custom API Request</h2>
 <p><span class="product-badge badge-zia">ZIA</span><span class="product-badge badge-zpa">ZPA</span><span class="product-badge badge-zcc">ZCC</span> Send an authenticated request to any OneAPI endpoint and return the raw status code and response body. Unlike other actions this does not raise on a non-2xx response and does not retry on 401, so the exact response is visible. That makes it useful for reproducing a request from Postman or vendor documentation and confirming whether a failure is a plugin issue or a permissions issue.</p>

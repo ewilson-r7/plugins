@@ -14,7 +14,7 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 | [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.0 | Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry. Updated SDK to 6.6.0 |
 | [microsoft_teams](plugins/microsoft_teams/) | 8.0.0 | Major refactor to app-only OAuth2 (client_credentials), added Bot Framework messaging, migrated endpoints to /v1.0, added installed_apps support for create_teams_chat |
 | [teamdynamix](plugins/teamdynamix/) | 1.0.0 | Initial release — create, get, update, and search tickets in TeamDynamix ITSM |
-| [zscaler](plugins/zscaler/) | 2.0.0 | Migrate to Zscaler OneAPI with OAuth 2.0 Private Key auth, add DLP/firewall/logs/threat feed/ZPA/ZCC VPN gateway bypass actions |
+| [zscaler](plugins/zscaler/) | 2.4.1 | Add Get Enrolled Devices and Get One-Time Password actions, enhance Update URLs of URL Category with parent-category URLs and activate config, fix Remove VPN Gateway Bypass deviceType error |
 
 ## Documentation
 
