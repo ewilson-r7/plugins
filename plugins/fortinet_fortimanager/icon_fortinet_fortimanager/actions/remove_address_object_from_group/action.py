@@ -1,6 +1,5 @@
 import insightconnect_plugin_runtime
 
-from insightconnect_plugin_runtime.exceptions import PluginException
 from insightconnect_plugin_runtime.telemetry import auto_instrument
 
 from .schema import RemoveAddressObjectFromGroupInput, RemoveAddressObjectFromGroupOutput, Input, Output, Component
@@ -11,7 +10,7 @@ from .schema import RemoveAddressObjectFromGroupInput, RemoveAddressObjectFromGr
 class RemoveAddressObjectFromGroup(insightconnect_plugin_runtime.Action):
 
     def __init__(self):
-        super(self.__class__, self).__init__(
+        super().__init__(
             name="remove_address_object_from_group",
             description=Component.DESCRIPTION,
             input=RemoveAddressObjectFromGroupInput(),
@@ -39,12 +38,17 @@ class RemoveAddressObjectFromGroup(insightconnect_plugin_runtime.Action):
         else:
             member_names = []
 
-        # Verify that the address object is a member of the group
+        # If the address object is not a member, return success with current members
         if address_object not in member_names:
-            raise PluginException(
-                cause=f"Address object '{address_object}' is not a member of group '{group}'.",
-                assistance="Verify the address object name and group membership.",
+            self.logger.info(
+                "Address object '%s' is not a member of group '%s', nothing to remove.",
+                address_object,
+                group,
             )
+            return {
+                Output.SUCCESS: False,
+                Output.ADDRESS_OBJECTS: member_names,
+            }
 
         # Remove the address object from the member list
         member_names.remove(address_object)

@@ -117,19 +117,19 @@ class TestCreateAddressObject(TestCase):
         mock_post.assert_not_called()
 
     @patch("requests.post")
-    def test_naming_conflict_raises_plugin_exception(self, mock_post):
-        """Test that a naming conflict (error -6) raises PluginException."""
+    def test_naming_conflict_returns_false(self, mock_post):
+        """Test that a naming conflict (error -6) returns success=False gracefully."""
         mock_post.return_value = MockResponse(self.mock_error_conflict)
 
-        with self.assertRaises(PluginException) as context:
-            self.action.run(
-                {
-                    Input.ADDRESS: "8.8.8.8",
-                    Input.SKIP_RFC1918: False,
-                }
-            )
+        result = self.action.run(
+            {
+                Input.ADDRESS: "8.8.8.8",
+                Input.SKIP_RFC1918: False,
+            }
+        )
 
-        self.assertIn("-6", context.exception.cause)
+        self.assertFalse(result[Output.SUCCESS])
+        self.assertEqual(result[Output.ADDRESS_OBJECT], {})
 
     @patch("requests.post")
     def test_custom_name_input(self, mock_post):

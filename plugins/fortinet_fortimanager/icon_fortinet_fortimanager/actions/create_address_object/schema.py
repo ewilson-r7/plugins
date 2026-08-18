@@ -11,6 +11,7 @@ class Input:
     ADDRESS = "address"
     ADDRESS_OBJECT_NAME = "address_object_name"
     ADOM = "adom"
+    COMMENT = "comment"
     SKIP_RFC1918 = "skip_rfc1918"
     WHITELIST = "whitelist"
 
@@ -43,6 +44,12 @@ class CreateAddressObjectInput(insightconnect_plugin_runtime.Input):
       "title": "ADOM",
       "description": "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection",
       "order": 5
+    },
+    "comment": {
+      "type": "string",
+      "title": "Comment",
+      "description": "Optional comment to add to the address object. Useful for identifying objects created by automation",
+      "order": 6
     },
     "skip_rfc1918": {
       "type": "boolean",

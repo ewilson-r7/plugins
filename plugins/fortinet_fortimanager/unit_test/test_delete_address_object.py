@@ -33,14 +33,13 @@ class TestDeleteAddressObject(TestCase):
         mock_post.assert_called_once()
 
     @patch("requests.post")
-    def test_delete_object_not_found_raises_plugin_exception(self, mock_post):
-        """Test that deleting a non-existent object raises PluginException."""
+    def test_delete_object_not_found_returns_false(self, mock_post):
+        """Test that deleting a non-existent object returns success=False gracefully."""
         mock_post.return_value = MockResponse(self.mock_error_not_found)
 
-        with self.assertRaises(PluginException) as context:
-            self.action.run({Input.ADDRESS_OBJECT: "nonexistent-object"})
+        result = self.action.run({Input.ADDRESS_OBJECT: "nonexistent-object"})
 
-        self.assertIn("-3", context.exception.cause)
+        self.assertFalse(result[Output.SUCCESS])
 
     @patch("requests.post")
     def test_delete_object_in_use_raises_plugin_exception(self, mock_post):
@@ -64,7 +63,7 @@ class TestDeleteAddressObject(TestCase):
         with self.assertRaises(PluginException) as context:
             self.action.run({Input.ADDRESS_OBJECT: "used-object"})
 
-        self.assertIn("-10015", context.exception.cause)
+        self.assertIn("referenced", context.exception.cause)
 
     @patch("requests.post")
     def test_delete_address_object_with_adom_override(self, mock_post):

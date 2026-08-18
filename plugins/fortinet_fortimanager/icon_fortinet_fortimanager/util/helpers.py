@@ -149,11 +149,13 @@ class Helpers:
 
     @staticmethod
     def filter_objects(objects: list, filters: dict) -> list:
-        """Apply case-insensitive exact-match filters with AND logic.
+        """Apply case-insensitive filters with AND logic.
 
         Each filter key maps to an object field. Returns objects where ALL
         filter values match the corresponding field (case-insensitive).
-        Objects missing a filtered field are excluded.
+        Handles special cases:
+        - List fields (e.g. subnet as ["ip", "mask"]): joined with space for comparison
+        - Subnet filter: compares both CIDR and space-separated formats
 
         Args:
             objects: List of dict objects to filter.
@@ -178,13 +180,92 @@ class Helpers:
                 if obj_value is None:
                     match = False
                     break
-                if str(obj_value).lower() != str(value).lower():
+                # Handle list values (FortiManager returns subnet as list: ["ip", "mask"])
+                if isinstance(obj_value, list):
+                    obj_value = " ".join(str(item) for item in obj_value)
+                obj_str = str(obj_value).lower().strip()
+                filter_str = str(value).lower().strip()
+                # For subnet field, also try CIDR-to-netmask comparison
+                if key == "subnet" and not Helpers._subnet_matches(obj_str, filter_str):
+                    match = False
+                    break
+                if key != "subnet" and obj_str != filter_str:
                     match = False
                     break
             if match:
                 result.append(obj)
 
         return result
+
+    @staticmethod
+    def _subnet_matches(obj_subnet: str, filter_subnet: str) -> bool:
+        """Compare subnet values accounting for different formats.
+
+        Handles:
+        - Exact string match
+        - FortiManager format "ip mask" vs CIDR "ip/prefix"
+        - Both normalized to ip_network for comparison
+
+        Args:
+            obj_subnet: The subnet value from the object (lowercased).
+            filter_subnet: The filter value (lowercased).
+
+        Returns:
+            True if the subnets represent the same network.
+        """
+        # Direct string match
+        if obj_subnet == filter_subnet:
+            return True
+
+        # Try normalizing both to ip_network and compare
+        try:
+            # Handle FortiManager "ip mask" format (e.g. "10.0.0.1 255.255.255.255")
+            obj_network = Helpers._parse_subnet(obj_subnet)
+            filter_network = Helpers._parse_subnet(filter_subnet)
+            if obj_network is not None and filter_network is not None:
+                return obj_network == filter_network
+        except (ValueError, TypeError):
+            pass
+
+        return False
+
+    @staticmethod
+    def _parse_subnet(value: str):
+        """Parse a subnet string in either CIDR or 'ip mask' format to ip_network.
+
+        Args:
+            value: Subnet string like "10.0.0.1/32" or "10.0.0.1 255.255.255.255"
+
+        Returns:
+            ipaddress.IPv4Network or None if unparseable.
+        """
+        value = value.strip()
+
+        # Try CIDR format first
+        if "/" in value:
+            try:
+                return ipaddress.ip_network(value, strict=False)
+            except (ValueError, TypeError):
+                return None
+
+        # Try "ip mask" format (space-separated)
+        parts = value.split()
+        if len(parts) == 2:
+            try:
+                ip_addr = ipaddress.ip_address(parts[0])
+                mask = ipaddress.ip_address(parts[1])
+                # Convert netmask to prefix length
+                prefix_len = ipaddress.IPv4Network(f"0.0.0.0/{mask}").prefixlen
+                return ipaddress.ip_network(f"{ip_addr}/{prefix_len}", strict=False)
+            except (ValueError, TypeError):
+                return None
+
+        # Try bare IP (treat as /32)
+        try:
+            ipaddress.ip_address(value)
+            return ipaddress.ip_network(f"{value}/32", strict=False)
+        except (ValueError, TypeError):
+            return None
 
     @staticmethod
     def strip_credentials(params: dict) -> dict:

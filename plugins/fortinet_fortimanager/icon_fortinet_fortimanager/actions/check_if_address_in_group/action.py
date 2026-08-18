@@ -10,7 +10,7 @@ from .schema import CheckIfAddressInGroupInput, CheckIfAddressInGroupOutput, Inp
 class CheckIfAddressInGroup(insightconnect_plugin_runtime.Action):
 
     def __init__(self):
-        super(self.__class__, self).__init__(
+        super().__init__(
             name="check_if_address_in_group",
             description=Component.DESCRIPTION,
             input=CheckIfAddressInGroupInput(),
@@ -39,10 +39,7 @@ class CheckIfAddressInGroup(insightconnect_plugin_runtime.Action):
         else:
             member_names = []
 
-        if not enable_search:
-            # Name-based match: exact match of address input against member object names
-            matching = [name for name in member_names if name == address]
-        else:
+        if enable_search:
             # Value-based search: compare input against stored subnet/FQDN of each member
             all_objects = self.connection.api.get_address_objects(adom)
 
@@ -61,6 +58,9 @@ class CheckIfAddressInGroup(insightconnect_plugin_runtime.Action):
                 fqdn = obj.get("fqdn", "")
                 if fqdn and fqdn.lower() == address.lower():
                     matching.append(member_name)
+        else:
+            # Name-based match: exact match of address input against member object names
+            matching = [name for name in member_names if name == address]
 
         return {
             Output.FOUND: len(matching) > 0,

@@ -1,5 +1,6 @@
 import insightconnect_plugin_runtime
 
+from insightconnect_plugin_runtime.exceptions import PluginException
 from insightconnect_plugin_runtime.telemetry import auto_instrument
 
 from .schema import CreateAddressObjectInput, CreateAddressObjectOutput, Input, Output, Component
@@ -11,7 +12,7 @@ from icon_fortinet_fortimanager.util.helpers import Helpers
 class CreateAddressObject(insightconnect_plugin_runtime.Action):
 
     def __init__(self):
-        super(self.__class__, self).__init__(
+        super().__init__(
             name="create_address_object",
             description=Component.DESCRIPTION,
             input=CreateAddressObjectInput(),
@@ -24,6 +25,7 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
         address = params.get(Input.ADDRESS)
         address_object_name = params.get(Input.ADDRESS_OBJECT_NAME)
         adom = params.get(Input.ADOM)
+        comment = params.get(Input.COMMENT, "")
         skip_rfc1918 = params.get(Input.SKIP_RFC1918)
         whitelist = params.get(Input.WHITELIST)
         # END INPUT BINDING - DO NOT REMOVE
@@ -55,8 +57,14 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
         if address_type == "ipmask":
             value = Helpers.normalize_ip(address)
 
-        # Call API to create the address object — PluginException propagates on naming conflict (error -6) etc.
-        self.connection.api.create_address_object(adom, object_name, address_type, value)
+        # Call API to create the address object — handle already-exists gracefully
+        try:
+            self.connection.api.create_address_object(adom, object_name, address_type, value, comment=comment)
+        except PluginException as error:
+            if "code -6" in str(error.cause) or "already exists" in str(error.cause).lower():
+                self.logger.info("Address object '%s' already exists, skipping creation.", object_name)
+                return {Output.SUCCESS: False, Output.ADDRESS_OBJECT: {}}
+            raise
 
         # Build output object details
         created_object = {"name": object_name, "type": address_type}
@@ -64,5 +72,7 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
             created_object["subnet"] = value
         elif address_type == "fqdn":
             created_object["fqdn"] = value
+        if comment:
+            created_object["comment"] = comment
 
         return {Output.SUCCESS: True, Output.ADDRESS_OBJECT: created_object}

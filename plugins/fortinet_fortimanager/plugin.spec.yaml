@@ -4,7 +4,7 @@ products: [insightconnect]
 name: fortinet_fortimanager
 title: Fortinet FortiManager
 description: "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
-version: 2.0.2
+version: 2.1.0
 connection_version: 1
 supported_versions: ["7.0.x", "7.2.x", "7.4.x"]
 vendor: rapid7_mnp
@@ -25,6 +25,7 @@ requirements:
   - "An API token (FortiManager 7.2.2+ recommended) or admin username and password"
   - "Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)"
 version_history:
+  - "2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects"
   - "2.0.2 - Improve error messages to show actual API response instead of static error code mapping"
   - "2.0.1 - Fix file permission issues"
   - "2.0.0 - Fix SSL verification not being honored when set to false"
@@ -303,6 +304,13 @@ actions:
         required: false
         example: root
         order: 5
+      comment:
+        title: Comment
+        description: "Optional comment to add to the address object. Useful for identifying objects created by automation"
+        type: string
+        required: false
+        example: "Created by R7 Automation"
+        order: 6
     output:
       success:
         title: Success

@@ -225,7 +225,7 @@ class FortiManagerAPI:
             return result
         return result.get("data", []) if isinstance(result, dict) else []
 
-    def create_address_object(self, adom: str, name: str, address_type: str, value: str) -> dict:
+    def create_address_object(self, adom: str, name: str, address_type: str, value: str, comment: str = "") -> dict:
         """Create a new address object in the specified ADOM.
 
         Args:
@@ -233,6 +233,7 @@ class FortiManagerAPI:
             name: The address object name.
             address_type: The type ('ipmask' or 'fqdn').
             value: The address value (CIDR or FQDN).
+            comment: Optional comment for the address object.
 
         Returns:
             The created address object data.
@@ -244,6 +245,9 @@ class FortiManagerAPI:
             data["subnet"] = value
         elif address_type == "fqdn":
             data["fqdn"] = value
+
+        if comment:
+            data["comment"] = comment
 
         return self.execute(METHOD_ADD, url, data=data)
 

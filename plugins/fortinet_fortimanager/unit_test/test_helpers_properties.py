@@ -207,7 +207,7 @@ class TestProperty3FilterANDSemantics:
     )
     @settings(max_examples=100)
     def test_filter_returns_correct_subset(self, objects, filter_name, filter_subnet):
-        """Output is exactly the subset satisfying all filters."""
+        """Output is exactly the subset satisfying all filters (semantic subnet match)."""
         filters = {}
         if filter_name is not None:
             filters["name"] = filter_name
@@ -216,7 +216,7 @@ class TestProperty3FilterANDSemantics:
 
         result = Helpers.filter_objects(objects, filters)
 
-        # Manually compute expected subset
+        # Manually compute expected subset — using the same logic as filter_objects
         expected = []
         active_filters = {k: v for k, v in filters.items() if v}
         for obj in objects:
@@ -226,7 +226,13 @@ class TestProperty3FilterANDSemantics:
                 if obj_value is None:
                     match = False
                     break
-                if str(obj_value).lower() != str(value).lower():
+                obj_str = str(obj_value).lower().strip()
+                filter_str = str(value).lower().strip()
+                if key == "subnet":
+                    if not Helpers._subnet_matches(obj_str, filter_str):
+                        match = False
+                        break
+                elif obj_str != filter_str:
                     match = False
                     break
             if match:

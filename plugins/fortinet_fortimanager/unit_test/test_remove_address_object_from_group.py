@@ -45,7 +45,7 @@ class TestRemoveAddressObjectFromGroup(TestCase):
 
     @patch("requests.post")
     def test_remove_address_object_not_in_group(self, mock_post):
-        """Test that PluginException is raised when address object is not in the group."""
+        """Test that removing a non-member returns success=False gracefully."""
         get_group_response = load_payload("get_address_group.json.resp")
 
         mock_post.side_effect = [
@@ -58,10 +58,12 @@ class TestRemoveAddressObjectFromGroup(TestCase):
             Input.ADOM: "",
         }
 
-        with self.assertRaises(PluginException) as context:
-            self.action.run(params)
+        result = self.action.run(params)
 
-        self.assertIn("not a member", context.exception.cause)
+        self.assertFalse(result[Output.SUCCESS])
+        # Address objects should remain unchanged
+        self.assertIn("google-dns", result[Output.ADDRESS_OBJECTS])
+        self.assertIn("cloudflare-dns", result[Output.ADDRESS_OBJECTS])
 
     @patch("requests.post")
     def test_remove_address_object_group_not_found(self, mock_post):

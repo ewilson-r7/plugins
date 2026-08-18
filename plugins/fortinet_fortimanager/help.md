@@ -151,6 +151,7 @@ This action is used to create a new address object in a FortiManager ADOM
 |address|string|None|True|The address to assign to the address object. Accepts an IP address, CIDR notation, or fully qualified domain name|None|198.51.100.100|None|None|
 |address_object_name|string|None|False|Optional name for the address object. If not provided, the address value will be used as the name|None|MaliciousHost|None|None|
 |adom|string|None|False|Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection|None|root|None|None|
+|comment|string|None|False|Optional comment to add to the address object. Useful for identifying objects created by automation|None|Created by R7 Automation|None|None|
 |skip_rfc1918|boolean|True|True|Skip creation for private IP addresses as defined in RFC 1918|None|True|None|None|
 |whitelist|[]string|None|False|List of addresses that should not be blocked. Supports IP addresses, CIDR ranges, and domain names|None|["198.51.100.100", "example.com", "192.0.2.0/24"]|None|None|
   
@@ -161,6 +162,7 @@ Example input:
   "address": "198.51.100.100",
   "address_object_name": "MaliciousHost",
   "adom": "root",
+  "comment": "Created by R7 Automation",
   "skip_rfc1918": true,
   "whitelist": [
     "198.51.100.100",
@@ -463,6 +465,7 @@ Example output:
 
 # Version History
 
+* 2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects
 * 2.0.2 - Improve error messages to show actual API response instead of static error code mapping
 * 2.0.1 - Fix file permission issues
 * 2.0.0 - Fix SSL verification not being honored when set to false
