@@ -3,6 +3,7 @@ import json
 import re
 
 from icon_zscaler.util.base_client import BaseClient
+from icon_zscaler.util.constants import DEVICE_TYPE_TO_ID
 
 JSON_HEADERS = {"Content-Type": "application/json", "Cache-Control": "no-cache"}
 
@@ -213,11 +214,12 @@ class ZCCClient(BaseClient):
         patch_value = ",".join(remaining) if was_string else remaining
 
         # The application-profiles PATCH endpoint requires deviceType in the body.
-        # This field identifies the platform (1=iOS, 2=Android, 3=Windows, 4=macOS, 5=Linux).
+        # The GET returns it as a string (e.g., "DEVICE_TYPE_WINDOWS") but the PATCH
+        # expects a numeric ID (e.g., 3). Convert using the mapping.
         patch_body = {"vpnGateways": patch_value}
         device_type = target_profile.get("deviceType")
         if device_type:
-            patch_body["deviceType"] = device_type
+            patch_body["deviceType"] = DEVICE_TYPE_TO_ID.get(device_type, device_type)
 
         self._make_request(
             "PATCH",

@@ -262,7 +262,7 @@ class TestRemoveVpnGatewayBypassStringShape(TestCase):
         patch_call = [call for call in calls if call["method"] == "PATCH"][0]
         patch_data = json.loads(patch_call["data"])
         self.assertEqual(patch_data["vpnGateways"], ["10.0.0.1", "10.0.0.0/24"])
-        self.assertEqual(patch_data["deviceType"], "DEVICE_TYPE_WINDOWS")
+        self.assertEqual(patch_data["deviceType"], 3)
 
     def test_removes_matching_ip_string(self) -> None:
         result, _ = self._run_removal("10.0.0.1")

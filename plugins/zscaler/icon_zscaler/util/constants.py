@@ -159,3 +159,14 @@ HTTP_ERROR_MAP = {
     500: {"cause": Cause.SERVER_ERROR, "assistance": Assistance.CONTACT_SUPPORT},
     503: {"cause": Cause.SERVICE_UNAVAILABLE, "assistance": Assistance.RETRY_LATER},
 }
+
+# ZCC application-profiles PATCH requires deviceType as a numeric ID, but the
+# GET response returns it as a string. This map converts the string to the ID.
+DEVICE_TYPE_TO_ID = {
+    "DEVICE_TYPE_IOS": 1,
+    "DEVICE_TYPE_ANDROID": 2,
+    "DEVICE_TYPE_WINDOWS": 3,
+    "DEVICE_TYPE_MAC": 4,
+    "DEVICE_TYPE_MACOS": 4,
+    "DEVICE_TYPE_LINUX": 5,
+}

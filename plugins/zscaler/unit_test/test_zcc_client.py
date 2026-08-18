@@ -228,7 +228,7 @@ class TestRemoveVpnGatewayBypass(TestCase):
 
     @patch("requests.request")
     def test_constructs_patch_payload_with_device_type(self, mock_request):
-        """Test that PATCH payload includes deviceType from the original profile."""
+        """Test that PATCH payload includes deviceType converted from string to numeric ID."""
         list_response = {
             "profiles": [
                 {
@@ -254,10 +254,10 @@ class TestRemoveVpnGatewayBypass(TestCase):
         patch_call = mock_request.call_args_list[1]
         patch_kwargs = patch_call[1]
         patch_data = json.loads(patch_kwargs["data"])
-        # PATCH must include deviceType alongside vpnGateways
+        # PATCH must include deviceType as numeric ID (3 = Windows)
         self.assertIn("vpnGateways", patch_data)
         self.assertIn("deviceType", patch_data)
-        self.assertEqual(patch_data["deviceType"], "DEVICE_TYPE_WINDOWS")
+        self.assertEqual(patch_data["deviceType"], 3)
 
     @patch("requests.request")
     def test_entry_not_found_is_idempotent(self, mock_request):
