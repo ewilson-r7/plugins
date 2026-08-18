@@ -6,7 +6,7 @@ from sys import argv
 
 Name = "Zscaler"
 Vendor = "rapid7_mnp"
-Version = "2.4.2"
+Version = "2.5.0"
 Description = "Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network"
 
 
@@ -81,6 +81,8 @@ def main():
             self.add_action(actions.CustomApiRequest())
         
             self.add_action(actions.RemoveVpnGatewayBypass())
+        
+            self.add_action(actions.AddVpnGatewayBypass())
         
             self.add_action(actions.GetEnrolledDevices())
         

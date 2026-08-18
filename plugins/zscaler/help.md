@@ -60,6 +60,48 @@ Example input:
 ### Actions
 
 
+#### Add VPN Gateway Bypass
+
+This action is used to add a VPN gateway bypass entry to a ZCC application profile. If the entry already exists, the 
+action succeeds without duplicating it (idempotent)
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|entry|string|None|True|The hostname or IP address to add to VPN gateway bypasses|None|gateway.example.com|None|None|
+|profile_id|string|None|True|The profile ID to update|None|12345|None|None|
+  
+Example input:
+
+```
+{
+  "entry": "gateway.example.com",
+  "profile_id": 12345
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|success|boolean|True|Whether the addition was successful|True|
+|vpn_gateways|[]vpn_gateway_entry|True|Updated list of VPN gateway bypass entries after the addition|[{"hostname": "gateway.example.com", "type": "hostname"}]|
+  
+Example output:
+
+```
+{
+  "success": true,
+  "vpn_gateways": [
+    {
+      "hostname": "gateway.example.com",
+      "type": "hostname"
+    }
+  ]
+}
+```
+
 #### Blacklist URL
 
 This action is used to add or remove URLs from a blacklist. These URLs will appear in the 'Blocked Malicious URLs' 
@@ -1633,6 +1675,7 @@ Example output:
 
 # Version History
 
+* 2.5.0 - Add VPN Gateway Bypass action for adding entries to ZCC application profiles
 * 2.4.2 - Fix Remove VPN Gateway Bypass sending deviceType as string instead of numeric ID. The PATCH endpoint requires the integer form (e.g., 3 for Windows) not the string form (DEVICE_TYPE_WINDOWS) returned by GET
 * 2.4.1 - Fix Remove VPN Gateway Bypass failing with 'deviceType is mandatory' by including the profile's deviceType in the PATCH request body
 * 2.4.0 - Add Get Enrolled Devices and Get One-Time Password actions for ZCC device OTP workflows | Enhance Update URLs of URL Category with URLs Retaining Parent Category input, Activate Configuration option, and rename URL List to Custom URLs

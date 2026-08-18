@@ -3,7 +3,7 @@ extension: plugin
 products: [insightconnect]
 name: zscaler
 title: Zscaler
-version: 2.4.2
+version: 2.5.0
 connection_version: 2
 supported_versions: ["Zscaler OneAPI 2024"]
 description: Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network
@@ -65,6 +65,7 @@ troubleshooting:
     Custom API Request action can be used to reproduce a known working vendor request and confirm
     whether the failure is scope related."
 version_history:
+  - "2.5.0 - Add VPN Gateway Bypass action for adding entries to ZCC application profiles"
   - "2.4.2 - Fix Remove VPN Gateway Bypass sending deviceType as string instead of numeric ID. The PATCH endpoint requires the integer form (e.g., 3 for Windows) not the string form (DEVICE_TYPE_WINDOWS) returned by GET"
   - "2.4.1 - Fix Remove VPN Gateway Bypass failing with 'deviceType is mandatory' by including the profile's deviceType in the PATCH request body"
   - "2.4.0 - Add Get Enrolled Devices and Get One-Time Password actions for ZCC device OTP workflows | Enhance Update URLs of URL Category with URLs Retaining Parent Category input, Activate Configuration option, and rename URL List to Custom URLs"
@@ -1610,6 +1611,35 @@ actions:
         type: "[]vpn_gateway_entry"
         required: true
         example: [{"hostname": "other-gateway.example.com", "type": "hostname"}]
+  add_vpn_gateway_bypass:
+    title: Add VPN Gateway Bypass
+    description: Add a VPN gateway bypass entry to a ZCC application profile. If the entry already exists, the action succeeds without duplicating it (idempotent)
+    input:
+      profile_id:
+        title: Profile ID
+        description: The profile ID to update
+        type: string
+        required: true
+        example: "12345"
+      entry:
+        title: Entry
+        description: The hostname or IP address to add to VPN gateway bypasses
+        type: string
+        required: true
+        example: "gateway.example.com"
+    output:
+      success:
+        title: Success
+        description: Whether the addition was successful
+        type: boolean
+        required: true
+        example: true
+      vpn_gateways:
+        title: VPN Gateways
+        description: Updated list of VPN gateway bypass entries after the addition
+        type: "[]vpn_gateway_entry"
+        required: true
+        example: [{"hostname": "gateway.example.com", "type": "hostname"}]
   get_enrolled_devices:
     title: Get Enrolled Devices
     description: List enrolled devices from Zscaler Client Connector with an optional username filter to locate a specific user's device. Returns device details including the UDID needed for OTP generation

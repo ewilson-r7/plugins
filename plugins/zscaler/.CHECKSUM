@@ -1,8 +1,12 @@
 {
-	"spec": "6fd33219f0ac218162b1ca8d62a92253",
-	"manifest": "6afeaece2fa0bc8ccc77b12f77297cb6",
-	"setup": "77aec0a225ea4b4a4df2c8c26b54c63d",
+	"spec": "577efab8e53ef6b4e78e5dc8215f921a",
+	"manifest": "4b8d4a7208e91a7681eb52dc688b18e9",
+	"setup": "3c4d28540fd4cf0df1db7e81610ac1e9",
 	"schemas": [
+		{
+			"identifier": "add_vpn_gateway_bypass/schema.py",
+			"hash": "406ad40581a552bb3bfec853abc47e33"
+		},
 		{
 			"identifier": "blacklist_url/schema.py",
 			"hash": "ab36db3d0e8f850796aba401743045de"

@@ -48,6 +48,8 @@ from .custom_api_request.action import CustomApiRequest
 
 from .remove_vpn_gateway_bypass.action import RemoveVpnGatewayBypass
 
+from .add_vpn_gateway_bypass.action import AddVpnGatewayBypass
+
 from .get_enrolled_devices.action import GetEnrolledDevices
 
 from .get_one_time_password.action import GetOneTimePassword

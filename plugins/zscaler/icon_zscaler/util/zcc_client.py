@@ -231,6 +231,71 @@ class ZCCClient(BaseClient):
         # Return normalized objects to match the vpn_gateway_entry output type
         return {"success": True, "vpn_gateways": [normalize_gateway_entry(entry) for entry in remaining]}
 
+    def add_vpn_gateway_bypass(self, profile_id: str, entry_to_add: str) -> dict:
+        """Add a VPN gateway bypass entry to a profile.
+
+        Fetches the current profile's vpnGateways list, appends the new entry
+        if not already present, and PATCHes the profile with the updated list.
+
+        Args:
+            profile_id: The profile ID to modify.
+            entry_to_add: The hostname or IP of the VPN gateway entry to add.
+
+        Returns:
+            Dict with structure: {"success": True, "vpn_gateways": updated_list}
+        """
+        response = self._make_request("GET", "web/policy/listByCompany")
+        profiles_data = response.json()
+
+        profiles = profiles_data if isinstance(profiles_data, list) else profiles_data.get("profiles", [])
+
+        target_id = normalize_profile_id(profile_id)
+
+        target_profile = None
+        for profile in profiles:
+            if normalize_profile_id(profile.get("profileId", profile.get("id", ""))) == target_id:
+                target_profile = profile
+                break
+
+        if not target_profile:
+            from insightconnect_plugin_runtime.exceptions import PluginException
+            from icon_zscaler.util.constants import Cause, Assistance
+
+            raise PluginException(
+                cause=Cause.RESOURCE_NOT_FOUND,
+                assistance=Assistance.VERIFY_INPUT,
+            )
+
+        policy_extension = target_profile.get("policyExtension", {})
+        current_gateways, was_string = extract_gateway_entries(policy_extension)
+
+        # Check if entry already exists (idempotent)
+        for gateway in current_gateways:
+            if self._matches_gateway(gateway, entry_to_add):
+                return {"success": True, "vpn_gateways": [normalize_gateway_entry(gw) for gw in current_gateways]}
+
+        # Append in the same shape the tenant uses
+        if was_string or (not current_gateways and isinstance(policy_extension.get("vpnGateways"), str)):
+            current_gateways.append(entry_to_add)
+            patch_value = ",".join(str(gw) for gw in current_gateways)
+        else:
+            current_gateways.append({"hostname": entry_to_add, "ip": "", "type": "hostname"})
+            patch_value = current_gateways
+
+        patch_body = {"vpnGateways": patch_value}
+        device_type = target_profile.get("deviceType")
+        if device_type:
+            patch_body["deviceType"] = DEVICE_TYPE_TO_ID.get(device_type, device_type)
+
+        self._make_request(
+            "PATCH",
+            f"application-profiles/{target_id}",
+            data=json.dumps(patch_body),
+            headers=JSON_HEADERS.copy(),
+        )
+
+        return {"success": True, "vpn_gateways": [normalize_gateway_entry(gw) for gw in current_gateways]}
+
     @staticmethod
     def _matches_gateway(gateway: object, target: str) -> bool:
         """Return True if a gateway entry matches the target hostname or IP.

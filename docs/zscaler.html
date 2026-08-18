@@ -46,7 +46,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Zscaler</h2>
-    <span>Plugin v2.4.2 &middot; OneAPI</span>
+    <span>Plugin v2.5.0 &middot; OneAPI</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -81,6 +81,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <span class="section-label">ZCC Actions</span>
   <a href="#get-vpn-gateway-bypasses">Get VPN Bypasses</a>
   <a href="#remove-vpn-gateway-bypass">Remove VPN Bypass</a>
+  <a href="#add-vpn-gateway-bypass">Add VPN Bypass</a>
   <a href="#get-enrolled-devices">Get Enrolled Devices</a>
   <a href="#get-one-time-password">Get One-Time Password</a>
   <span class="section-label">Diagnostics</span>
@@ -93,7 +94,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Zscaler Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.4.2 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.5.0 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
 
 <h2 id="description">Description</h2>
 <p>Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network. This plugin uses the Zscaler OneAPI unified gateway (<code>api.zsapi.net</code>) with OAuth 2.0 Client Credentials authentication to manage security policies across three Zscaler product lines:</p>
@@ -563,6 +564,23 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   "success": true,
   "vpn_gateways": [
     {"hostname": "other-gateway.example.com", "type": "hostname"}
+  ]
+}</code></pre>
+
+<h2 id="add-vpn-gateway-bypass">Add VPN Gateway Bypass</h2>
+<p><span class="product-badge badge-zcc">ZCC</span> Add a VPN gateway bypass entry to a ZCC application profile. Idempotent — adding an entry that already exists succeeds without duplicating it.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Profile ID</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Application profile ID to update</td></tr>
+  <tr><td>Entry</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Hostname or IP to add to bypasses</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "success": true,
+  "vpn_gateways": [
+    {"hostname": "gateway.example.com", "type": "hostname"},
+    {"hostname": "new-gateway.example.com", "type": "hostname"}
   ]
 }</code></pre>
 
