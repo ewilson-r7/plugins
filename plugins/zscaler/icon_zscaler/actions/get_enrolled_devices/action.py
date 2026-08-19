@@ -6,10 +6,10 @@ from insightconnect_plugin_runtime.helper import clean
 
 
 OS_TYPE_MAP = {
-    "Windows": "1",
-    "macOS": "2",
-    "iOS": "3",
-    "Android": "4",
+    "Windows": "3",
+    "macOS": "4",
+    "iOS": "1",
+    "Android": "2",
     "Linux": "5",
 }
 

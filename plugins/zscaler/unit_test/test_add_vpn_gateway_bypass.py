@@ -124,6 +124,8 @@ class TestAddVpnGatewayBypass(TestCase):
         patch_kwargs = patch_call[1]
         patch_data = json.loads(patch_kwargs["data"])
         self.assertEqual(patch_data["deviceType"], 3)
+        self.assertIn("policyExtension", patch_data)
+        self.assertIn("vpnGateways", patch_data["policyExtension"])
 
     @patch("requests.request")
     def test_adds_to_empty_gateways_list(self, mock_request):
@@ -134,9 +136,7 @@ class TestAddVpnGatewayBypass(TestCase):
                     "profileId": "profile-001",
                     "profileName": "Default Profile",
                     "deviceType": "DEVICE_TYPE_MACOS",
-                    "policyExtension": {
-                        "vpnGateways": []
-                    },
+                    "policyExtension": {"vpnGateways": []},
                 }
             ]
         }

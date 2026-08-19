@@ -213,10 +213,10 @@ class ZCCClient(BaseClient):
         # Write back in the same shape the tenant uses, joining if it was a string
         patch_value = ",".join(remaining) if was_string else remaining
 
-        # The application-profiles PATCH endpoint requires deviceType in the body.
-        # The GET returns it as a string (e.g., "DEVICE_TYPE_WINDOWS") but the PATCH
-        # expects a numeric ID (e.g., 3). Convert using the mapping.
-        patch_body = {"vpnGateways": patch_value}
+        # The application-profiles PATCH endpoint requires:
+        # 1. deviceType as a numeric ID (not the string returned by GET)
+        # 2. vpnGateways nested inside policyExtension (not at the top level)
+        patch_body = {"policyExtension": {"vpnGateways": patch_value}}
         device_type = target_profile.get("deviceType")
         if device_type:
             patch_body["deviceType"] = DEVICE_TYPE_TO_ID.get(device_type, device_type)
@@ -282,7 +282,7 @@ class ZCCClient(BaseClient):
             current_gateways.append({"hostname": entry_to_add, "ip": "", "type": "hostname"})
             patch_value = current_gateways
 
-        patch_body = {"vpnGateways": patch_value}
+        patch_body = {"policyExtension": {"vpnGateways": patch_value}}
         device_type = target_profile.get("deviceType")
         if device_type:
             patch_body["deviceType"] = DEVICE_TYPE_TO_ID.get(device_type, device_type)
@@ -329,12 +329,12 @@ class ZCCClient(BaseClient):
 
         Args:
             username: Filter by user email address.
-            os_type: Filter by OS type code (1=Windows, 2=macOS, 3=iOS, 4=Android, 5=Linux).
+            os_type: Filter by OS type code (1=iOS, 2=Android, 3=Windows, 4=macOS, 5=Linux).
 
         Returns:
             List of device dicts from the API response.
         """
-        params = {}
+        params = {"pageSize": 1000, "page": 1}
         if username:
             params["username"] = username
         if os_type:

@@ -1675,6 +1675,7 @@ Example output:
 
 # Version History
 
+* 2.5.1 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page parameters, fix VPN Gateway Bypass PATCH to nest vpnGateways inside policyExtension object, fix OS Type filter to use correct numeric IDs
 * 2.5.0 - Add VPN Gateway Bypass action for adding entries to ZCC application profiles
 * 2.4.2 - Fix Remove VPN Gateway Bypass sending deviceType as string instead of numeric ID. The PATCH endpoint requires the integer form (e.g., 3 for Windows) not the string form (DEVICE_TYPE_WINDOWS) returned by GET
 * 2.4.1 - Fix Remove VPN Gateway Bypass failing with 'deviceType is mandatory' by including the profile's deviceType in the PATCH request body

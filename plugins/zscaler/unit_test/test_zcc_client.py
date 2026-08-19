@@ -193,8 +193,8 @@ class TestRemoveVpnGatewayBypass(TestCase):
         patch_kwargs = patch_call[1]
         self.assertIn("PATCH", patch_kwargs.get("method", ""))
         patch_data = json.loads(patch_kwargs["data"])
-        self.assertIn("vpnGateways", patch_data)
-        self.assertEqual(len(patch_data["vpnGateways"]), 1)
+        self.assertIn("policyExtension", patch_data)
+        self.assertEqual(len(patch_data["policyExtension"]["vpnGateways"]), 1)
 
     @patch("requests.request")
     def test_removes_entry_by_ip(self, mock_request):
@@ -255,7 +255,8 @@ class TestRemoveVpnGatewayBypass(TestCase):
         patch_kwargs = patch_call[1]
         patch_data = json.loads(patch_kwargs["data"])
         # PATCH must include deviceType as numeric ID (3 = Windows)
-        self.assertIn("vpnGateways", patch_data)
+        self.assertIn("policyExtension", patch_data)
+        self.assertIn("vpnGateways", patch_data["policyExtension"])
         self.assertIn("deviceType", patch_data)
         self.assertEqual(patch_data["deviceType"], 3)
 
