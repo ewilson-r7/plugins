@@ -1,7 +1,7 @@
 {
-	"spec": "944cbd05eb0ac9d66f315c4c66b2644b",
-	"manifest": "d25fffe27d37a21f6d9e92a6601331ca",
-	"setup": "2283520a04d6444d5545da8ec4368a78",
+	"spec": "73acc91df3c3b74a4245d540d311c114",
+	"manifest": "66729d8de6ffd915be708fda75da94d5",
+	"setup": "663f189e1328f1d95dcfbbb7daee3d25",
 	"schemas": [
 		{
 			"identifier": "add_vpn_gateway_bypass/schema.py",
@@ -41,7 +41,7 @@
 		},
 		{
 			"identifier": "get_enrolled_devices/schema.py",
-			"hash": "3e93d609fcbc276585dfcdcfeee899b6"
+			"hash": "05216a3badc68e7eb57735a2b346c958"
 		},
 		{
 			"identifier": "get_firewall_logs/schema.py",

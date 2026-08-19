@@ -26,14 +26,8 @@ class GetEnrolledDevicesInput(insightconnect_plugin_runtime.Input):
     "os_type": {
       "type": "string",
       "title": "OS Type",
-      "description": "Filter devices by operating system type",
-      "enum": [
-        "Windows",
-        "macOS",
-        "iOS",
-        "Android",
-        "Linux"
-      ],
+      "description": "Filter devices by operating system type. Valid values are Windows, macOS, iOS, Android, Linux. Leave blank to return all devices",
+      "placeholder": "Windows",
       "order": 2
     },
     "username": {
