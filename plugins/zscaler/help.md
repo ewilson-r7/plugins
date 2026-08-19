@@ -463,7 +463,7 @@ This action is used to list enrolled devices from Zscaler Client Connector with 
 
 |Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-|os_type|string|None|False|Filter devices by operating system type. Valid values are Windows, macOS, iOS, Android, Linux. Leave blank to return all devices|None|Windows|Windows|None|
+|os_type|string|None|False|Filter devices by operating system type. Leave blank to return all devices|["", "Windows", "macOS", "iOS", "Android", "Linux"]|Windows|Windows|None|
 |username|string|None|False|Filter devices by username (email address). If provided, only devices belonging to this user are returned|None|user@example.com|user@example.com|None|
   
 Example input:
@@ -1675,7 +1675,7 @@ Example output:
 
 # Version History
 
-* 2.5.3 - Fix Get Enrolled Devices validation error when OS Type is left blank by removing enum constraint. The SDK rejects empty strings against enum lists before action code runs
+* 2.5.3 - Fix Get Enrolled Devices validation error when OS Type is left blank by adding empty string to the enum options
 * 2.5.2 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page pagination parameters
 * 2.5.1 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page parameters, fix VPN Gateway Bypass PATCH to nest vpnGateways inside policyExtension object, fix OS Type filter to use correct numeric IDs
 * 2.5.0 - Add VPN Gateway Bypass action for adding entries to ZCC application profiles

@@ -1,5 +1,5 @@
 {
-	"spec": "73acc91df3c3b74a4245d540d311c114",
+	"spec": "be346d089083c659d783b6010bbdb94e",
 	"manifest": "66729d8de6ffd915be708fda75da94d5",
 	"setup": "663f189e1328f1d95dcfbbb7daee3d25",
 	"schemas": [
@@ -41,7 +41,7 @@
 		},
 		{
 			"identifier": "get_enrolled_devices/schema.py",
-			"hash": "05216a3badc68e7eb57735a2b346c958"
+			"hash": "65f6797bcf5dfcd4da364cb6774f3bf4"
 		},
 		{
 			"identifier": "get_firewall_logs/schema.py",
