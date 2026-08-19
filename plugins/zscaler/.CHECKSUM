@@ -1,7 +1,7 @@
 {
-	"spec": "a0956f6c5f18d9a45ac9dd83da581033",
-	"manifest": "a32d3c08434b096dd1585ba4c1c22532",
-	"setup": "c460ad0cfee9f156ac4e9728aa115930",
+	"spec": "944cbd05eb0ac9d66f315c4c66b2644b",
+	"manifest": "d25fffe27d37a21f6d9e92a6601331ca",
+	"setup": "2283520a04d6444d5545da8ec4368a78",
 	"schemas": [
 		{
 			"identifier": "add_vpn_gateway_bypass/schema.py",

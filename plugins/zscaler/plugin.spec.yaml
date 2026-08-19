@@ -3,7 +3,7 @@ extension: plugin
 products: [insightconnect]
 name: zscaler
 title: Zscaler
-version: 2.5.1
+version: 2.5.2
 connection_version: 2
 supported_versions: ["Zscaler OneAPI 2024"]
 description: Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network
@@ -65,6 +65,7 @@ troubleshooting:
     Custom API Request action can be used to reproduce a known working vendor request and confirm
     whether the failure is scope related."
 version_history:
+  - "2.5.2 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page pagination parameters"
   - "2.5.1 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page parameters, fix VPN Gateway Bypass PATCH to nest vpnGateways inside policyExtension object, fix OS Type filter to use correct numeric IDs"
   - "2.5.0 - Add VPN Gateway Bypass action for adding entries to ZCC application profiles"
   - "2.4.2 - Fix Remove VPN Gateway Bypass sending deviceType as string instead of numeric ID. The PATCH endpoint requires the integer form (e.g., 3 for Windows) not the string form (DEVICE_TYPE_WINDOWS) returned by GET"
