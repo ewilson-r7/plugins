@@ -4,7 +4,7 @@ products: [insightconnect]
 name: fortinet_fortimanager
 title: Fortinet FortiManager
 description: "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
-version: 2.1.0
+version: 3.0.0
 connection_version: 1
 supported_versions: ["7.0.x", "7.2.x", "7.4.x"]
 vendor: rapid7_mnp
@@ -25,6 +25,7 @@ requirements:
   - "An API token (FortiManager 7.2.2+ recommended) or admin username and password"
   - "Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)"
 version_history:
+  - "3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step"
   - "2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects"
   - "2.0.2 - Improve error messages to show actual API response instead of static error code mapping"
   - "2.0.1 - Fix file permission issues"
@@ -264,6 +265,12 @@ actions:
         type: "[]address_object"
         required: true
         example: '[{"name": "MaliciousHost", "type": "ipmask", "subnet": "198.51.100.100/32"}]'
+      message:
+        title: Message
+        description: Human-readable description of the result
+        type: string
+        required: false
+        example: Retrieved 1 of 24 address objects matching the specified filters.
   create_address_object:
     title: Create Address Object
     description: Create a new address object in a FortiManager ADOM
@@ -324,6 +331,12 @@ actions:
         type: address_object
         required: false
         example: '{"name": "MaliciousHost", "type": "ipmask", "subnet": "198.51.100.100/32"}'
+      message:
+        title: Message
+        description: Human-readable description of the result, including why creation was skipped
+        type: string
+        required: false
+        example: Address object 'MaliciousHost' created successfully.
   delete_address_object:
     title: Delete Address Object
     description: Delete an address object from a FortiManager ADOM
@@ -349,6 +362,12 @@ actions:
         type: boolean
         required: true
         example: true
+      message:
+        title: Message
+        description: Human-readable description of the result, including why the object could not be deleted
+        type: string
+        required: false
+        example: Address object 'MaliciousHost' deleted successfully.
   add_address_object_to_group:
     title: Add Address Object to Group
     description: Add an address object to an address group in a FortiManager ADOM
@@ -425,13 +444,19 @@ actions:
         type: "[]string"
         required: true
         example: ["AnotherHost"]
+      message:
+        title: Message
+        description: Human-readable description of the result
+        type: string
+        required: false
+        example: Address object 'MaliciousHost' removed from group 'InsightConnect Block List'. 1 member remains.
   check_if_address_in_group:
     title: Check if Address in Group
     description: Check if an address exists in an address group
     input:
       address:
         title: Address
-        description: "The address to check. When Enable Search is false, this is matched against address object names. When Enable Search is true, this is matched against the stored subnet or FQDN value of each member object"
+        description: "The address to look for. Matches against both address object names and stored values, so an object name, an IP address, a CIDR range, or an FQDN are all accepted"
         type: string
         required: true
         example: "198.51.100.100"
@@ -443,21 +468,13 @@ actions:
         required: true
         example: InsightConnect Block List
         order: 2
-      enable_search:
-        title: Enable Search
-        description: "When enabled, the address input is compared against the stored value (subnet/FQDN) of each member object rather than matching by name"
-        type: boolean
-        required: true
-        default: false
-        example: false
-        order: 3
       adom:
         title: ADOM
         description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
         type: string
         required: false
         example: root
-        order: 4
+        order: 3
     output:
       found:
         title: Found
@@ -471,6 +488,12 @@ actions:
         type: "[]string"
         required: true
         example: ["198.51.100.100/32"]
+      message:
+        title: Message
+        description: Human-readable description of the result
+        type: string
+        required: false
+        example: Found 1 matching address object in group 'InsightConnect Block List'.
   get_policies:
     title: Get Policies
     description: Retrieve firewall policies from a FortiManager policy package

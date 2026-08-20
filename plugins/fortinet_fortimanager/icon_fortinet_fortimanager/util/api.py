@@ -36,6 +36,19 @@ class SessionExpiredError(Exception):
     pass
 
 
+class FortiManagerPluginException(PluginException):
+    """PluginException that also carries the FortiManager JSON-RPC status code.
+
+    Actions branch on `code` rather than matching substrings in the message, so
+    behaviour does not depend on FortiManager's wording (which varies by version -
+    the in-use error, for example, reports only 'used').
+    """
+
+    def __init__(self, code: int, **kwargs):
+        self.code = code
+        super().__init__(**kwargs)
+
+
 class FortiManagerAPI:
     """
     JSON-RPC client for FortiManager.
@@ -506,7 +519,8 @@ class FortiManagerAPI:
         fallback_message = ERROR_MESSAGES.get(code, "Unknown error")
         error_message = api_message if api_message else fallback_message
 
-        raise PluginException(
+        raise FortiManagerPluginException(
+            code=code,
             cause=f"FortiManager API error (code {code}): {error_message}",
             assistance="Verify the input parameters and ADOM configuration.",
             data=str(result),

@@ -7,8 +7,13 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from icon_fortinet_fortimanager.actions.delete_address_object import DeleteAddressObject
-from icon_fortinet_fortimanager.actions.delete_address_object.schema import Input, Output
+from icon_fortinet_fortimanager.actions.delete_address_object.schema import (
+    DeleteAddressObjectOutput,
+    Input,
+    Output,
+)
 from insightconnect_plugin_runtime.exceptions import PluginException
+from jsonschema import validate
 from unit_test.util import create_mock_connection, load_payload, MockResponse
 
 
@@ -42,28 +47,30 @@ class TestDeleteAddressObject(TestCase):
         self.assertFalse(result[Output.SUCCESS])
 
     @patch("requests.post")
-    def test_delete_object_in_use_raises_plugin_exception(self, mock_post):
-        """Test that deleting an object referenced by a group/policy raises PluginException."""
-        # Simulate a "referenced object" error — FortiManager returns a specific error
-        # when trying to delete an object that is in use by a group or policy.
-        # This is typically error code -10015 or a variant with a descriptive message.
+    def test_delete_object_in_use_reports_reason(self, mock_post):
+        """An object still referenced by a group or policy is reported, not raised.
+
+        FortiManager returns code -10015 with the message 'used', so the code is what
+        the action matches on. In 2.1.0 this raised and failed the workflow step.
+        """
         error_in_use_response = {
             "id": 1,
             "result": [
                 {
                     "status": {
                         "code": -10015,
-                        "message": "The object is being used by other objects and cannot be deleted",
+                        "message": "used",
                     }
                 }
             ],
         }
         mock_post.return_value = MockResponse(error_in_use_response)
 
-        with self.assertRaises(PluginException) as context:
-            self.action.run({Input.ADDRESS_OBJECT: "used-object"})
+        result = self.action.run({Input.ADDRESS_OBJECT: "used-object"})
 
-        self.assertIn("referenced", context.exception.cause)
+        self.assertFalse(result[Output.SUCCESS])
+        self.assertIn("still in use", result[Output.MESSAGE])
+        validate(result, DeleteAddressObjectOutput.schema)
 
     @patch("requests.post")
     def test_delete_address_object_with_adom_override(self, mock_post):

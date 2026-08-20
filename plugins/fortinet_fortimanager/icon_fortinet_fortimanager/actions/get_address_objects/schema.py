@@ -16,6 +16,7 @@ class Input:
 
 class Output:
     ADDRESS_OBJECTS = "address_objects"
+    MESSAGE = "message"
 
 
 class GetAddressObjectsInput(insightconnect_plugin_runtime.Input):
@@ -71,6 +72,12 @@ class GetAddressObjectsOutput(insightconnect_plugin_runtime.Output):
         "$ref": "#/definitions/address_object"
       },
       "order": 1
+    },
+    "message": {
+      "type": "string",
+      "title": "Message",
+      "description": "Human-readable description of the result",
+      "order": 2
     }
   },
   "required": [

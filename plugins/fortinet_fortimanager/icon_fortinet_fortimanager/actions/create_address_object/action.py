@@ -1,11 +1,12 @@
 import insightconnect_plugin_runtime
 
-from insightconnect_plugin_runtime.exceptions import PluginException
 from insightconnect_plugin_runtime.telemetry import auto_instrument
 
 from .schema import CreateAddressObjectInput, CreateAddressObjectOutput, Input, Output, Component
 
 # Custom imports below
+from icon_fortinet_fortimanager.util.api import FortiManagerPluginException
+from icon_fortinet_fortimanager.util.constants import ERROR_CODE_OBJECT_ALREADY_EXISTS
 from icon_fortinet_fortimanager.util.helpers import Helpers
 
 
@@ -42,31 +43,36 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
         # Detect address type
         address_type = Helpers.determine_address_type(address)
 
-        # Check whitelist — skip and return success=false if matched
+        # Check whitelist — skip when matched
         if whitelist and Helpers.matches_whitelist(address, whitelist):
             self.logger.info("Address %s matches whitelist, skipping creation.", address)
-            return {Output.SUCCESS: False, Output.ADDRESS_OBJECT: {}}
+            return self._skipped(f"Address '{address}' matches the whitelist. No address object was created.")
 
-        # Check RFC 1918 if skip_rfc1918 enabled — skip and return success=false if private
+        # Check RFC 1918 if skip_rfc1918 enabled — skip when private
         if address_type == "ipmask" and skip_rfc1918 and Helpers.is_rfc1918(address):
             self.logger.info("Address %s is RFC 1918 private, skipping creation.", address)
-            return {Output.SUCCESS: False, Output.ADDRESS_OBJECT: {}}
+            return self._skipped(
+                f"Address '{address}' is an RFC 1918 private address and Skip RFC 1918 is enabled. "
+                "No address object was created."
+            )
 
         # Normalize IP (bare IP → /32 CIDR)
         value = address
         if address_type == "ipmask":
             value = Helpers.normalize_ip(address)
 
-        # Call API to create the address object — handle already-exists gracefully
+        # Create the object. An existing object is reported through the output rather
+        # than failing the step, so the action is safe to re-run in a workflow.
         try:
             self.connection.api.create_address_object(adom, object_name, address_type, value, comment=comment)
-        except PluginException as error:
-            if "code -6" in str(error.cause) or "already exists" in str(error.cause).lower():
+        except FortiManagerPluginException as error:
+            if error.code == ERROR_CODE_OBJECT_ALREADY_EXISTS:
                 self.logger.info("Address object '%s' already exists, skipping creation.", object_name)
-                return {Output.SUCCESS: False, Output.ADDRESS_OBJECT: {}}
+                return self._skipped(
+                    f"Address object '{object_name}' already exists in ADOM '{adom}'. No changes were made."
+                )
             raise
 
-        # Build output object details
         created_object = {"name": object_name, "type": address_type}
         if address_type == "ipmask":
             created_object["subnet"] = value
@@ -75,4 +81,18 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
         if comment:
             created_object["comment"] = comment
 
-        return {Output.SUCCESS: True, Output.ADDRESS_OBJECT: created_object}
+        return {
+            Output.SUCCESS: True,
+            Output.ADDRESS_OBJECT: created_object,
+            Output.MESSAGE: f"Address object '{object_name}' created successfully in ADOM '{adom}'.",
+        }
+
+    @staticmethod
+    def _skipped(message: str) -> dict:
+        """Build a no-op result.
+
+        The address_object key is omitted entirely rather than set to an empty dict:
+        the address_object type marks name and type required, so an empty dict fails
+        output schema validation.
+        """
+        return {Output.SUCCESS: False, Output.MESSAGE: message}

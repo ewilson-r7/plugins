@@ -7,8 +7,13 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from icon_fortinet_fortimanager.actions.create_address_object import CreateAddressObject
-from icon_fortinet_fortimanager.actions.create_address_object.schema import Input, Output
+from icon_fortinet_fortimanager.actions.create_address_object.schema import (
+    CreateAddressObjectOutput,
+    Input,
+    Output,
+)
 from insightconnect_plugin_runtime.exceptions import PluginException
+from jsonschema import validate
 from unit_test.util import create_mock_connection, load_payload, MockResponse
 
 
@@ -87,7 +92,11 @@ class TestCreateAddressObject(TestCase):
 
     @patch("requests.post")
     def test_whitelist_skip_returns_success_false(self, mock_post):
-        """Test that whitelisted address skips creation and returns success=false."""
+        """A whitelisted address skips creation and reports why.
+
+        address_object must be omitted rather than returned as {}: the type marks
+        name and type required, so an empty dict fails output schema validation.
+        """
         result = self.action.run(
             {
                 Input.ADDRESS: "8.8.8.8",
@@ -97,13 +106,15 @@ class TestCreateAddressObject(TestCase):
         )
 
         self.assertFalse(result[Output.SUCCESS])
-        self.assertEqual(result[Output.ADDRESS_OBJECT], {})
+        self.assertNotIn(Output.ADDRESS_OBJECT, result)
+        self.assertIn("whitelist", result[Output.MESSAGE])
+        validate(result, CreateAddressObjectOutput.schema)
         # Verify no API call was made
         mock_post.assert_not_called()
 
     @patch("requests.post")
     def test_rfc1918_skip_returns_success_false(self, mock_post):
-        """Test that RFC 1918 address skips creation and returns success=false when skip_rfc1918 is enabled."""
+        """An RFC 1918 address skips creation and reports why when skip_rfc1918 is enabled."""
         result = self.action.run(
             {
                 Input.ADDRESS: "192.168.1.100",
@@ -112,13 +123,19 @@ class TestCreateAddressObject(TestCase):
         )
 
         self.assertFalse(result[Output.SUCCESS])
-        self.assertEqual(result[Output.ADDRESS_OBJECT], {})
+        self.assertNotIn(Output.ADDRESS_OBJECT, result)
+        self.assertIn("RFC 1918", result[Output.MESSAGE])
+        validate(result, CreateAddressObjectOutput.schema)
         # Verify no API call was made
         mock_post.assert_not_called()
 
     @patch("requests.post")
     def test_naming_conflict_returns_false(self, mock_post):
-        """Test that a naming conflict (error -6) returns success=False gracefully."""
+        """An existing object (error -6) is reported through the output, not raised.
+
+        In 2.1.0 this path returned address_object={} and crashed the step with
+        "'name' is a required property".
+        """
         mock_post.return_value = MockResponse(self.mock_error_conflict)
 
         result = self.action.run(
@@ -129,7 +146,9 @@ class TestCreateAddressObject(TestCase):
         )
 
         self.assertFalse(result[Output.SUCCESS])
-        self.assertEqual(result[Output.ADDRESS_OBJECT], {})
+        self.assertNotIn(Output.ADDRESS_OBJECT, result)
+        self.assertIn("already exists", result[Output.MESSAGE])
+        validate(result, CreateAddressObjectOutput.schema)
 
     @patch("requests.post")
     def test_custom_name_input(self, mock_post):

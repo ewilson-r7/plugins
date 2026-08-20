@@ -9,27 +9,37 @@
       "data": [
         {
           "name": "google-dns",
-          "type": "ipmask",
-          "subnet": "8.8.8.8/32",
-          "comment": "Google DNS"
+          "type": 0,
+          "subnet": ["8.8.8.8", "255.255.255.255"],
+          "comment": "Google DNS",
+          "uuid": "8a1c0f1e-0000-51e0-aaaa-000000000001",
+          "color": 0,
+          "allow-routing": 0,
+          "associated-interface": ["any"]
         },
         {
           "name": "internal-net",
-          "type": "ipmask",
-          "subnet": "192.168.1.0/24",
-          "comment": "Internal network"
+          "type": 0,
+          "subnet": ["192.168.1.0", "255.255.255.0"],
+          "comment": "Internal network",
+          "uuid": "8a1c0f1e-0000-51e0-aaaa-000000000002",
+          "color": 0
         },
         {
           "name": "example-fqdn",
-          "type": "fqdn",
+          "type": 2,
           "fqdn": "example.com",
-          "comment": "Example FQDN"
+          "comment": "Example FQDN",
+          "uuid": "8a1c0f1e-0000-51e0-aaaa-000000000003",
+          "cache-ttl": 0
         },
         {
           "name": "cloudflare-dns",
-          "type": "ipmask",
-          "subnet": "1.1.1.1/32",
-          "comment": "Cloudflare DNS"
+          "type": 0,
+          "subnet": ["1.1.1.1", "255.255.255.255"],
+          "comment": "Cloudflare DNS",
+          "uuid": "8a1c0f1e-0000-51e0-aaaa-000000000004",
+          "color": 0
         }
       ]
     }

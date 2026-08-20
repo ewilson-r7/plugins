@@ -11,7 +11,7 @@ from icon_fortinet_fortimanager.util.helpers import Helpers
 class GetAddressObjects(insightconnect_plugin_runtime.Action):
 
     def __init__(self):
-        super(self.__class__, self).__init__(
+        super().__init__(
             name="get_address_objects",
             description=Component.DESCRIPTION,
             input=GetAddressObjectsInput(),
@@ -33,7 +33,11 @@ class GetAddressObjects(insightconnect_plugin_runtime.Action):
         # Fetch all address objects from the ADOM
         objects = self.connection.api.get_address_objects(adom)
 
-        # Build filter dict from inputs
+        # Normalize before filtering so filters compare against the same values that
+        # are returned, and so loosely typed API values (subnet as a list, type as an
+        # integer) cannot fail output schema validation.
+        normalized = [Helpers.normalize_address_object(address_object) for address_object in objects]
+
         filters = {
             "name": name_filter or "",
             "subnet": subnet_filter or "",
@@ -41,6 +45,21 @@ class GetAddressObjects(insightconnect_plugin_runtime.Action):
         }
 
         # Apply client-side filters with AND semantics
-        filtered = Helpers.filter_objects(objects, filters)
+        filtered = Helpers.filter_objects(normalized, filters)
 
-        return {Output.ADDRESS_OBJECTS: filtered}
+        return {
+            Output.ADDRESS_OBJECTS: filtered,
+            Output.MESSAGE: self._build_message(len(filtered), len(normalized), filters),
+        }
+
+    @staticmethod
+    def _build_message(matched: int, total: int, filters: dict) -> str:
+        """Describe how many objects were returned, and out of how many when filtered."""
+        active = [name for name, value in filters.items() if value]
+        plural = "" if matched == 1 else "s"
+        if not active:
+            return f"Retrieved {matched} address object{plural} from FortiManager."
+        return (
+            f"Retrieved {matched} of {total} address object{plural} matching the "
+            f"specified filter(s): {', '.join(sorted(active))}."
+        )

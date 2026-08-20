@@ -13,6 +13,7 @@ class Input:
 
 
 class Output:
+    MESSAGE = "message"
     SUCCESS = "success"
 
 
@@ -52,6 +53,12 @@ class DeleteAddressObjectOutput(insightconnect_plugin_runtime.Output):
   "type": "object",
   "title": "Variables",
   "properties": {
+    "message": {
+      "type": "string",
+      "title": "Message",
+      "description": "Human-readable description of the result, including why the object could not be deleted",
+      "order": 2
+    },
     "success": {
       "type": "boolean",
       "title": "Success",

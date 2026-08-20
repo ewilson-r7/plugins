@@ -10,13 +10,13 @@ class Component:
 class Input:
     ADDRESS = "address"
     ADOM = "adom"
-    ENABLE_SEARCH = "enable_search"
     GROUP = "group"
 
 
 class Output:
     ADDRESS_OBJECTS = "address_objects"
     FOUND = "found"
+    MESSAGE = "message"
 
 
 class CheckIfAddressInGroupInput(insightconnect_plugin_runtime.Input):
@@ -28,20 +28,13 @@ class CheckIfAddressInGroupInput(insightconnect_plugin_runtime.Input):
     "address": {
       "type": "string",
       "title": "Address",
-      "description": "The address to check. When Enable Search is false, this is matched against address object names. When Enable Search is true, this is matched against the stored subnet or FQDN value of each member object",
+      "description": "The address to look for. Matches against both address object names and stored values, so an object name, an IP address, a CIDR range, or an FQDN are all accepted",
       "order": 1
     },
     "adom": {
       "type": "string",
       "title": "ADOM",
       "description": "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection",
-      "order": 4
-    },
-    "enable_search": {
-      "type": "boolean",
-      "title": "Enable Search",
-      "description": "When enabled, the address input is compared against the stored value (subnet/FQDN) of each member object rather than matching by name",
-      "default": false,
       "order": 3
     },
     "group": {
@@ -53,7 +46,6 @@ class CheckIfAddressInGroupInput(insightconnect_plugin_runtime.Input):
   },
   "required": [
     "address",
-    "enable_search",
     "group"
   ],
   "definitions": {}
@@ -84,6 +76,12 @@ class CheckIfAddressInGroupOutput(insightconnect_plugin_runtime.Output):
       "title": "Found",
       "description": "Whether at least one matching address object was found in the group",
       "order": 1
+    },
+    "message": {
+      "type": "string",
+      "title": "Message",
+      "description": "Human-readable description of the result",
+      "order": 3
     }
   },
   "required": [

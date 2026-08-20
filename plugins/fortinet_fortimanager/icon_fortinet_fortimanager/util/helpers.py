@@ -3,6 +3,8 @@ import re
 
 from insightconnect_plugin_runtime.exceptions import PluginException
 
+from icon_fortinet_fortimanager.util.constants import ADDRESS_FIELD_ALIASES, ADDRESS_TYPE_BY_ID
+
 # RFC 1918 private address ranges (only these three, not 127/8 or 169.254/16)
 _RFC1918_NETWORKS = [
     ipaddress.ip_network("10.0.0.0/8"),
@@ -16,6 +18,186 @@ _FQDN_PATTERN = re.compile(r"^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63}
 
 class Helpers:
     """Pure utility functions for address handling and filtering."""
+
+    @staticmethod
+    def collapse_scalar(value) -> str:
+        """Collapse a FortiManager field value into a single trimmed string.
+
+        FortiManager frequently returns single-valued fields wrapped in a list.
+        Lists are space-joined, everything else is stringified.
+
+        Args:
+            value: A raw value from a FortiManager JSON-RPC response.
+
+        Returns:
+            The value as a trimmed string, or '' when empty/None.
+        """
+        if value is None:
+            return ""
+        if isinstance(value, list):
+            return " ".join(str(item) for item in value if item not in (None, "")).strip()
+        return str(value).strip()
+
+    @staticmethod
+    def normalize_subnet(value) -> str:
+        """Normalize a FortiManager subnet value to CIDR notation.
+
+        FortiManager returns subnet as a two-element list of address and netmask
+        (e.g. ['198.51.100.100', '255.255.255.255']). Falls back to the raw string
+        when the value cannot be parsed as a network.
+
+        Args:
+            value: The raw subnet value (list, string, or None).
+
+        Returns:
+            The subnet in CIDR notation, or '' when empty.
+        """
+        raw = Helpers.collapse_scalar(value)
+        if not raw:
+            return ""
+        network = Helpers._parse_subnet(raw.lower())
+        return str(network) if network is not None else raw
+
+    @staticmethod
+    def normalize_address_type(raw_type, address_object: dict = None) -> str:
+        """Normalize the address `type` field to the string name the schema declares.
+
+        FortiManager returns this field as an integer on read but accepts the string
+        name on write. Known IDs are mapped; an unmapped integer is rendered as its
+        numeric string rather than guessed at, so the value is never mislabelled and
+        never fails schema validation. When the field is absent entirely, the type is
+        inferred from whichever value field the API did return.
+
+        Args:
+            raw_type: The raw `type` value from the API response.
+            address_object: The full object, used to infer an absent type.
+
+        Returns:
+            The address type as a string.
+        """
+        if isinstance(raw_type, str) and raw_type.strip():
+            return raw_type.strip()
+        if isinstance(raw_type, bool):
+            return str(raw_type)
+        if isinstance(raw_type, int):
+            return ADDRESS_TYPE_BY_ID.get(raw_type, str(raw_type))
+        return Helpers._infer_address_type(address_object or {})
+
+    @staticmethod
+    def _infer_address_type(address_object: dict) -> str:
+        """Infer an address type from the value fields present in the object."""
+        if Helpers.collapse_scalar(address_object.get("subnet")):
+            return "ipmask"
+        if Helpers.collapse_scalar(address_object.get("fqdn")):
+            return "fqdn"
+        start_ip = address_object.get("start-ip") or address_object.get("start_ip")
+        if Helpers.collapse_scalar(start_ip):
+            return "iprange"
+        return ""
+
+    @staticmethod
+    def normalize_address_object(address_object: dict) -> dict:
+        """Coerce a FortiManager address object into the plugin's declared schema.
+
+        FortiManager's JSON-RPC returns loosely typed values: `subnet` arrives as a
+        list, `type` as an integer, and several fields use hyphenated names that the
+        underscored schema never matched. Emitting only the declared fields means an
+        unexpected or newly added API field can never fail output validation.
+
+        `name` and `type` are always present because the address_object type marks
+        them required.
+
+        Args:
+            address_object: A raw address object dict from the API.
+
+        Returns:
+            A dict conforming to the address_object schema type.
+        """
+        if not isinstance(address_object, dict):
+            return {"name": "", "type": ""}
+
+        normalized = {
+            "name": Helpers.collapse_scalar(address_object.get("name")),
+            "type": Helpers.normalize_address_type(address_object.get("type"), address_object),
+        }
+
+        subnet = Helpers.normalize_subnet(address_object.get("subnet"))
+        if subnet:
+            normalized["subnet"] = subnet
+
+        for schema_field, api_names in ADDRESS_FIELD_ALIASES.items():
+            for api_name in api_names:
+                value = Helpers.collapse_scalar(address_object.get(api_name))
+                if value:
+                    normalized[schema_field] = value
+                    break
+
+        for field in ("fqdn", "comment"):
+            value = Helpers.collapse_scalar(address_object.get(field))
+            if value:
+                normalized[field] = value
+
+        return normalized
+
+    @staticmethod
+    def extract_group_members(group_data: dict) -> list:
+        """Extract member address object names from an address group response.
+
+        FortiManager returns group members as a list of names, a list of objects with
+        a `name` key, or a bare string for a single member.
+
+        Args:
+            group_data: The address group dict from the API.
+
+        Returns:
+            List of member address object names.
+        """
+        members = (group_data or {}).get("member", [])
+        if isinstance(members, str):
+            members = [members]
+        if not isinstance(members, list):
+            return []
+
+        names = []
+        for member in members:
+            name = member.get("name", "") if isinstance(member, dict) else Helpers.collapse_scalar(member)
+            if name:
+                names.append(name)
+        return names
+
+    @staticmethod
+    def address_value_matches(normalized_object: dict, address: str) -> bool:
+        """Check whether a normalized address object's stored value matches an address.
+
+        Compares subnets as networks so equivalent notations match (a bare IP, its /32
+        CIDR form, and FortiManager's address+netmask form are all treated as equal).
+        FQDN and IP range endpoints are compared case-insensitively.
+
+        Args:
+            normalized_object: An object already passed through normalize_address_object.
+            address: The address value to look for.
+
+        Returns:
+            True if the object's stored value represents the given address.
+        """
+        needle = (address or "").strip().lower()
+        if not needle:
+            return False
+
+        subnet = normalized_object.get("subnet", "")
+        if subnet and Helpers._subnet_matches(subnet.lower(), needle):
+            return True
+
+        fqdn = normalized_object.get("fqdn", "")
+        if fqdn and fqdn.lower() == needle:
+            return True
+
+        start_ip = normalized_object.get("start_ip", "").lower()
+        end_ip = normalized_object.get("end_ip", "").lower()
+        if start_ip and needle in (start_ip, end_ip):
+            return True
+
+        return False
 
     @staticmethod
     def determine_address_type(address: str) -> str:

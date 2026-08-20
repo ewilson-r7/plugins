@@ -106,9 +106,8 @@ This action is used to check if an address exists in an address group
 
 |Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-|address|string|None|True|The address to check. When Enable Search is false, this is matched against address object names. When Enable Search is true, this is matched against the stored subnet or FQDN value of each member object|None|198.51.100.100|None|None|
+|address|string|None|True|The address to look for. Matches against both address object names and stored values, so an object name, an IP address, a CIDR range, or an FQDN are all accepted|None|198.51.100.100|None|None|
 |adom|string|None|False|Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection|None|root|None|None|
-|enable_search|boolean|False|True|When enabled, the address input is compared against the stored value (subnet/FQDN) of each member object rather than matching by name|None|False|None|None|
 |group|string|None|True|Name of the address group to check|None|InsightConnect Block List|None|None|
   
 Example input:
@@ -117,7 +116,6 @@ Example input:
 {
   "address": "198.51.100.100",
   "adom": "root",
-  "enable_search": false,
   "group": "InsightConnect Block List"
 }
 ```
@@ -128,6 +126,7 @@ Example input:
 | :--- | :--- | :--- | :--- | :--- |
 |address_objects|[]string|True|List of matching address object names found in the group|["198.51.100.100/32"]|
 |found|boolean|True|Whether at least one matching address object was found in the group|True|
+|message|string|False|Human-readable description of the result|Found 1 matching address object in group 'InsightConnect Block List'.|
   
 Example output:
 
@@ -136,7 +135,8 @@ Example output:
   "address_objects": [
     "198.51.100.100/32"
   ],
-  "found": true
+  "found": true,
+  "message": "Found 1 matching address object in group 'InsightConnect Block List'."
 }
 ```
 
@@ -177,6 +177,7 @@ Example input:
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
 |address_object|address_object|False|Details of the created address object|{"name": "MaliciousHost", "type": "ipmask", "subnet": "198.51.100.100/32"}|
+|message|string|False|Human-readable description of the result, including why creation was skipped|Address object 'MaliciousHost' created successfully.|
 |success|boolean|True|Boolean value indicating whether the address object was created. Returns false if the address was skipped due to whitelist or RFC 1918 filtering|True|
   
 Example output:
@@ -188,6 +189,7 @@ Example output:
     "subnet": "198.51.100.100/32",
     "type": "ipmask"
   },
+  "message": "Address object 'MaliciousHost' created successfully.",
   "success": true
 }
 ```
@@ -216,12 +218,14 @@ Example input:
 
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
+|message|string|False|Human-readable description of the result, including why the object could not be deleted|Address object 'MaliciousHost' deleted successfully.|
 |success|boolean|True|Boolean value indicating the success of the deletion|True|
   
 Example output:
 
 ```
 {
+  "message": "Address object 'MaliciousHost' deleted successfully.",
   "success": true
 }
 ```
@@ -255,6 +259,7 @@ Example input:
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
 |address_objects|[]address_object|True|List of address objects matching the specified filters|[{"name": "MaliciousHost", "type": "ipmask", "subnet": "198.51.100.100/32"}]|
+|message|string|False|Human-readable description of the result|Retrieved 1 of 24 address objects matching the specified filters.|
   
 Example output:
 
@@ -266,7 +271,8 @@ Example output:
       "subnet": "198.51.100.100/32",
       "type": "ipmask"
     }
-  ]
+  ],
+  "message": "Retrieved 1 of 24 address objects matching the specified filters."
 }
 ```
 
@@ -399,6 +405,7 @@ Example input:
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
 |address_objects|[]string|True|Updated list of remaining address object names in the group|["AnotherHost"]|
+|message|string|False|Human-readable description of the result|Address object 'MaliciousHost' removed from group 'InsightConnect Block List'. 1 member remains.|
 |success|boolean|True|Boolean value indicating the success of the operation|True|
   
 Example output:
@@ -408,6 +415,7 @@ Example output:
   "address_objects": [
     "AnotherHost"
   ],
+  "message": "Address object 'MaliciousHost' removed from group 'InsightConnect Block List'. 1 member remains.",
   "success": true
 }
 ```
@@ -465,6 +473,7 @@ Example output:
 
 # Version History
 
+* 3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step
 * 2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects
 * 2.0.2 - Improve error messages to show actual API response instead of static error code mapping
 * 2.0.1 - Fix file permission issues

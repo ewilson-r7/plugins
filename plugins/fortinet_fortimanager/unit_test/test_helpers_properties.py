@@ -407,7 +407,7 @@ class TestProperty7NameBasedGroupCheck:
     @settings(max_examples=100)
     def test_name_search_finds_iff_in_list(self, names, search):
         """found=True iff search string is in the list."""
-        # Simulate name-based check (enable_search=false): exact name match
+        # Simulate the name-matching half of the check: exact name match
         found = search in names
         assert found == (search in names)
 
@@ -449,7 +449,7 @@ class TestProperty8ValueBasedGroupSearch:
     @settings(max_examples=100)
     def test_value_search_finds_iff_matches_stored(self, objects, search):
         """found=True iff input matches a stored value exactly."""
-        # Simulate value-based search (enable_search=true):
+        # Simulate the value-matching half of the check:
         # Check if search matches any object's subnet or fqdn value
         found = False
         for obj in objects:

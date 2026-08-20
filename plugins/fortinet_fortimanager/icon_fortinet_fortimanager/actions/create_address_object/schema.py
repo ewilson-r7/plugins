@@ -18,6 +18,7 @@ class Input:
 
 class Output:
     ADDRESS_OBJECT = "address_object"
+    MESSAGE = "message"
     SUCCESS = "success"
 
 
@@ -91,6 +92,12 @@ class CreateAddressObjectOutput(insightconnect_plugin_runtime.Output):
       "title": "Address Object",
       "description": "Details of the created address object",
       "order": 2
+    },
+    "message": {
+      "type": "string",
+      "title": "Message",
+      "description": "Human-readable description of the result, including why creation was skipped",
+      "order": 3
     },
     "success": {
       "type": "boolean",
