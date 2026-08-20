@@ -1,7 +1,7 @@
 {
-	"spec": "294b005d9e6eabe1533e59d65c0d5c3b",
-	"manifest": "4657093c6090835495fb9633285eadac",
-	"setup": "9a1ef62a7d24e83b0ce6070f795ccece",
+	"spec": "192726a934336f048cbb3ffffe44799f",
+	"manifest": "a47fd3404954ca1c75a8960320ecabaf",
+	"setup": "73a2ad732fb87da85bd9652b8682e2d8",
 	"schemas": [
 		{
 			"identifier": "add_address_object_to_group/schema.py",
@@ -20,6 +20,10 @@
 			"hash": "eb68ae869ed33509befe8a9e0a15c823"
 		},
 		{
+			"identifier": "get_address_group/schema.py",
+			"hash": "dd7d90939180d85ecc6aba1134f09655"
+		},
+		{
 			"identifier": "get_address_objects/schema.py",
 			"hash": "2eec120079d3b82fa6db7379a95ecd9f"
 		},
@@ -30,6 +34,10 @@
 		{
 			"identifier": "install_policy_package/schema.py",
 			"hash": "20e3a4f07ce3e8a6e015f222e404e247"
+		},
+		{
+			"identifier": "list_address_groups/schema.py",
+			"hash": "feaa54185ad0b38ba319d40934006613"
 		},
 		{
 			"identifier": "remove_address_object_from_group/schema.py",

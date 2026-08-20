@@ -12,6 +12,10 @@ from .remove_address_object_from_group.action import RemoveAddressObjectFromGrou
 
 from .check_if_address_in_group.action import CheckIfAddressInGroup
 
+from .get_address_group.action import GetAddressGroup
+
+from .list_address_groups.action import ListAddressGroups
+
 from .get_policies.action import GetPolicies
 
 from .install_policy_package.action import InstallPolicyPackage

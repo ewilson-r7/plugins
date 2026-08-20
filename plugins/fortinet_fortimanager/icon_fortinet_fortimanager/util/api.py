@@ -290,6 +290,21 @@ class FortiManagerAPI:
         url = URL_ADDRESS_GROUP.format(adom=adom, name=group_name)
         return self.execute(METHOD_GET, url)
 
+    def get_address_groups(self, adom: str) -> list:
+        """Retrieve all address groups from the specified ADOM.
+
+        Args:
+            adom: The ADOM name.
+
+        Returns:
+            List of address group dictionaries.
+        """
+        url = URL_ADDRESS_GROUPS.format(adom=adom)
+        result = self.execute(METHOD_GET, url)
+        if isinstance(result, list):
+            return result
+        return result.get("data", []) if isinstance(result, dict) else []
+
     def update_address_group(self, adom: str, group_name: str, members: list) -> dict:
         """Update an address group's member list.
 

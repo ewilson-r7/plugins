@@ -43,7 +43,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Fortinet FortiManager</h2>
-    <span>Plugin v3.0.0</span>
+    <span>Plugin v3.1.0</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -58,6 +58,8 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   <a href="#add-address-object-to-group">Add to Group</a>
   <a href="#remove-address-object-from-group">Remove from Group</a>
   <a href="#check-if-address-in-group">Check if in Group</a>
+  <a href="#get-address-group">Get Address Group</a>
+  <a href="#list-address-groups">List Address Groups</a>
   <a href="#get-policies">Get Policies</a>
   <a href="#install-policy-package">Install Policy Package</a>
   <span class="section-label">Reference</span>
@@ -69,7 +71,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Fortinet FortiManager Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v3.0.0 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v3.1.0 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
 
 <h2 id="description">Description</h2>
 <p>Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API.</p>
@@ -336,6 +338,51 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
   "message": "Found 1 matching address object in group 'InsightConnect Block List': MaliciousHost."
 }</code></pre>
 
+<h2 id="get-address-group">Get Address Group</h2>
+<p>Retrieve a single address group and the names of its member address objects. Returns member <strong>names</strong> only — pair it with <a href="#get-address-objects">Get Address Objects</a> if you need the underlying subnets or FQDNs.</p>
+<div class="info-box">
+  <strong>Nested groups:</strong> FortiManager allows an address group to contain other address groups. Those appear in <code>member</code> alongside address objects and are not distinguished, so a member name may itself be a group.
+</div>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>Group</td><td><code>string</code></td><td><span class="badge badge-required">Required</span></td><td>Name of the address group to retrieve</td></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "address_group": {
+    "name": "InsightConnect Block List",
+    "member": ["MaliciousHost", "AnotherHost"],
+    "comment": "R7 Automation block list"
+  },
+  "message": "Address group 'InsightConnect Block List' has 2 members."
+}</code></pre>
+<p>A group that does not exist raises an error. A group with no members returns an empty <code>member</code> list.</p>
+
+<h2 id="list-address-groups">List Address Groups</h2>
+<p>Retrieve every address group in an ADOM along with the names of their members. Useful for auditing which groups exist before targeting one with the add, remove, or check actions.</p>
+<h4>Input</h4>
+<table>
+  <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td>ADOM</td><td><code>string</code></td><td><span class="badge badge-optional">Optional</span></td><td>Override connection ADOM</td></tr>
+</table>
+<h4>Output</h4>
+<pre><code>{
+  "address_groups": [
+    {
+      "name": "InsightConnect Block List",
+      "member": ["MaliciousHost", "AnotherHost"],
+      "comment": "R7 Automation block list"
+    },
+    {
+      "name": "Threat-Feed-Ranges",
+      "member": ["range-203-0-113"]
+    }
+  ],
+  "message": "Retrieved 2 address groups from ADOM 'root'."
+}</code></pre>
+
 <h2 id="get-policies">Get Policies</h2>
 <p>Retrieve firewall policies from a FortiManager policy package with optional name filtering.</p>
 <h4>Input</h4>
@@ -428,6 +475,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>3.1.0</td><td>Added Get Address Group and List Address Groups actions for retrieving address groups and the names of their member address objects.</td></tr>
   <tr><td>3.0.0</td><td>Normalize FortiManager address object responses so a subnet returned as a list or a type returned as an integer no longer crashes an action. Removed the Enable Search input from Check if Address in Group, which now always matches on both name and address value. Added a Message output to all five address actions. Delete Address Object reports an in-use object through its output instead of failing the step.</td></tr>
   <tr><td>2.1.0</td><td>Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful error handling for existing/non-existent/in-use objects, fix subnet and name filters in Get Address Objects</td></tr>
   <tr><td>2.0.2</td><td>Improve error messages to show actual API response instead of static error code mapping</td></tr>
@@ -446,7 +494,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.0.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
+  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.1.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
 </div>
 </div>
 </body>

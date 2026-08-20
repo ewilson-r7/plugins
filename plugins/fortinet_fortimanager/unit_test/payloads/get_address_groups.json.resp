@@ -1,0 +1,35 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "data": [
+        {
+          "name": "blocked-addresses",
+          "member": ["google-dns", "cloudflare-dns"],
+          "comment": "Blocked address group",
+          "uuid": "9b2d1a2f-0000-51e0-bbbb-000000000001",
+          "color": 0
+        },
+        {
+          "name": "member-objects-group",
+          "member": [{"name": "internal-net"}, {"name": "example-fqdn"}],
+          "comment": ["Comment returned as a list"],
+          "uuid": "9b2d1a2f-0000-51e0-bbbb-000000000002"
+        },
+        {
+          "name": "single-member-group",
+          "member": "google-dns"
+        },
+        {
+          "name": "empty-group",
+          "member": [],
+          "comment": "No members yet"
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@ products: [insightconnect]
 name: fortinet_fortimanager
 title: Fortinet FortiManager
 description: "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
-version: 3.0.0
+version: 3.1.0
 connection_version: 1
 supported_versions: ["7.0.x", "7.2.x", "7.4.x"]
 vendor: rapid7_mnp
@@ -17,6 +17,7 @@ sdk:
 key_features:
   - "Create, delete, and list address objects"
   - "Add and remove address objects from address groups"
+  - "Retrieve address groups and their member names"
   - "Check if an address exists in an address group"
   - "Retrieve firewall policies from policy packages"
   - "Install policy packages to managed FortiGate devices"
@@ -25,6 +26,7 @@ requirements:
   - "An API token (FortiManager 7.2.2+ recommended) or admin username and password"
   - "Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)"
 version_history:
+  - "3.1.0 - Add Get Address Group and List Address Groups actions for retrieving address groups and their member names"
   - "3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step"
   - "2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects"
   - "2.0.2 - Improve error messages to show actual API response instead of static error code mapping"
@@ -494,6 +496,61 @@ actions:
         type: string
         required: false
         example: Found 1 matching address object in group 'InsightConnect Block List'.
+  get_address_group:
+    title: Get Address Group
+    description: Retrieve an address group and the names of its member address objects
+    input:
+      group:
+        title: Group
+        description: Name of the address group to retrieve
+        type: string
+        required: true
+        example: InsightConnect Block List
+        order: 1
+      adom:
+        title: ADOM
+        description: "Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 2
+    output:
+      address_group:
+        title: Address Group
+        description: The address group with the names of its member address objects
+        type: address_group
+        required: true
+        example: '{"name": "InsightConnect Block List", "member": ["MaliciousHost", "AnotherHost"]}'
+      message:
+        title: Message
+        description: Human-readable description of the result
+        type: string
+        required: false
+        example: Address group 'InsightConnect Block List' has 2 members.
+  list_address_groups:
+    title: List Address Groups
+    description: Retrieve all address groups from a FortiManager ADOM with their member names
+    input:
+      adom:
+        title: ADOM
+        description: "Administrative Domain to query. If provided, overrides the ADOM configured in the connection"
+        type: string
+        required: false
+        example: root
+        order: 1
+    output:
+      address_groups:
+        title: Address Groups
+        description: List of address groups in the ADOM with the names of their member address objects
+        type: "[]address_group"
+        required: true
+        example: '[{"name": "InsightConnect Block List", "member": ["MaliciousHost", "AnotherHost"]}]'
+      message:
+        title: Message
+        description: Human-readable description of the result
+        type: string
+        required: false
+        example: Retrieved 3 address groups from ADOM root.
   get_policies:
     title: Get Policies
     description: Retrieve firewall policies from a FortiManager policy package

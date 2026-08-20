@@ -112,6 +112,40 @@ class TestAddressObjectNormalizer(TestCase):
         self.assertEqual(Helpers.normalize_address_object(None), {"name": "", "type": ""})
 
 
+class TestAddressGroupNormalizer(TestCase):
+    def test_required_fields_always_present(self):
+        """name and member are always emitted because the type marks them required."""
+        for payload in ({}, {"name": None}, {"member": None}):
+            result = Helpers.normalize_address_group(payload)
+            self.assertIn("name", result)
+            self.assertIn("member", result)
+            self.assertIsInstance(result["member"], list)
+
+    def test_member_shapes_all_collapse_to_names(self):
+        """Bare names, member objects, and a single bare string all yield a name list."""
+        self.assertEqual(Helpers.normalize_address_group({"member": ["a", "b"]})["member"], ["a", "b"])
+        self.assertEqual(Helpers.normalize_address_group({"member": [{"name": "a"}]})["member"], ["a"])
+        self.assertEqual(Helpers.normalize_address_group({"member": "a"})["member"], ["a"])
+
+    def test_comment_returned_as_list_is_collapsed(self):
+        """A list-wrapped comment becomes a string."""
+        self.assertEqual(Helpers.normalize_address_group({"comment": ["note"]})["comment"], "note")
+
+    def test_comment_omitted_when_absent(self):
+        """comment is optional and is not emitted as an empty string."""
+        self.assertNotIn("comment", Helpers.normalize_address_group({"name": "g", "member": []}))
+
+    def test_undeclared_fields_are_dropped(self):
+        """Fields outside the declared type are not emitted."""
+        result = Helpers.normalize_address_group({"name": "g", "member": [], "uuid": "x", "color": 3})
+
+        self.assertEqual(set(result), {"name", "member"})
+
+    def test_non_dict_input_is_survivable(self):
+        """A malformed entry yields a schema-valid stub instead of raising."""
+        self.assertEqual(Helpers.normalize_address_group(None), {"name": "", "member": []})
+
+
 class TestOutputSchemaConformance(TestCase):
     """Validate action output against the generated schema using real wire-format data."""
 

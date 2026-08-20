@@ -166,6 +166,36 @@ class Helpers:
         return names
 
     @staticmethod
+    def normalize_address_group(address_group: dict) -> dict:
+        """Coerce a FortiManager address group into the plugin's declared schema.
+
+        Emits only the fields declared by the address_group type, so an unexpected or
+        newly added API field cannot fail output validation. `name` and `member` are
+        always present because the type marks them required, and `member` is always a
+        list of strings whether the API returned bare names, member objects, or a
+        single bare string.
+
+        Args:
+            address_group: A raw address group dict from the API.
+
+        Returns:
+            A dict conforming to the address_group schema type.
+        """
+        if not isinstance(address_group, dict):
+            return {"name": "", "member": []}
+
+        normalized = {
+            "name": Helpers.collapse_scalar(address_group.get("name")),
+            "member": Helpers.extract_group_members(address_group),
+        }
+
+        comment = Helpers.collapse_scalar(address_group.get("comment"))
+        if comment:
+            normalized["comment"] = comment
+
+        return normalized
+
+    @staticmethod
     def address_value_matches(normalized_object: dict, address: str) -> bool:
         """Check whether a normalized address object's stored value matches an address.
 

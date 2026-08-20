@@ -6,6 +6,7 @@ Fortinet FortiManager is a centralized network security management platform that
 
 * Create, delete, and list address objects
 * Add and remove address objects from address groups
+* Retrieve address groups and their member names
 * Check if an address exists in an address group
 * Retrieve firewall policies from policy packages
 * Install policy packages to managed FortiGate devices
@@ -230,6 +231,48 @@ Example output:
 }
 ```
 
+#### Get Address Group
+
+This action is used to retrieve an address group and the names of its member address objects
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|adom|string|None|False|Administrative Domain for the operation. If provided, overrides the ADOM configured in the connection|None|root|None|None|
+|group|string|None|True|Name of the address group to retrieve|None|InsightConnect Block List|None|None|
+  
+Example input:
+
+```
+{
+  "adom": "root",
+  "group": "InsightConnect Block List"
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|address_group|address_group|True|The address group with the names of its member address objects|{"name": "InsightConnect Block List", "member": ["MaliciousHost", "AnotherHost"]}|
+|message|string|False|Human-readable description of the result|Address group 'InsightConnect Block List' has 2 members.|
+  
+Example output:
+
+```
+{
+  "address_group": {
+    "member": [
+      "MaliciousHost",
+      "AnotherHost"
+    ],
+    "name": "InsightConnect Block List"
+  },
+  "message": "Address group 'InsightConnect Block List' has 2 members."
+}
+```
+
 #### Get Address Objects
 
 This action is used to retrieve address objects from a FortiManager ADOM with optional filtering
@@ -378,6 +421,48 @@ Example output:
 }
 ```
 
+#### List Address Groups
+
+This action is used to retrieve all address groups from a FortiManager ADOM with their member names
+
+##### Input
+
+|Name|Type|Default|Required|Description|Enum|Example|Placeholder|Tooltip|
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+|adom|string|None|False|Administrative Domain to query. If provided, overrides the ADOM configured in the connection|None|root|None|None|
+  
+Example input:
+
+```
+{
+  "adom": "root"
+}
+```
+
+##### Output
+
+|Name|Type|Required|Description|Example|
+| :--- | :--- | :--- | :--- | :--- |
+|address_groups|[]address_group|True|List of address groups in the ADOM with the names of their member address objects|[{"name": "InsightConnect Block List", "member": ["MaliciousHost", "AnotherHost"]}]|
+|message|string|False|Human-readable description of the result|Retrieved 3 address groups from ADOM root.|
+  
+Example output:
+
+```
+{
+  "address_groups": [
+    {
+      "member": [
+        "MaliciousHost",
+        "AnotherHost"
+      ],
+      "name": "InsightConnect Block List"
+    }
+  ],
+  "message": "Retrieved 3 address groups from ADOM root."
+}
+```
+
 #### Remove Address Object from Group
 
 This action is used to remove an address object from an address group in a FortiManager ADOM
@@ -473,6 +558,7 @@ Example output:
 
 # Version History
 
+* 3.1.0 - Add Get Address Group and List Address Groups actions for retrieving address groups and their member names
 * 3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step
 * 2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects
 * 2.0.2 - Improve error messages to show actual API response instead of static error code mapping

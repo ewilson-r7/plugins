@@ -6,7 +6,7 @@ from sys import argv
 
 Name = "Fortinet FortiManager"
 Vendor = "rapid7_mnp"
-Version = "3.0.0"
+Version = "3.1.0"
 Description = "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
 
 
@@ -45,6 +45,10 @@ def main():
             self.add_action(actions.RemoveAddressObjectFromGroup())
         
             self.add_action(actions.CheckIfAddressInGroup())
+        
+            self.add_action(actions.GetAddressGroup())
+        
+            self.add_action(actions.ListAddressGroups())
         
             self.add_action(actions.GetPolicies())
         
