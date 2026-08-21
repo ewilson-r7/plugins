@@ -6,7 +6,6 @@ from .schema import CreateAddressObjectInput, CreateAddressObjectOutput, Input, 
 
 # Custom imports below
 from icon_fortinet_fortimanager.util.api import FortiManagerPluginException
-from icon_fortinet_fortimanager.util.constants import ERROR_CODE_OBJECT_ALREADY_EXISTS
 from icon_fortinet_fortimanager.util.helpers import Helpers
 
 
@@ -66,7 +65,7 @@ class CreateAddressObject(insightconnect_plugin_runtime.Action):
         try:
             self.connection.api.create_address_object(adom, object_name, address_type, value, comment=comment)
         except FortiManagerPluginException as error:
-            if error.code == ERROR_CODE_OBJECT_ALREADY_EXISTS:
+            if error.object_already_exists:
                 self.logger.info("Address object '%s' already exists, skipping creation.", object_name)
                 return self._skipped(
                     f"Address object '{object_name}' already exists in ADOM '{adom}'. No changes were made."

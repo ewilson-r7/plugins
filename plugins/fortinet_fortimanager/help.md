@@ -558,6 +558,7 @@ Example output:
 
 # Version History
 
+* 3.1.1 - Fix Create Address Object failing the step for an existing object - FortiManager returns status code -2 with the message Object already exists rather than the documented -6, so error conditions are now classified by both status code and message
 * 3.1.0 - Add Get Address Group and List Address Groups actions for retrieving address groups and their member names
 * 3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step
 * 2.1.0 - Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful handling for existing objects in Create, non-existent/in-use objects in Delete, and non-member objects in Remove from Group, fix subnet and name filters in Get Address Objects

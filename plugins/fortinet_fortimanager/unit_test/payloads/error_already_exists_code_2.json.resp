@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "result": [
+    {
+      "status": {
+        "code": -2,
+        "message": "Object already exists"
+      },
+      "url": "/pm/config/adom/test1/obj/firewall/address"
+    }
+  ]
+}

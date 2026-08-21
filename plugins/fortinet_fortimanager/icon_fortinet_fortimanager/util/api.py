@@ -12,7 +12,14 @@ from icon_fortinet_fortimanager.util.constants import (
     ERROR_CODE_OBJECT_NOT_EXIST,
     ERROR_CODE_SESSION_EXPIRED,
     ERROR_CODE_SUCCESS,
+    ERROR_CODES_OBJECT_ALREADY_EXISTS,
+    ERROR_CODES_OBJECT_IN_USE,
+    ERROR_CODES_OBJECT_NOT_EXIST,
     ERROR_MESSAGES,
+    MESSAGES_EXACT_OBJECT_IN_USE,
+    MESSAGES_OBJECT_ALREADY_EXISTS,
+    MESSAGES_OBJECT_IN_USE,
+    MESSAGES_OBJECT_NOT_EXIST,
     METHOD_ADD,
     METHOD_DELETE,
     METHOD_EXEC,
@@ -39,14 +46,47 @@ class SessionExpiredError(Exception):
 class FortiManagerPluginException(PluginException):
     """PluginException that also carries the FortiManager JSON-RPC status code.
 
-    Actions branch on `code` rather than matching substrings in the message, so
-    behaviour does not depend on FortiManager's wording (which varies by version -
-    the in-use error, for example, reports only 'used').
+    Exposes the condition an error represents rather than making each action work it
+    out. Both the status code and FortiManager's own message are consulted, because
+    neither alone is reliable: a duplicate address object comes back as -2 with the
+    message "Object already exists" on 7.x rather than the documented -6, while the
+    in-use error carries the code -10015 and only the word "used".
     """
 
-    def __init__(self, code: int, **kwargs):
+    def __init__(self, code: int, api_message: str = "", **kwargs):
         self.code = code
+        self.api_message = api_message or ""
         super().__init__(**kwargs)
+
+    def _message_matches(self, contains: tuple = (), exact: tuple = ()) -> bool:
+        """Match FortiManager's message against substring and whole-message markers."""
+        normalized = self.api_message.strip().lower()
+        if not normalized:
+            return False
+        if normalized in exact:
+            return True
+        return any(marker in normalized for marker in contains)
+
+    @property
+    def object_already_exists(self) -> bool:
+        """The target object is already present, so a create is a no-op."""
+        return self.code in ERROR_CODES_OBJECT_ALREADY_EXISTS or self._message_matches(
+            contains=MESSAGES_OBJECT_ALREADY_EXISTS
+        )
+
+    @property
+    def object_not_exist(self) -> bool:
+        """The target object is absent, so a delete is a no-op."""
+        return self.code in ERROR_CODES_OBJECT_NOT_EXIST or self._message_matches(
+            contains=MESSAGES_OBJECT_NOT_EXIST
+        )
+
+    @property
+    def object_in_use(self) -> bool:
+        """The object is still referenced by a group or policy and cannot be deleted."""
+        return self.code in ERROR_CODES_OBJECT_IN_USE or self._message_matches(
+            contains=MESSAGES_OBJECT_IN_USE, exact=MESSAGES_EXACT_OBJECT_IN_USE
+        )
 
 
 class FortiManagerAPI:
@@ -536,6 +576,7 @@ class FortiManagerAPI:
 
         raise FortiManagerPluginException(
             code=code,
+            api_message=api_message,
             cause=f"FortiManager API error (code {code}): {error_message}",
             assistance="Verify the input parameters and ADOM configuration.",
             data=str(result),

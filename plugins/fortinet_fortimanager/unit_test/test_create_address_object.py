@@ -151,6 +151,52 @@ class TestCreateAddressObject(TestCase):
         validate(result, CreateAddressObjectOutput.schema)
 
     @patch("requests.post")
+    def test_already_exists_reported_under_code_2(self, mock_post):
+        """FortiManager 7.x returns -2 with 'Object already exists', not the documented -6.
+
+        This is the exact response from the customer tenant. 3.0.0 matched on the
+        status code alone and so re-raised, failing the step.
+        """
+        mock_post.return_value = MockResponse(load_payload("error_already_exists_code_2.json.resp"))
+
+        result = self.action.run(
+            {
+                Input.ADDRESS: "165.227.16.208",
+                Input.ADDRESS_OBJECT_NAME: "TEST_ADDR-165.227.16.208_32",
+                Input.SKIP_RFC1918: False,
+            }
+        )
+
+        self.assertFalse(result[Output.SUCCESS])
+        self.assertNotIn(Output.ADDRESS_OBJECT, result)
+        self.assertIn("already exists", result[Output.MESSAGE])
+        validate(result, CreateAddressObjectOutput.schema)
+
+    @patch("requests.post")
+    def test_genuine_invalid_params_still_raises(self, mock_post):
+        """A real -2 error must not be swallowed as a duplicate.
+
+        -2 is FortiManager's generic invalid-parameters code, so it is only treated as
+        an existing object when the message says so.
+        """
+        mock_post.return_value = MockResponse(
+            {
+                "id": 1,
+                "result": [{"status": {"code": -2, "message": "Invalid value for attribute subnet"}}],
+            }
+        )
+
+        with self.assertRaises(PluginException) as context:
+            self.action.run(
+                {
+                    Input.ADDRESS: "8.8.8.8",
+                    Input.SKIP_RFC1918: False,
+                }
+            )
+
+        self.assertIn("Invalid value for attribute subnet", context.exception.cause)
+
+    @patch("requests.post")
     def test_custom_name_input(self, mock_post):
         """Test that a custom address object name is used when provided."""
         mock_post.return_value = MockResponse(self.mock_success_response)

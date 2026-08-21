@@ -47,6 +47,26 @@ ERROR_CODE_SESSION_EXPIRED = -10
 # message for this code is just 'used', so the code is what must be matched.
 ERROR_CODE_OBJECT_IN_USE = -10015
 
+# Condition classification.
+# FortiManager reports the same logical condition under different status codes
+# depending on version and endpoint: creating a duplicate address object returns -2
+# with the message "Object already exists" on 7.x, even though -6 is the documented
+# already-exists code. Matching only on the code misses that, and matching only on
+# the message breaks when the wording changes, so both are checked.
+ERROR_CODES_OBJECT_ALREADY_EXISTS = (ERROR_CODE_OBJECT_ALREADY_EXISTS,)
+ERROR_CODES_OBJECT_NOT_EXIST = (ERROR_CODE_OBJECT_NOT_EXIST,)
+ERROR_CODES_OBJECT_IN_USE = (ERROR_CODE_OBJECT_IN_USE,)
+
+# Substring markers matched case-insensitively against FortiManager's own message.
+MESSAGES_OBJECT_ALREADY_EXISTS = ("already exists", "duplicate")
+MESSAGES_OBJECT_NOT_EXIST = ("does not exist", "not exist", "no such")
+MESSAGES_OBJECT_IN_USE = ("in use", "used by", "referenced")
+
+# FortiManager reports the in-use condition as the bare word 'used', which is too
+# short to substring-match safely because it also appears inside 'unused'. Matched
+# against the whole message instead.
+MESSAGES_EXACT_OBJECT_IN_USE = ("used",)
+
 # Human-readable error code meanings (fallback when API message is empty)
 ERROR_MESSAGES = {
     ERROR_CODE_SUCCESS: "Success",

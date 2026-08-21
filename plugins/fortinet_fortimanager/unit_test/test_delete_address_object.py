@@ -73,6 +73,35 @@ class TestDeleteAddressObject(TestCase):
         validate(result, DeleteAddressObjectOutput.schema)
 
     @patch("requests.post")
+    def test_delete_object_in_use_reported_by_message_alone(self, mock_post):
+        """The in-use condition is recognized from the message even under a different code.
+
+        FortiManager's status code for this varies by version, so the message is a
+        fallback for when the code is not the documented -10015.
+        """
+        mock_post.return_value = MockResponse(
+            {"id": 1, "result": [{"status": {"code": -2, "message": "object is in use by addrgrp"}}]}
+        )
+
+        result = self.action.run({Input.ADDRESS_OBJECT: "used-object"})
+
+        self.assertFalse(result[Output.SUCCESS])
+        self.assertIn("still in use", result[Output.MESSAGE])
+        validate(result, DeleteAddressObjectOutput.schema)
+
+    @patch("requests.post")
+    def test_unrelated_error_still_raises(self, mock_post):
+        """An error that is neither absent nor in-use is a genuine failure."""
+        mock_post.return_value = MockResponse(
+            {"id": 1, "result": [{"status": {"code": -1, "message": "No permission for the resource"}}]}
+        )
+
+        with self.assertRaises(PluginException) as context:
+            self.action.run({Input.ADDRESS_OBJECT: "some-object"})
+
+        self.assertIn("No permission", context.exception.cause)
+
+    @patch("requests.post")
     def test_delete_address_object_with_adom_override(self, mock_post):
         """Test that ADOM input overrides connection default."""
         mock_post.return_value = MockResponse(self.mock_success_response)

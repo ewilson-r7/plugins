@@ -6,7 +6,6 @@ from .schema import DeleteAddressObjectInput, DeleteAddressObjectOutput, Input, 
 
 # Custom imports below
 from icon_fortinet_fortimanager.util.api import FortiManagerPluginException
-from icon_fortinet_fortimanager.util.constants import ERROR_CODE_OBJECT_IN_USE, ERROR_CODE_OBJECT_NOT_EXIST
 
 
 class DeleteAddressObject(insightconnect_plugin_runtime.Action):
@@ -34,7 +33,7 @@ class DeleteAddressObject(insightconnect_plugin_runtime.Action):
         try:
             self.connection.api.delete_address_object(adom, address_object)
         except FortiManagerPluginException as error:
-            if error.code == ERROR_CODE_OBJECT_NOT_EXIST:
+            if error.object_not_exist:
                 self.logger.info("Address object '%s' does not exist, nothing to delete.", address_object)
                 return {
                     Output.SUCCESS: False,
@@ -42,7 +41,7 @@ class DeleteAddressObject(insightconnect_plugin_runtime.Action):
                         f"Address object '{address_object}' does not exist in ADOM '{adom}'. Nothing to delete."
                     ),
                 }
-            if error.code == ERROR_CODE_OBJECT_IN_USE:
+            if error.object_in_use:
                 self.logger.info("Address object '%s' is still referenced and cannot be deleted.", address_object)
                 return {
                     Output.SUCCESS: False,

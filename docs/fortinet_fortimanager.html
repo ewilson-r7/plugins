@@ -43,7 +43,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Fortinet FortiManager</h2>
-    <span>Plugin v3.1.0</span>
+    <span>Plugin v3.1.1</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -71,7 +71,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Fortinet FortiManager Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v3.1.0 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v3.1.1 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
 
 <h2 id="description">Description</h2>
 <p>Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API.</p>
@@ -475,6 +475,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>3.1.1</td><td>Fixed Create Address Object failing the step when the object already exists. FortiManager returns status code -2 with the message "Object already exists" rather than the documented -6, so error conditions are now classified by both status code and message.</td></tr>
   <tr><td>3.1.0</td><td>Added Get Address Group and List Address Groups actions for retrieving address groups and the names of their member address objects.</td></tr>
   <tr><td>3.0.0</td><td>Normalize FortiManager address object responses so a subnet returned as a list or a type returned as an integer no longer crashes an action. Removed the Enable Search input from Check if Address in Group, which now always matches on both name and address value. Added a Message output to all five address actions. Delete Address Object reports an in-use object through its output instead of failing the step.</td></tr>
   <tr><td>2.1.0</td><td>Fix Enable Search logic in Check if Address in Group, add comment input to Create Address Object, add graceful error handling for existing/non-existent/in-use objects, fix subnet and name filters in Get Address Objects</td></tr>
@@ -494,7 +495,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.1.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
+  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.1.1 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
 </div>
 </div>
 </body>
