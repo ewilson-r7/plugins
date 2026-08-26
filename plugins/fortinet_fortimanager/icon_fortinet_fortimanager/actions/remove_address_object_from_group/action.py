@@ -1,10 +1,12 @@
 import insightconnect_plugin_runtime
 
+from insightconnect_plugin_runtime.exceptions import PluginException
 from insightconnect_plugin_runtime.telemetry import auto_instrument
 
 from .schema import RemoveAddressObjectFromGroupInput, RemoveAddressObjectFromGroupOutput, Input, Output, Component
 
 # Custom imports below
+from icon_fortinet_fortimanager.util.api import FortiManagerPluginException
 from icon_fortinet_fortimanager.util.helpers import Helpers
 
 
@@ -52,8 +54,24 @@ class RemoveAddressObjectFromGroup(insightconnect_plugin_runtime.Action):
         # Remove the address object from the member list
         member_names.remove(address_object)
 
-        # Update the group with the new member list
-        self.connection.api.update_address_group(adom, group, member_names)
+        # Writing the member list back revalidates every remaining member, so a member
+        # that has since been deleted from the ADOM fails the whole update.
+        try:
+            self.connection.api.update_address_group(adom, group, member_names)
+        except FortiManagerPluginException as error:
+            if error.referenced_object_not_exist:
+                raise PluginException(
+                    cause=(
+                        f"Group '{group}' could not be updated because it still contains a member that no "
+                        f"longer exists in ADOM '{adom}'."
+                    ),
+                    assistance=(
+                        "FortiManager revalidates every member when the group is updated. Check the response "
+                        "detail below for the offending member name and remove it in FortiManager, then retry."
+                    ),
+                    data=error.data,
+                ) from error
+            raise
 
         remaining = len(member_names)
         plural = "" if remaining == 1 else "s"

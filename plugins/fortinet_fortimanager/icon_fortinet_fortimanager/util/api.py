@@ -15,11 +15,13 @@ from icon_fortinet_fortimanager.util.constants import (
     ERROR_CODES_OBJECT_ALREADY_EXISTS,
     ERROR_CODES_OBJECT_IN_USE,
     ERROR_CODES_OBJECT_NOT_EXIST,
+    ERROR_CODES_REFERENCED_OBJECT_NOT_EXIST,
     ERROR_MESSAGES,
     MESSAGES_EXACT_OBJECT_IN_USE,
     MESSAGES_OBJECT_ALREADY_EXISTS,
     MESSAGES_OBJECT_IN_USE,
     MESSAGES_OBJECT_NOT_EXIST,
+    MESSAGES_REFERENCED_OBJECT_NOT_EXIST,
     METHOD_ADD,
     METHOD_DELETE,
     METHOD_EXEC,
@@ -77,8 +79,25 @@ class FortiManagerPluginException(PluginException):
     @property
     def object_not_exist(self) -> bool:
         """The target object is absent, so a delete is a no-op."""
-        return self.code in ERROR_CODES_OBJECT_NOT_EXIST or self._message_matches(
-            contains=MESSAGES_OBJECT_NOT_EXIST
+        if self.code in ERROR_CODES_OBJECT_NOT_EXIST:
+            return True
+        # "datasrc invalid ... solution: data not exist" is a different condition: the
+        # request itself is valid but references something missing. Its message would
+        # otherwise match on "not exist" and be misread as an absent target.
+        if self.referenced_object_not_exist:
+            return False
+        return self._message_matches(contains=MESSAGES_OBJECT_NOT_EXIST)
+
+    @property
+    def referenced_object_not_exist(self) -> bool:
+        """A value referenced by the request does not exist in the ADOM.
+
+        Raised for example when adding a member to an address group before the address
+        object has been created. Unlike the absent-target conditions this is a real
+        failure: the requested end state was not reached and cannot be.
+        """
+        return self.code in ERROR_CODES_REFERENCED_OBJECT_NOT_EXIST or self._message_matches(
+            contains=MESSAGES_REFERENCED_OBJECT_NOT_EXIST
         )
 
     @property

@@ -15,6 +15,7 @@ class Input:
 
 class Output:
     ADDRESS_OBJECTS = "address_objects"
+    MESSAGE = "message"
     SUCCESS = "success"
 
 
@@ -69,6 +70,12 @@ class AddAddressObjectToGroupOutput(insightconnect_plugin_runtime.Output):
         "type": "string"
       },
       "order": 2
+    },
+    "message": {
+      "type": "string",
+      "title": "Message",
+      "description": "Human-readable description of the result",
+      "order": 3
     },
     "success": {
       "type": "boolean",

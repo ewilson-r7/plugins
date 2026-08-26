@@ -4,7 +4,7 @@ products: [insightconnect]
 name: fortinet_fortimanager
 title: Fortinet FortiManager
 description: "Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API"
-version: 3.1.1
+version: 3.2.0
 connection_version: 1
 supported_versions: ["7.0.x", "7.2.x", "7.4.x"]
 vendor: rapid7_mnp
@@ -26,6 +26,7 @@ requirements:
   - "An API token (FortiManager 7.2.2+ recommended) or admin username and password"
   - "Network connectivity from the InsightConnect orchestrator to FortiManager on HTTPS (port 443)"
 version_history:
+  - "3.2.0 - Add Address Object to Group now reports a clear error naming the missing address object instead of surfacing the raw FortiManager datasrc message, and gains a Message output so all six address actions are consistent"
   - "3.1.1 - Fix Create Address Object failing the step for an existing object - FortiManager returns status code -2 with the message Object already exists rather than the documented -6, so error conditions are now classified by both status code and message"
   - "3.1.0 - Add Get Address Group and List Address Groups actions for retrieving address groups and their member names"
   - "3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step"
@@ -409,6 +410,12 @@ actions:
         type: "[]string"
         required: true
         example: ["MaliciousHost", "AnotherHost"]
+      message:
+        title: Message
+        description: Human-readable description of the result
+        type: string
+        required: false
+        example: Address object 'MaliciousHost' added to group 'InsightConnect Block List'. 2 members total.
   remove_address_object_from_group:
     title: Remove Address Object from Group
     description: Remove an address object from an address group in a FortiManager ADOM

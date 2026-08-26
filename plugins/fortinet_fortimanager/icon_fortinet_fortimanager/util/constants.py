@@ -46,6 +46,10 @@ ERROR_CODE_SESSION_EXPIRED = -10
 # Returned when an object is still referenced by a group or policy. FortiManager's
 # message for this code is just 'used', so the code is what must be matched.
 ERROR_CODE_OBJECT_IN_USE = -10015
+# Returned when a request references an object that does not exist, such as adding a
+# member to an address group before the address object itself has been created. The
+# message names the offending value after 'detail:'.
+ERROR_CODE_DATASRC_INVALID = -10131
 
 # Condition classification.
 # FortiManager reports the same logical condition under different status codes
@@ -56,11 +60,16 @@ ERROR_CODE_OBJECT_IN_USE = -10015
 ERROR_CODES_OBJECT_ALREADY_EXISTS = (ERROR_CODE_OBJECT_ALREADY_EXISTS,)
 ERROR_CODES_OBJECT_NOT_EXIST = (ERROR_CODE_OBJECT_NOT_EXIST,)
 ERROR_CODES_OBJECT_IN_USE = (ERROR_CODE_OBJECT_IN_USE,)
+ERROR_CODES_REFERENCED_OBJECT_NOT_EXIST = (ERROR_CODE_DATASRC_INVALID,)
 
 # Substring markers matched case-insensitively against FortiManager's own message.
 MESSAGES_OBJECT_ALREADY_EXISTS = ("already exists", "duplicate")
 MESSAGES_OBJECT_NOT_EXIST = ("does not exist", "not exist", "no such")
 MESSAGES_OBJECT_IN_USE = ("in use", "used by", "referenced")
+
+# FortiManager phrases a missing referenced object as
+# "datasrc invalid. object: ... detail: <name>. solution: data not exist"
+MESSAGES_REFERENCED_OBJECT_NOT_EXIST = ("datasrc invalid", "data not exist")
 
 # FortiManager reports the in-use condition as the bare word 'used', which is too
 # short to substring-match safely because it also appears inside 'unused'. Matched

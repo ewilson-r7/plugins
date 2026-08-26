@@ -86,6 +86,40 @@ class TestObjectInUse(TestCase):
         self.assertFalse(_error(-1, "No permission for the resource").object_in_use)
 
 
+class TestReferencedObjectNotExist(TestCase):
+    DATASRC = (
+        "datasrc invalid. object: firewall addrgrp.TESTGROUP:member. "
+        "detail: TEST_ADDR-8.2.15.5_32. solution: data not exist"
+    )
+
+    def test_documented_code_matches(self):
+        self.assertTrue(_error(-10131, self.DATASRC).referenced_object_not_exist)
+
+    def test_message_matches_under_other_code(self):
+        self.assertTrue(_error(-2, self.DATASRC).referenced_object_not_exist)
+
+    def test_does_not_collide_with_absent_target(self):
+        """'data not exist' must not be read as the target object being absent.
+
+        MESSAGES_OBJECT_NOT_EXIST contains 'not exist', which this message would
+        otherwise match, making a delete report a false no-op.
+        """
+        error = _error(-10131, self.DATASRC)
+
+        self.assertTrue(error.referenced_object_not_exist)
+        self.assertFalse(error.object_not_exist)
+
+    def test_explicit_not_exist_code_still_wins(self):
+        """A -3 response is authoritative for the absent-target condition."""
+        error = _error(-3, "Object does not exist")
+
+        self.assertTrue(error.object_not_exist)
+        self.assertFalse(error.referenced_object_not_exist)
+
+    def test_unrelated_error_does_not_match(self):
+        self.assertFalse(_error(-1, "No permission for the resource").referenced_object_not_exist)
+
+
 class TestExceptionRemainsAPluginException(TestCase):
     def test_carries_code_and_message(self):
         error = _error(-2, "Object already exists")

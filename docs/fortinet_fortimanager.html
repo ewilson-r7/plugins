@@ -43,7 +43,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Fortinet FortiManager</h2>
-    <span>Plugin v3.1.1</span>
+    <span>Plugin v3.2.0</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -71,7 +71,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Fortinet FortiManager Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v3.1.1 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v3.2.0 &middot; Supported: FortiManager 7.0.x, 7.2.x, 7.4.x</p>
 
 <h2 id="description">Description</h2>
 <p>Fortinet FortiManager is a centralized network security management platform that provides single-pane-of-glass administration for multiple FortiGate devices. This plugin enables InsightConnect SOAR workflows to manage address objects, address groups, and firewall policies through FortiManager's JSON-RPC API.</p>
@@ -290,7 +290,10 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 }</code></pre>
 
 <h2 id="add-address-object-to-group">Add Address Object to Group</h2>
-<p>Add an address object to an address group. The object must already exist in the ADOM. Addition is idempotent — adding an object that already exists in the group succeeds without error.</p>
+<p>Add an address object to an address group. The object must already exist in the ADOM. Addition is idempotent — adding an object that is already a member succeeds without duplicating it.</p>
+<div class="warning-box">
+  <strong>This action fails if the address object does not exist.</strong> Unlike the other address actions, a missing object is reported as a step failure rather than <code>success: false</code>, because the object was not added and cannot be — reporting success would let a block list silently miss an address. The error names the object and the ADOM. If a Create Address Object step runs before this one, check its <code>success</code> output: creation is skipped for whitelisted and RFC 1918 private addresses.
+</div>
 <h4>Input</h4>
 <table>
   <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
@@ -301,7 +304,8 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h4>Output</h4>
 <pre><code>{
   "success": true,
-  "address_objects": ["MaliciousHost", "AnotherHost"]
+  "address_objects": ["MaliciousHost", "AnotherHost"],
+  "message": "Address object 'MaliciousHost' added to group 'InsightConnect Block List'. 2 members total."
 }</code></pre>
 
 <h2 id="remove-address-object-from-group">Remove Address Object from Group</h2>
@@ -475,6 +479,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>3.2.0</td><td>Add Address Object to Group now reports a clear error naming the missing address object instead of surfacing the raw FortiManager datasrc message, and gained a Message output so all six address actions are consistent.</td></tr>
   <tr><td>3.1.1</td><td>Fixed Create Address Object failing the step when the object already exists. FortiManager returns status code -2 with the message "Object already exists" rather than the documented -6, so error conditions are now classified by both status code and message.</td></tr>
   <tr><td>3.1.0</td><td>Added Get Address Group and List Address Groups actions for retrieving address groups and the names of their member address objects.</td></tr>
   <tr><td>3.0.0</td><td>Normalize FortiManager address object responses so a subnet returned as a list or a type returned as an integer no longer crashes an action. Removed the Enable Search input from Check if Address in Group, which now always matches on both name and address value. Added a Message output to all five address actions. Delete Address Object reports an in-use object through its output instead of failing the step.</td></tr>
@@ -495,7 +500,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.1.1 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
+  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.2.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
 </div>
 </div>
 </body>

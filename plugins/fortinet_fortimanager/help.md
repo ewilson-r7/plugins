@@ -85,6 +85,7 @@ Example input:
 |Name|Type|Required|Description|Example|
 | :--- | :--- | :--- | :--- | :--- |
 |address_objects|[]string|True|Updated list of address object names in the group|["MaliciousHost", "AnotherHost"]|
+|message|string|False|Human-readable description of the result|Address object 'MaliciousHost' added to group 'InsightConnect Block List'. 2 members total.|
 |success|boolean|True|Boolean value indicating the success of the operation|True|
   
 Example output:
@@ -95,6 +96,7 @@ Example output:
     "MaliciousHost",
     "AnotherHost"
   ],
+  "message": "Address object 'MaliciousHost' added to group 'InsightConnect Block List'. 2 members total.",
   "success": true
 }
 ```
@@ -558,6 +560,7 @@ Example output:
 
 # Version History
 
+* 3.2.0 - Add Address Object to Group now reports a clear error naming the missing address object instead of surfacing the raw FortiManager datasrc message, and gains a Message output so all six address actions are consistent
 * 3.1.1 - Fix Create Address Object failing the step for an existing object - FortiManager returns status code -2 with the message Object already exists rather than the documented -6, so error conditions are now classified by both status code and message
 * 3.1.0 - Add Get Address Group and List Address Groups actions for retrieving address groups and their member names
 * 3.0.0 - Normalize FortiManager address object responses to fix crashes when a subnet is returned as a list or a type as an integer - remove the Enable Search input from Check if Address in Group so it always matches on both name and address value - add a Message output to all five address actions - Delete Address Object now reports an in-use object through the output instead of failing the step
