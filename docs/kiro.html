@@ -77,7 +77,7 @@
             <a href="#skill-plugin-review">plugin-review</a>
             <a href="#skill-refactor-plugin-auth">refactor-plugin-auth</a>
             <a href="#skill-generate-plugin-html-docs">generate-plugin-html-docs</a>
-            <a href="#skill-workflow-submission">workflow-submission</a>
+            <a href="#skill-deslop">deslop</a>
 
             <div class="section-label">Hooks</div>
             <a href="#hook-update-steering-on-fix">update-steering-on-fix</a>
@@ -141,7 +141,7 @@
 │   ├── plugin-review.md          # Read-only review
 │   ├── refactor-plugin-auth.md   # Auth migration workflow
 │   ├── generate-plugin-html-docs.md  # HTML docs generation
-│   └── workflow-submission.md    # Workflow submission process
+│   └── deslop.md                 # Strip AI slop before commit
 ├── hooks/
 │   ├── update-steering-on-fix.md # Learn from session fixes
 │   └── regenerate-docs.md        # Auto-regen docs after build
@@ -271,8 +271,8 @@
         </div>
 
         <div class="skill-item">
-            <h3 id="skill-workflow-submission">workflow-submission</h3>
-            <p>Submits completed workflows to the <span class="inline-code">rapid7/insightconnect-workflows</span> repository. Validates the workflow structure, creates the PR with proper metadata, and ensures the submission meets the upstream repository's contribution requirements.</p>
+            <h3 id="skill-deslop">deslop</h3>
+            <p>Strips AI-generated slop from Python plugin code across twelve patterns: comments that restate the code, defensive guards for impossible states, over-abstraction, stuttering names, chained error messages, dead code, speculative flexibility, and redundant logging. Scoped to what the current branch introduced rather than pre-existing code, leaves behavior unchanged, and skips generated files.</p>
         </div>
 
         <!-- HOOKS -->

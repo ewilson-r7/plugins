@@ -149,4 +149,8 @@ These provide the detailed reference material — you don't need to memorize the
 | `plugin-review` | Read-only review or questions |
 | `refactor-plugin-auth` | Migrating auth models |
 | `generate-plugin-html-docs` | Creating shareable HTML documentation |
-| `workflow-submission` | Submitting workflows to the workflows repo |
+
+Workflow work is out of scope for this repo. Building `.icon` bundles and submitting them to
+`rapid7/insightconnect-workflows` live in the `workflows` repo, as the `workflow-builder` and
+`workflow-submission` skills. Route requests about workflows there rather than attempting them
+here, since this repo has none of the workflow reference data those skills depend on.
