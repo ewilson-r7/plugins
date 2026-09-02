@@ -7,3 +7,4 @@ tests/**/*
 **/*.json
 **/*.tar
 **/*.gz
+**/*.plg
