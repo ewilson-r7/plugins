@@ -4,7 +4,7 @@ products: ["insightconnect"]
 name: microsoft_office365_email_security
 title: Microsoft Office365 Email Security
 description: The Microsoft Office 365 email security plugin adds utilities to help administrators manage their Office 365 instances. This plugin will allow administrators to take remediation actions across their organization
-version: 4.1.2
+version: 4.1.3
 connection_version: 4
 supported_versions: ["Microsoft Office 365 2026-07-14"]
 vendor: rapid7_custom
@@ -28,6 +28,9 @@ sdk:
   type: slim
   version: 6.6.0
   user: root
+  custom_cmd:
+    - "# Install PowerShell and ExchangeOnlineManagement module"
+    - RUN apt-get -y update && apt-get install -y curl gnupg apt-transport-https libicu76 --no-install-recommends && mkdir -p /opt/microsoft/powershell/7 && curl -fsSL https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-linux-x64.tar.gz | tar -xz -C /opt/microsoft/powershell/7 && chmod 755 /opt/microsoft/powershell/7/pwsh && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && rm -rf /var/lib/apt/lists/* && pwsh -Command "Install-Module -Name PSWSMan -RequiredVersion 2.3.1 -Force" && pwsh -Command "Install-WSMan" && pwsh -Command "Install-Module -Name ExchangeOnlineManagement -RequiredVersion 3.9.2 -Force"
 troubleshooting:
   - "Queries are expected to be wrapped in quotes e.g. subject:\"a subject\""
   - "If the 8192 character (per rule) limit is reached when adding additional conditions/emails to an existing rule, conditions/emails within that rule will need to be deleted to allow for the addition of new conditions/emails."
@@ -63,6 +66,7 @@ requirements:
   - "Tenant Allow/Block List actions"
   - "Tenant AllowBlockList Manager role"
 version_history:
+  - "4.1.3 - Move the PowerShell and ExchangeOnlineManagement install into the SDK custom_cmd block so it is no longer erased by insight-plugin refresh | Install modules with -Force instead of piping yes to answer the repository trust prompt"
   - "4.1.2 - Fix Tenant Allow/Block List scripts to use correct output marker for response parsing"
   - "4.1.1 - Fix Dockerfile to install PowerShell and ExchangeOnlineManagement module from public source"
   - "4.1.0 - Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0"

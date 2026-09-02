@@ -538,6 +538,7 @@ Example output:
 
 # Version History
 
+* 4.1.3 - Move the PowerShell and ExchangeOnlineManagement install into the SDK custom_cmd block so it is no longer erased by insight-plugin refresh | Install modules with -Force instead of piping yes to answer the repository trust prompt
 * 4.1.2 - Fix Tenant Allow/Block List scripts to use correct output marker for response parsing
 * 4.1.1 - Fix Dockerfile to install PowerShell and ExchangeOnlineManagement module from public source
 * 4.1.0 - Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry | Updated SDK to 6.6.0

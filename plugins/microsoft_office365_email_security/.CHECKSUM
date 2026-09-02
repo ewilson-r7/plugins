@@ -1,7 +1,7 @@
 {
-	"spec": "6af289309d48aa69bcef10482c3d75ee",
-	"manifest": "7e70fad919fd00e19db7d62a21cb4823",
-	"setup": "8d70334c60ff20a0572af1635fbeb1e4",
+	"spec": "6f49e231858f03824719574ac9ea7e00",
+	"manifest": "a76d8ca49145753974022db1f5306bce",
+	"setup": "824c26dcaaef542039bbf8c5327014de",
 	"schemas": [
 		{
 			"identifier": "block_sender_transport_rule/schema.py",
