@@ -8,8 +8,7 @@ This directory contains configuration files for [Kiro](https://kiro.dev), an AI-
 .kiro/
 ├── steering/       # Context rules loaded automatically or on demand
 ├── skills/         # Reusable multi-step workflows the agent can execute
-├── hooks/          # Event-driven automation triggered by IDE/agent actions
-└── settings/       # MCP servers and permission configuration
+└── hooks/          # Event-driven automation triggered by IDE/agent actions
 ```
 
 ## Steering Files
@@ -56,24 +55,18 @@ Hooks run automatically when specific events occur in the IDE or agent session.
 | `update-steering-on-fix.json` | User-triggered | Reviews session learnings and updates steering files to prevent repeat mistakes |
 | `regenerate-docs.json` | PostTaskExec | After a dev plugin build task completes, regenerates HTML docs and updates the docs site index |
 
-## Settings
+## Permissions and tool access
 
-| File | Purpose |
-|------|---------|
-| `settings/mcp.json` | Model Context Protocol server configuration (e.g., web fetch) |
-| `settings/permissions.yaml` | Shell command allowlists (see the caveat below) |
+Nothing in this directory grants the agent permissions, by design.
 
-### Where tool permissions actually apply
+Kiro reads permission rules from the user's own machine, not from a repository, so that a cloned
+repo cannot grant itself trust. Rules that need to take effect belong in
+`~/.kiro/settings/permissions.yaml` or in an agent profile.
 
-A skill cannot restrict its own tools. `SKILL.md` frontmatter supports only `name`,
+A skill also cannot restrict its own tools. `SKILL.md` frontmatter supports only `name`,
 `description`, `license`, `compatibility`, and `metadata`; all skills share one permission set
-and there is no isolation between them. To limit which tools are available, use a custom agent's
-`tools`, `excludedTools`, `allowedTools`, or `permissions.rules` fields instead.
-
-Note also that `settings/permissions.yaml` is committed here for reference only. Kiro reads
-permission rules from the user's own machine, not from a repository, so that a cloned repo cannot
-grant itself trust. Rules that need to take effect must be configured locally or carried in an
-agent profile.
+with no isolation between them. To limit which tools are available, use a custom agent's `tools`,
+`excludedTools`, `allowedTools`, or `permissions.rules` fields.
 
 ## How It Works Together
 

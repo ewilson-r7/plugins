@@ -83,9 +83,6 @@
             <a href="#hook-update-steering-on-fix">update-steering-on-fix</a>
             <a href="#hook-regenerate-docs">regenerate-docs</a>
 
-            <div class="section-label">Settings</div>
-            <a href="#settings-mcp">mcp</a>
-            <a href="#settings-permissions">permissions</a>
 
             <div class="section-label">Reference</div>
             <a href="#inclusion-modes">Inclusion Modes</a>
@@ -145,9 +142,6 @@
 ├── hooks/
 │   ├── update-steering-on-fix.md # Learn from session fixes
 │   └── regenerate-docs.md        # Auto-regen docs after build
-├── settings/
-│   ├── mcp.json                  # MCP server configuration
-│   └── permissions.yaml          # Shell command allowlists
 └── README.md                     # Overview documentation</code></pre>
 
         <!-- STEERING FILES -->
@@ -291,18 +285,6 @@
             <p>Triggers after a development build completes successfully. Regenerates the HTML documentation for the affected plugin and updates the <span class="inline-code">docs/index.html</span> navigation if a new plugin was added. Ensures docs always reflect the latest spec and implementation.</p>
         </div>
 
-        <!-- SETTINGS -->
-        <h2 id="settings">Settings</h2>
-
-        <div class="steering-item">
-            <h3 id="settings-mcp">mcp.json</h3>
-            <p>MCP (Model Context Protocol) server configuration. Currently configures a fetch server that allows Kiro to retrieve web content — used for reading API documentation, checking upstream repository state, and resolving latest SDK versions from GitHub.</p>
-        </div>
-
-        <div class="steering-item">
-            <h3 id="settings-permissions">permissions.yaml</h3>
-            <p>Shell command allowlists that control what the agent can execute. Defines permitted commands (like <span class="inline-code">insight-plugin</span>, <span class="inline-code">git</span>, <span class="inline-code">python</span>, <span class="inline-code">docker</span>) and blocks potentially dangerous operations. Acts as a security boundary for autonomous execution.</p>
-        </div>
 
         <!-- INCLUSION MODES -->
         <h2 id="inclusion-modes">Inclusion Modes</h2>

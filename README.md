@@ -65,7 +65,6 @@ The `.kiro/` directory contains development environment configuration:
 - **steering/** - Context rules for plugin development conventions, testing patterns, and code structure
 - **skills/** - Reusable agent skills for creating plugins, actions, workflows, and releases
 - **hooks/** - Automation hooks triggered by IDE events
-- **settings/** - MCP server and permissions configuration
 
 ## Changelog
 
