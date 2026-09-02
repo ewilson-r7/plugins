@@ -1,3 +1,8 @@
+---
+name: create-plugin-action
+description: Add a new action to an existing InsightConnect plugin, covering the plugin.spec.yaml edit, insight-plugin refresh scaffolding, the action implementation, the API client method, unit tests, and validation. Use when asked to add, create, or wire up an action, a new endpoint, or additional capability on a plugin that already exists.
+---
+
 # Create Plugin Action
 
 Step-by-step workflow for adding a new action to an existing InsightConnect plugin.
