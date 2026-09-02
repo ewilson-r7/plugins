@@ -1,3 +1,8 @@
+---
+name: refactor-plugin-auth
+description: Migrate an InsightConnect plugin from user-delegated authentication (ROPC or password grant) to app-only authentication (client_credentials), with optional Bot Framework support for messaging. Use when a plugin requires username and password credentials, when service accounts need eliminating for MFA, licensing, or security reasons, or when asked to move a plugin to app-only, application permissions, or client credentials auth.
+---
+
 # Refactor Plugin Authentication
 
 Guide for migrating a plugin from user-delegated auth (ROPC/password grant) to app-only auth (client_credentials) with optional Bot Framework for messaging.

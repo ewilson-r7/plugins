@@ -1,3 +1,8 @@
+---
+name: create-new-plugin
+description: Build a brand new Rapid7 InsightConnect plugin from scratch, covering vendor API research, plugin.spec.yaml authoring, insight-plugin scaffolding, connection and API client implementation, actions, unit tests, and validation. Use when asked to create, build, or start a new plugin, when a vendor integration does not exist yet, or when API documentation is supplied and a plugin should be built from it.
+---
+
 # Create New Plugin
 
 Step-by-step workflow for building a brand new InsightConnect plugin from scratch.

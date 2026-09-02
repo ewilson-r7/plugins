@@ -1,3 +1,8 @@
+---
+name: plugin-release
+description: Release a plugin change through the production GitHub process for rapid7/insightconnect-plugins. Covers syncing the dev branch with master, cutting a release branch, opening the PR, handling CI failures and a master that moves during review, and merging after approval. Use when asked to release, ship, or open an upstream PR for a plugin. Dev builds on the plugins fork do not use this flow, they push a feature branch instead.
+---
+
 # Plugin Release Workflow
 
 > **Scope:** This is the **prod** release process for `insightconnect-plugins` (origin `rapid7`). Dev builds on the `plugins` fork just push a feature branch to your fork (see `repos.md`) — no release branch.

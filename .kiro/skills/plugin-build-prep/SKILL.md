@@ -1,3 +1,8 @@
+---
+name: plugin-build-prep
+description: Verify plugin build readiness before any plugin code is written. Confirms whether the target is the dev or prod repo, checks that insight-plugin and the supporting toolchain are installed and current, resolves the latest SDK version from the SDK README changelog, and sets the Python version used for tooling. Use before insight-plugin create or refresh, and before any build, update, or enhance work. Skip for read-only review or questions.
+---
+
 # Plugin Build Prep (Pre-Build Readiness)
 
 Run this **before** any build/update/enhance work. It ensures tooling is installed and current and that you build against the latest SDK.

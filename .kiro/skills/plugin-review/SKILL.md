@@ -1,3 +1,8 @@
+---
+name: plugin-review
+description: Review an InsightConnect plugin or answer questions about one without changing anything. Reads from the master repos rather than a dev fork, checks the spec and implementation against conventions, and reports findings. Use when asked to review, audit, or explain a plugin, how one of its actions works, or whether it supports something. Strictly read-only, so no edits, no branches, and no insight-plugin refresh or create.
+---
+
 # Plugin Review & Questions (Read-Only)
 
 Workflow for reviewing a plugin or answering questions about one. This is **read-only** — no file edits, no branches, no `insight-plugin refresh/create`.

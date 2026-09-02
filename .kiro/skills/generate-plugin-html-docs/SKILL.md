@@ -1,3 +1,8 @@
+---
+name: generate-plugin-html-docs
+description: Generate a standalone, self-contained HTML documentation page for an InsightConnect plugin from its plugin.spec.yaml and help.md, with sidebar navigation, setup and configuration, a least-privilege permissions section, action inputs and outputs, custom types, and version history. Use when asked for shareable or customer-facing plugin documentation, an HTML doc page, or docs to hand to a sales engineer or stakeholder.
+---
+
 # Generate Plugin HTML Documentation
 
 Generate a standalone, shareable HTML documentation page for an InsightConnect plugin. The output is a single self-contained HTML file with a sidebar navigation, styled tables, and code examples — suitable for sharing with SEs, customers, or internal stakeholders.
