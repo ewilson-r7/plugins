@@ -14,7 +14,7 @@ Triggered by verbs like build, create, add, update, enhance, refactor, fix, rele
 
 1. **Ask "prod or dev?"** if the user has not already said which. Do not guess, and do not infer from the working directory.
    - **prod** → work in `$GITHUB_ROOT/insightconnect-plugins/plugins/<plugin_name>` (origin `rapid7/insightconnect-plugins`). Use the full release workflow (`git-workflow.md`).
-   - **dev** → work in `$GITHUB_ROOT/plugins/plugins/<plugin_name>` (your personal repo `ewilson-r7/plugins`). All plugins live on `main` — commit directly, no feature branches. Use the lightweight dev workflow (commit to `main` → push).
+   - **dev** → work in `$GITHUB_ROOT/plugins/plugins/<plugin_name>` (your personal repo `ewilson-r7/plugins`). All plugins live on `main`, which is protected, so use the lightweight dev workflow: short-lived branch, then a self-merged PR.
 2. **Run PRE-BUILD READINESS** (`plugin-build-prep` skill) before writing or scaffolding anything.
 3. Then follow the appropriate build workflow:
    - New plugin → `create-new-plugin` skill
@@ -51,11 +51,13 @@ See `repos.md` steering for the full routing table.
 5. Keep version at `1.0.0` until initial release
 
 ## Git flow after the build
-- **dev target** (`plugins` repo — `ewilson-r7/plugins`): commit directly to `main`. Stage specific files, commit as `plugin_name: Short description`, push to `origin main`. No feature branches needed.
+- **dev target** (`plugins` repo — `ewilson-r7/plugins`): `main` is protected and rejects direct pushes, so use a short-lived branch and self-merge the PR. Stage specific files and commit as `plugin_name: Short description`. No review is required, so merge straight after opening.
   ```bash
+  git checkout -b <plugin_name>-<short-desc>
   git add plugins/<plugin_name>/
   git commit -m "plugin_name: Short description"
-  git push origin main
+  git push -u origin <plugin_name>-<short-desc>
+  gh pr create --fill && gh pr merge --squash --delete-branch
   ```
   When ready to PR upstream:
   ```bash
