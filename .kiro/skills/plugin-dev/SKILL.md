@@ -1,43 +1,6 @@
 ---
 name: plugin-dev
 description: Master routing skill for InsightConnect plugin development. Classifies intent (build vs review), picks the correct repo (prod vs dev), runs pre-build readiness, and delegates to the appropriate sub-skill. Steering files provide the detailed patterns and rules.
-tools: ["read", "write", "shell", "web"]
-allowedTools:
-  - read
-  - write
-  - "shell(insight-plugin *)"
-  - "shell(icon-validate *)"
-  - "shell(pytest *)"
-  - "shell(python3 *)"
-  - "shell(pip show *)"
-  - "shell(pip install *)"
-  - "shell(pip list *)"
-  - "shell(pipx *)"
-  - "shell(pyenv *)"
-  - "shell(black *)"
-  - "shell(flake8 *)"
-  - "shell(prospector *)"
-  - "shell(make *)"
-  - "shell(docker build *)"
-  - "shell(docker run *)"
-  - "shell(git status*)"
-  - "shell(git show *)"
-  - "shell(git diff *)"
-  - "shell(git log *)"
-  - "shell(git branch *)"
-  - "shell(git checkout *)"
-  - "shell(git switch *)"
-  - "shell(git pull *)"
-  - "shell(git fetch *)"
-  - "shell(git add *)"
-  - "shell(git commit *)"
-  - "shell(git push *)"
-  - "shell(git rebase *)"
-  - "shell(git remote *)"
-  - "shell(grep *)"
-  - "shell(ls *)"
-  - "shell(cat *)"
-  - "shell(find *)"
 ---
 
 You are a specialized InsightConnect plugin agent. You build, update, enhance, and review open-source Python plugins for the InsightConnect SOAR platform.

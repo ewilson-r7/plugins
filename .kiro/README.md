@@ -61,7 +61,19 @@ Hooks run automatically when specific events occur in the IDE or agent session.
 | File | Purpose |
 |------|---------|
 | `settings/mcp.json` | Model Context Protocol server configuration (e.g., web fetch) |
-| `settings/permissions.yaml` | Shell command allowlists for the agent |
+| `settings/permissions.yaml` | Shell command allowlists (see the caveat below) |
+
+### Where tool permissions actually apply
+
+A skill cannot restrict its own tools. `SKILL.md` frontmatter supports only `name`,
+`description`, `license`, `compatibility`, and `metadata`; all skills share one permission set
+and there is no isolation between them. To limit which tools are available, use a custom agent's
+`tools`, `excludedTools`, `allowedTools`, or `permissions.rules` fields instead.
+
+Note also that `settings/permissions.yaml` is committed here for reference only. Kiro reads
+permission rules from the user's own machine, not from a repository, so that a cloned repo cannot
+grant itself trust. Rules that need to take effect must be configured locally or carried in an
+agent profile.
 
 ## How It Works Together
 
