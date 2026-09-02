@@ -43,7 +43,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Fortinet FortiManager</h2>
-    <span>Plugin v3.2.0</span>
+    <span>Plugin v3.2.1</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -479,6 +479,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>3.2.1</td><td>Set vendor to rapid7_custom for custom plugin distribution</td></tr>
   <tr><td>3.2.0</td><td>Add Address Object to Group now reports a clear error naming the missing address object instead of surfacing the raw FortiManager datasrc message, and gained a Message output so all six address actions are consistent.</td></tr>
   <tr><td>3.1.1</td><td>Fixed Create Address Object failing the step when the object already exists. FortiManager returns status code -2 with the message "Object already exists" rather than the documented -6, so error conditions are now classified by both status code and message.</td></tr>
   <tr><td>3.1.0</td><td>Added Get Address Group and List Address Groups actions for retrieving address groups and the names of their member address objects.</td></tr>
@@ -500,7 +501,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.2.0 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
+  Rapid7 InsightConnect &middot; Fortinet FortiManager Plugin v3.2.1 &middot; Supported Versions: 7.0.x, 7.2.x, 7.4.x
 </div>
 </div>
 </body>
