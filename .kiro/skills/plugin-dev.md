@@ -149,5 +149,4 @@ These provide the detailed reference material — you don't need to memorize the
 | `plugin-review` | Read-only review or questions |
 | `refactor-plugin-auth` | Migrating auth models |
 | `generate-plugin-html-docs` | Creating shareable HTML documentation |
-| `workflow-builder` | Building .icon workflow files |
 | `workflow-submission` | Submitting workflows to the workflows repo |

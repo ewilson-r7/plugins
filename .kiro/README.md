@@ -45,7 +45,6 @@ Skills are detailed step-by-step workflows the agent follows for specific tasks.
 | `plugin-review.md` | Read-only plugin review and analysis |
 | `refactor-plugin-auth.md` | Migrating plugins from user-delegated to app-only auth |
 | `generate-plugin-html-docs.md` | Generate self-contained HTML documentation pages |
-| `workflow-builder.md` | Build importable InsightConnect .icon workflow files |
 | `workflow-submission.md` | Submit workflows to the rapid7/insightconnect-workflows repo |
 
 ## Hooks
