@@ -4,10 +4,10 @@ products: [insightconnect]
 name: chatgpt
 title: ChatGPT
 description: Interact with OpenAI ChatGPT models to assist SOC analysts with threat analysis, incident summarization, script explanation, and response recommendations
-version: 1.0.0
+version: 1.0.1
 connection_version: 1
 supported_versions: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"]
-vendor: rapid7
+vendor: rapid7_custom
 support: rapid7
 cloud_ready: true
 status: []
@@ -40,6 +40,7 @@ requirements:
   - OpenAI API key with access to Chat Completions API
   - Sufficient API credits/quota for the selected model
 version_history:
+  - 1.0.1 - Set vendor to rapid7_custom for custom plugin distribution
   - 1.0.0 - Initial plugin release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions
 sdk:
   type: full

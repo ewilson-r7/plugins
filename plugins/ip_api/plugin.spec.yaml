@@ -5,15 +5,15 @@ products:
 name: ip_api
 title: IP API
 description: Geolocate IPv4 addresses, IPv6 addresses, and domain names using the ip-api.com service
-version: 1.0.0
+version: 1.0.1
 cloud_ready: true
-vendor: rapid7
+vendor: rapid7_custom
 support: rapid7
 status: []
 supported_versions: ["2026-04-15"]
 sdk:
   type: full
-  version: 6.4.3
+  version: 6.6.0
   user: nobody
 key_features:
   - Geolocate a single IP address or domain name
@@ -41,6 +41,7 @@ hub_tags:
   features: []
 
 version_history:
+- 1.0.1 - Set vendor to rapid7_custom for custom plugin distribution | Updated SDK to the latest version (6.6.0)
 - 1.0.0 - Initial plugin release
 
 types:

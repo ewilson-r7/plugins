@@ -5,8 +5,8 @@ import json
 from sys import argv
 
 Name = "Rapid7 Velociraptor"
-Vendor = "rapid7"
-Version = "1.0.0"
+Vendor = "rapid7_custom"
+Version = "1.0.1"
 Description = "Manage endpoint collections, hunts, and artifact deployments using the Rapid7 Velociraptor API"
 
 

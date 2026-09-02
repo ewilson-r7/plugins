@@ -199,6 +199,7 @@ Example output:
 
 # Version History
 
+* 1.0.1 - Set vendor to rapid7_custom for custom plugin distribution | Updated SDK to the latest version (6.6.0)
 * 1.0.0 - Initial plugin release
 
 # Links

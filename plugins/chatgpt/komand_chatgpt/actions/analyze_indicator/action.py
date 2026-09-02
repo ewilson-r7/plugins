@@ -32,9 +32,7 @@ class AnalyzeIndicator(insightconnect_plugin_runtime.Action):
         if additional_context:
             prompt_parts.append(f"Additional context: {additional_context}")
 
-        prompt_parts.append(
-            "Provide a detailed threat analysis, risk assessment, and recommended response actions."
-        )
+        prompt_parts.append("Provide a detailed threat analysis, risk assessment, and recommended response actions.")
 
         prompt = "\n\n".join(prompt_parts)
 

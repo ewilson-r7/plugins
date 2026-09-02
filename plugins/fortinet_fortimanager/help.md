@@ -560,6 +560,7 @@ Example output:
 
 # Version History
 
+* 3.2.1 - Set vendor to rapid7_custom for custom plugin distribution
 * 3.2.0 - Add Address Object to Group now reports a clear error naming the missing address object instead of surfacing the raw FortiManager datasrc message, and gains a Message output so all six address actions are consistent
 * 3.1.1 - Fix Create Address Object failing the step for an existing object - FortiManager returns status code -2 with the message Object already exists rather than the documented -6, so error conditions are now classified by both status code and message
 * 3.1.0 - Add Get Address Group and List Address Groups actions for retrieving address groups and their member names

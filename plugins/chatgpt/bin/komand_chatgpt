@@ -5,8 +5,8 @@ import json
 from sys import argv
 
 Name = "ChatGPT"
-Vendor = "rapid7"
-Version = "1.0.0"
+Vendor = "rapid7_custom"
+Version = "1.0.1"
 Description = "Interact with OpenAI ChatGPT models to assist SOC analysts with threat analysis, incident summarization, script explanation, and response recommendations"
 
 

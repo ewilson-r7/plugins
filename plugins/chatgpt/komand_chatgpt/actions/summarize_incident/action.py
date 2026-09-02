@@ -34,15 +34,11 @@ class SummarizeIncident(insightconnect_plugin_runtime.Action):
             prompt_parts.append(f"Incident severity: {severity.upper()}")
 
         prompt_parts.append(f"Incident data:\n{incident_data}")
-        prompt_parts.append(
-            "Provide a concise summary, timeline of events, and key findings."
-        )
+        prompt_parts.append("Provide a concise summary, timeline of events, and key findings.")
 
         prompt = "\n\n".join(prompt_parts)
 
-        self.logger.info(
-            "Summarizing incident for %s audience (severity: %s)", audience, severity or "not specified"
-        )
+        self.logger.info("Summarizing incident for %s audience (severity: %s)", audience, severity or "not specified")
 
         result = self.connection.client.chat_completion_json(
             prompt=prompt,

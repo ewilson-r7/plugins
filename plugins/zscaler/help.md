@@ -1675,6 +1675,7 @@ Example output:
 
 # Version History
 
+* 2.5.4 - Set vendor to rapid7_custom for custom plugin distribution
 * 2.5.3 - Fix Get Enrolled Devices validation error when OS Type is left blank by adding empty string to the enum options
 * 2.5.2 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page pagination parameters
 * 2.5.1 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page parameters, fix VPN Gateway Bypass PATCH to nest vpnGateways inside policyExtension object, fix OS Type filter to use correct numeric IDs

@@ -5,8 +5,8 @@ import json
 from sys import argv
 
 Name = "TeamDynamix"
-Vendor = "rapid7"
-Version = "1.0.0"
+Vendor = "rapid7_custom"
+Version = "1.0.1"
 Description = "TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management  platform. This plugin allows users to create, read, update, and search tickets  within a TeamDynamix instance, enabling automated ticketing workflows."
 
 

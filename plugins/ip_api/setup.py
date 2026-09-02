@@ -2,10 +2,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ip_api-rapid7-plugin",
-    version="1.0.0",
+    name="ip_api-rapid7_custom-plugin",
+    version="1.0.1",
     description="Geolocate IPv4 addresses, IPv6 addresses, and domain names using the ip-api.com service",
-    author="rapid7",
+    author="rapid7_custom",
     author_email="",
     url="",
     packages=find_packages(),

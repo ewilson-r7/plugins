@@ -703,6 +703,7 @@ Example output:
 
 # Version History
 
+* 1.0.1 - Set vendor to rapid7_custom for custom plugin distribution
 * 1.0.0 - Initial plugin release
 
 # Links

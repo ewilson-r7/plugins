@@ -1,7 +1,7 @@
 {
-	"spec": "d67bd69fe3bd0d81c0de2302dade98dc",
-	"manifest": "a6cb8cbc83c3eff981f91adf5d9a2fc8",
-	"setup": "1efbf0076108ae703c69a8085ea642f9",
+	"spec": "15a8d963ffc43563deb9ef625e8a2bbd",
+	"manifest": "70e31e660dd84d8b5a600a97d2034224",
+	"setup": "ad655e8264a0cdfc445bd7b70dd4912b",
 	"schemas": [
 		{
 			"identifier": "geolocate_bulk/schema.py",

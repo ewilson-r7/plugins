@@ -4,7 +4,6 @@ from .schema import GetEnrolledDevicesInput, GetEnrolledDevicesOutput, Input, Ou
 # Custom imports below
 from insightconnect_plugin_runtime.helper import clean
 
-
 OS_TYPE_MAP = {
     "Windows": "3",
     "macOS": "4",
