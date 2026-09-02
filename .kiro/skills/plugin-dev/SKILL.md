@@ -13,8 +13,8 @@ Before doing anything else, classify the request into one of two intents and pic
 Triggered by verbs like build, create, add, update, enhance, refactor, fix, release.
 
 1. **Ask "prod or dev?"** if the user has not already said which. Do not guess, and do not infer from the working directory.
-   - **prod** → work in `~/Documents/GitHub/insightconnect-plugins/plugins/<plugin_name>` (origin `rapid7/insightconnect-plugins`). Use the full release workflow (`git-workflow.md`).
-   - **dev** → work in `~/Documents/GitHub/plugins/plugins/<plugin_name>` (your personal repo `ewilson-r7/plugins`). All plugins live on `main` — commit directly, no feature branches. Use the lightweight dev workflow (commit to `main` → push).
+   - **prod** → work in `$GITHUB_ROOT/insightconnect-plugins/plugins/<plugin_name>` (origin `rapid7/insightconnect-plugins`). Use the full release workflow (`git-workflow.md`).
+   - **dev** → work in `$GITHUB_ROOT/plugins/plugins/<plugin_name>` (your personal repo `ewilson-r7/plugins`). All plugins live on `main` — commit directly, no feature branches. Use the lightweight dev workflow (commit to `main` → push).
 2. **Run PRE-BUILD READINESS** (`plugin-build-prep` skill) before writing or scaffolding anything.
 3. Then follow the appropriate build workflow:
    - New plugin → `create-new-plugin` skill

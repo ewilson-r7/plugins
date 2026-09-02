@@ -26,7 +26,7 @@ Check the diff against main and remove AI-generated slop introduced in the curre
 
 1. Identify changed files:
    ```bash
-   git -C ~/Documents/GitHub/plugins diff --name-only main -- plugins/
+   git diff --name-only main -- plugins/
    ```
 2. For each changed `.py` file, read the diff and surrounding code
 3. Identify slop patterns from the focus areas above

@@ -10,7 +10,8 @@ Generate a standalone, shareable HTML documentation page for an InsightConnect p
 ## Input
 
 - A plugin directory containing a `plugin.spec.yaml` and `help.md` file
-- Output path for the HTML file (default: `/Users/ewilson/Documents/Kiro Work Files/<plugin_name>_plugin_docs.html`)
+- Output path for the HTML file (default: `docs/<plugin_name>.html` in this repo, which is where
+  the published docs site reads from and what the regenerate-docs hook expects)
 
 ## Steps
 

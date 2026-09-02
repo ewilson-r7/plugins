@@ -5,15 +5,24 @@ inclusion: auto
 
 There are several local clones of Rapid7 plugin repos. Which one you use depends on the **intent** of the request and, for builds, on an explicit **prod vs dev** choice. **Never infer prod vs dev from the current working directory — always ask or use what the user stated.**
 
+## Clone location
+
+Paths below are written against `$GITHUB_ROOT`, the directory holding the sibling clones.
+It defaults to `~/Documents/GitHub`. When the clones live elsewhere, substitute that location
+throughout rather than assuming the default, and ask if it cannot be determined from context.
+
+This file is the single source for these paths. Skills reference it instead of repeating paths,
+so a different layout only needs correcting here.
+
 ## Routing Table
 
 | Intent | Target | Path | Git origin | Workflow |
 |--------|--------|------|------------|----------|
-| Build / Update / Enhance | **prod** | `~/Documents/GitHub/insightconnect-plugins/plugins/<name>` | `rapid7/insightconnect-plugins` | Full release flow (`git-workflow.md`) |
-| Build / Update / Enhance | **dev** | `~/Documents/GitHub/plugins/plugins/<name>` | `ewilson-r7/plugins` (personal repo; upstream rapid7) | Commit to `main` (below) |
-| Review / Question | current | `~/Documents/GitHub/insightconnect-plugins/plugins/<name>` | `rapid7/insightconnect-plugins` | Read-only |
-| Review / Question | legacy | `~/Documents/GitHub/komand-plugins/plugins/<name>` | rapid7 (legacy) | Read-only |
-| SDK version lookup | — | `~/Documents/GitHub/komand-plugin-sdk-python/README.md` (`## Changelog`) | rapid7 | Read top entry |
+| Build / Update / Enhance | **prod** | `$GITHUB_ROOT/insightconnect-plugins/plugins/<name>` | `rapid7/insightconnect-plugins` | Full release flow (`git-workflow.md`) |
+| Build / Update / Enhance | **dev** | `$GITHUB_ROOT/plugins/plugins/<name>` | `ewilson-r7/plugins` (personal repo; upstream rapid7) | Commit to `main` (below) |
+| Review / Question | current | `$GITHUB_ROOT/insightconnect-plugins/plugins/<name>` | `rapid7/insightconnect-plugins` | Read-only |
+| Review / Question | legacy | `$GITHUB_ROOT/komand-plugins/plugins/<name>` | rapid7 (legacy) | Read-only |
+| SDK version lookup | — | `$GITHUB_ROOT/komand-plugin-sdk-python/README.md` (`## Changelog`) | rapid7 | Read top entry |
 
 ## Rules
 
