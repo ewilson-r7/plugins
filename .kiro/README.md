@@ -37,15 +37,15 @@ Skills are detailed step-by-step workflows the agent follows for specific tasks.
 
 | Skill | Purpose |
 |-------|---------|
-| `plugin-dev.md` | Master routing skill — classifies intent, picks repo, delegates to sub-skills |
-| `plugin-build-prep.md` | Pre-build readiness check (tooling, SDK version, Python version) |
-| `create-new-plugin.md` | Full workflow for building a new plugin from scratch |
-| `create-plugin-action.md` | Adding a new action to an existing plugin |
-| `plugin-release.md` | Production release workflow (branch strategy, PR process) |
-| `plugin-review.md` | Read-only plugin review and analysis |
-| `refactor-plugin-auth.md` | Migrating plugins from user-delegated to app-only auth |
-| `generate-plugin-html-docs.md` | Generate self-contained HTML documentation pages |
-| `deslop.md` | Strip AI-generated slop from Python plugin code before committing |
+| `plugin-dev/` | Master routing skill — classifies intent, picks repo, delegates to sub-skills |
+| `plugin-build-prep/` | Pre-build readiness check (tooling, SDK version, Python version) |
+| `create-new-plugin/` | Full workflow for building a new plugin from scratch |
+| `create-plugin-action/` | Adding a new action to an existing plugin |
+| `plugin-release/` | Production release workflow (branch strategy, PR process) |
+| `plugin-review/` | Read-only plugin review and analysis |
+| `refactor-plugin-auth/` | Migrating plugins from user-delegated to app-only auth |
+| `generate-plugin-html-docs/` | Generate self-contained HTML documentation pages |
+| `deslop/` | Strip AI-generated slop from Python plugin code before committing |
 
 ## Hooks
 
