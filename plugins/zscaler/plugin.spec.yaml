@@ -3,11 +3,11 @@ extension: plugin
 products: [insightconnect]
 name: zscaler
 title: Zscaler
-version: 2.5.3
+version: 2.5.4
 connection_version: 2
 supported_versions: ["Zscaler OneAPI 2024"]
 description: Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network
-vendor: rapid7_mnp
+vendor: rapid7_custom
 support: rapid7
 status: []
 sdk:
@@ -65,6 +65,7 @@ troubleshooting:
     Custom API Request action can be used to reproduce a known working vendor request and confirm
     whether the failure is scope related."
 version_history:
+  - "2.5.4 - Set vendor to rapid7_custom for custom plugin distribution"
   - "2.5.3 - Fix Get Enrolled Devices validation error when OS Type is left blank by adding empty string to the enum options"
   - "2.5.2 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page pagination parameters"
   - "2.5.1 - Fix Get Enrolled Devices failing when OS Type is blank by including required pageSize and page parameters, fix VPN Gateway Bypass PATCH to nest vpnGateways inside policyExtension object, fix OS Type filter to use correct numeric IDs"

@@ -46,7 +46,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <nav class="sidebar">
   <div class="brand">
     <h2>Zscaler</h2>
-    <span>Plugin v2.5.3 &middot; OneAPI</span>
+    <span>Plugin v2.5.4 &middot; OneAPI</span>
   </div>
   <span class="section-label">Overview</span>
   <a href="#description">Description</a>
@@ -94,7 +94,7 @@ td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 
 <!-- Main Content -->
 <div class="main">
 <h1>Zscaler Plugin</h1>
-<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.5.3 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
+<p style="color:#6c6c8c; margin-bottom:32px;">Rapid7 InsightConnect &middot; v2.5.4 &middot; Zscaler OneAPI 2024 &middot; OAuth 2.0 Private Key JWT</p>
 
 <h2 id="description">Description</h2>
 <p>Zscaler is a SaaS security platform that provides fast, secure connections between client applications, regardless of device, location, or network. This plugin uses the Zscaler OneAPI unified gateway (<code>api.zsapi.net</code>) with OAuth 2.0 Client Credentials authentication to manage security policies across three Zscaler product lines:</p>
@@ -735,6 +735,7 @@ Connection test succeeded. Authorized services: ZCC.</code></pre>
 <h2 id="version-history">Version History</h2>
 <table>
   <tr><th>Version</th><th>Changes</th></tr>
+  <tr><td>2.5.4</td><td>Set vendor to rapid7_custom for custom plugin distribution</td></tr>
   <tr><td>2.2.0</td><td>Connection test now treats authentication as fatal and per-service authorization as informational, so it reports the state of every service and only fails when none are authorized | Share a single OAuth token across the ZIA, ZPA and ZCC clients so a token is obtained once per connection instead of once per service</td></tr>
   <tr><td>2.1.2</td><td>Fix profile ID being returned with a trailing decimal, which produced an invalid request path when passed to Remove VPN Gateway Bypass</td></tr>
   <tr><td>2.1.1</td><td>Fix Get VPN Gateway Bypasses and Remove VPN Gateway Bypass to handle a vpnGateways value returned as a comma separated string | Fix Get VPN Gateway Bypasses output keys to match the vpn_gateway_profile type</td></tr>
@@ -767,7 +768,7 @@ Connection test succeeded. Authorized services: ZCC.</code></pre>
 </ul>
 
 <div class="footer">
-  Rapid7 InsightConnect &middot; Zscaler Plugin v2.2.0 &middot; Supported Versions: Zscaler OneAPI 2024
+  Rapid7 InsightConnect &middot; Zscaler Plugin v2.5.4 &middot; Supported Versions: Zscaler OneAPI 2024
 </div>
 </div>
 </body>

@@ -40,7 +40,5 @@ class GetAddressGroup(insightconnect_plugin_runtime.Action):
 
         return {
             Output.ADDRESS_GROUP: address_group,
-            Output.MESSAGE: (
-                f"Address group '{address_group['name'] or group}' has {member_count} member{plural}."
-            ),
+            Output.MESSAGE: (f"Address group '{address_group['name'] or group}' has {member_count} member{plural}."),
         }

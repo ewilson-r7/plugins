@@ -6,15 +6,16 @@ Custom and enhanced plugins for Rapid7 InsightConnect SOAR, developed by Eric Wi
 
 | Plugin | Version | Latest Change |
 |--------|---------|---------------|
-| [active_directory_ldap](plugins/active_directory_ldap/) | 11.0.0 | Add Kerberos (SASL GSSAPI) authentication support, changed user to root for Kerberos credential management, updated SDK to 6.6.0 |
-| [chatgpt](plugins/chatgpt/) | 1.0.0 | Initial release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions for SOC analysts |
-| [fortinet_fortimanager](plugins/fortinet_fortimanager/) | 3.2.0 | Add Address Object to Group now names the missing address object instead of surfacing the raw FortiManager datasrc error, and gains a Message output; fix Create Address Object failing on an existing object (FortiManager returns code -2, not -6); add Get Address Group and List Address Groups actions; normalize FortiManager address responses to fix action crashes, remove Enable Search so Check if Address in Group always matches name and value |
+| [active_directory_ldap](plugins/active_directory_ldap/) | 11.0.1 | Set vendor to rapid7_custom; add Kerberos (SASL GSSAPI) authentication support, changed user to root for Kerberos credential management, updated SDK to 6.6.0 |
+| [chatgpt](plugins/chatgpt/) | 1.0.1 | Set vendor to rapid7_custom; initial release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions for SOC analysts |
+| [fortinet_fortimanager](plugins/fortinet_fortimanager/) | 3.2.1 | Set vendor to rapid7_custom; Add Address Object to Group now names the missing address object instead of surfacing the raw FortiManager datasrc error, and gains a Message output; fix Create Address Object failing on an existing object (FortiManager returns code -2, not -6); add Get Address Group and List Address Groups actions |
 | [halo_itsm](plugins/halo_itsm/) | 1.0.0 | Initial release — create, get, update, delete, and list tickets with action notes and file attachments in Halo ITSM |
-| [ip_api](plugins/ip_api/) | 1.0.0 | Initial release — geolocate IPv4/IPv6 addresses and domain names using ip-api.com |
-| [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.0 | Add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry. Updated SDK to 6.6.0 |
-| [microsoft_teams](plugins/microsoft_teams/) | 8.0.0 | Major refactor to app-only OAuth2 (client_credentials), added Bot Framework messaging, migrated endpoints to /v1.0, added installed_apps support for create_teams_chat |
-| [teamdynamix](plugins/teamdynamix/) | 1.0.0 | Initial release — create, get, update, and search tickets in TeamDynamix ITSM |
-| [zscaler](plugins/zscaler/) | 2.5.3 | Add Get Enrolled Devices and Get One-Time Password actions, enhance Update URLs of URL Category with parent-category URLs and activate config, fix Remove VPN Gateway Bypass deviceType error |
+| [ip_api](plugins/ip_api/) | 1.0.1 | Set vendor to rapid7_custom, updated SDK to 6.6.0; initial release — geolocate IPv4/IPv6 addresses and domain names using ip-api.com |
+| [microsoft_office365_email_security](plugins/microsoft_office365_email_security/) | 4.1.3 | Move the PowerShell and ExchangeOnlineManagement install into SDK custom_cmd so it survives insight-plugin refresh; add Tenant Allow/Block List actions: Get Items, Create Entry, Remove Entry |
+| [microsoft_teams](plugins/microsoft_teams/) | 8.0.1 | Set vendor to rapid7_custom, updated SDK to 6.6.0; major refactor to app-only OAuth2 (client_credentials), added Bot Framework messaging, migrated endpoints to /v1.0 |
+| [rapid7_velociraptor](plugins/rapid7_velociraptor/) | 1.0.1 | Set vendor to rapid7_custom; initial release — list and inspect clients, launch artifact collections, create and monitor hunts, retrieve results, and manage client labels |
+| [teamdynamix](plugins/teamdynamix/) | 1.0.1 | Set vendor to rapid7_custom, updated SDK to 6.6.0; initial release — create, get, update, and search tickets in TeamDynamix ITSM |
+| [zscaler](plugins/zscaler/) | 2.5.4 | Set vendor to rapid7_custom; add Get Enrolled Devices and Get One-Time Password actions, enhance Update URLs of URL Category with parent-category URLs and activate config, fix Remove VPN Gateway Bypass deviceType error |
 
 ## Documentation
 
@@ -67,6 +68,13 @@ The `.kiro/` directory contains development environment configuration:
 - **settings/** - MCP server and permissions configuration
 
 ## Changelog
+
+### 2026-09-02
+- Standardized `vendor` to `rapid7_custom` across all 10 plugins (previously `rapid7` on six, `rapid7_mnp` on `fortinet_fortimanager` and `zscaler`)
+- Updated `ip_api` (6.4.3), `microsoft_teams` (6.5.1), and `teamdynamix` (6.5.0) to SDK 6.6.0
+- Ran `insight-plugin refresh` and `insight-plugin validate` against all 10 plugins
+- Fixed `microsoft_office365_email_security`: the PowerShell and ExchangeOnlineManagement install lived in the generated Dockerfile and was erased by `refresh`. It now lives in `sdk.custom_cmd`, so it survives regeneration
+- Added the missing `rapid7_velociraptor` row to the plugin table
 
 ### 2026-07-14
 - Added `docs/` site with sidebar navigation and plugin documentation for SE reference

@@ -298,6 +298,7 @@ Example output:
 
 # Version History
 
+* 1.0.1 - Set vendor to rapid7_custom for custom plugin distribution
 * 1.0.0 - Initial plugin release with Ask ChatGPT, Analyze Indicator, Summarize Incident, Suggest Response Actions, and Explain Script actions
 
 # Links

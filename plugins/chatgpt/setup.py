@@ -2,10 +2,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="chatgpt-rapid7-plugin",
-    version="1.0.0",
+    name="chatgpt-rapid7_custom-plugin",
+    version="1.0.1",
     description="Interact with OpenAI ChatGPT models to assist SOC analysts with threat analysis, incident summarization, script explanation, and response recommendations",
-    author="rapid7",
+    author="rapid7_custom",
     author_email="",
     url="",
     packages=find_packages(),

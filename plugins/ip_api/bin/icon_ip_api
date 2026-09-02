@@ -5,8 +5,8 @@ import json
 from sys import argv
 
 Name = "IP API"
-Vendor = "rapid7"
-Version = "1.0.0"
+Vendor = "rapid7_custom"
+Version = "1.0.1"
 Description = "Geolocate IPv4 addresses, IPv6 addresses, and domain names using the ip-api.com service"
 
 

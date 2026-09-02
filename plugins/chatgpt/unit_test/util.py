@@ -8,7 +8,6 @@ import insightconnect_plugin_runtime
 from komand_chatgpt.connection.connection import Connection
 from komand_chatgpt.connection.schema import Input as ConnectionInput
 
-
 STUB_CONNECTION_PARAMS = {
     ConnectionInput.API_KEY: {"secretKey": "sk-proj-test-key-1234567890"},
     ConnectionInput.MODEL: "gpt-4o",

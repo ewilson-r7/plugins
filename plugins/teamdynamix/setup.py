@@ -2,10 +2,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="teamdynamix-rapid7-plugin",
-    version="1.0.0",
+    name="teamdynamix-rapid7_custom-plugin",
+    version="1.0.1",
     description="TeamDynamix is an IT Service Management (ITSM) and Project Portfolio Management  platform. This plugin allows users to create, read, update, and search tickets  within a TeamDynamix instance, enabling automated ticketing workflows.",
-    author="rapid7",
+    author="rapid7_custom",
     author_email="",
     url="",
     packages=find_packages(),

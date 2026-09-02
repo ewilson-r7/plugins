@@ -83,7 +83,4 @@ class CheckIfAddressInGroup(insightconnect_plugin_runtime.Action):
         if not matching:
             return f"No address object matching '{address}' was found in group '{group}'."
         plural = "" if len(matching) == 1 else "s"
-        return (
-            f"Found {len(matching)} matching address object{plural} in group '{group}': "
-            f"{', '.join(matching)}."
-        )
+        return f"Found {len(matching)} matching address object{plural} in group '{group}': " f"{', '.join(matching)}."
