@@ -38,13 +38,18 @@ so a different layout only needs correcting here.
 
 For **dev** builds on the personal repo (`ewilson-r7/plugins`):
 
-All plugins live on `main` in `plugins/<plugin_name>/`. No feature branches needed for dev work — commit directly to `main`:
+All plugins live on `main` in `plugins/<plugin_name>/`. `main` is protected and rejects direct
+pushes, so dev work goes through a short-lived branch and a self-merged PR:
 ```bash
 # Make changes in plugins/<plugin_name>/
+git checkout -b <plugin_name>-<short-desc>
 git add plugins/<plugin_name>/
 git commit -m "plugin_name: Short description"
-git push origin main
+git push -u origin <plugin_name>-<short-desc>
+gh pr create --fill && gh pr merge --squash --delete-branch
 ```
+No review is required, so the PR can be merged immediately after opening. The branch exists to
+satisfy the protection rule, not to gate the work.
 
 When ready to submit upstream as a PR:
 ```bash
