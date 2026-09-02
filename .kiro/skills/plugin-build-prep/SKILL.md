@@ -18,8 +18,8 @@ Skip for review/question (read-only) work.
 
 ### 1. Confirm target repo
 Confirm the build intent and the explicit **prod or dev** choice (never infer from the working directory):
-- **prod** → `~/Documents/GitHub/insightconnect-plugins/plugins/<name>`
-- **dev** → `~/Documents/GitHub/plugins/plugins/<name>`
+- **prod** → `$GITHUB_ROOT/insightconnect-plugins/plugins/<name>`
+- **dev** → `$GITHUB_ROOT/plugins/plugins/<name>`
 
 See `repos.md` for the full routing table.
 
@@ -41,7 +41,7 @@ Offer to install/upgrade anything missing before proceeding.
 ### 3. Resolve the latest SDK version from the SDK README
 The latest `insightconnect-plugin-runtime` version is the **top entry** under `## Changelog` in:
 ```
-~/Documents/GitHub/komand-plugin-sdk-python/README.md
+$GITHUB_ROOT/komand-plugin-sdk-python/README.md
 ```
 Read that file, take the highest/newest version at the top of the changelog list, and use it for `sdk.version` in `plugin.spec.yaml`. The same README states the target Python version (currently 3.13.x).
 

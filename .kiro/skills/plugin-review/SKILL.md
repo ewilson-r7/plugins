@@ -9,17 +9,20 @@ Workflow for reviewing a plugin or answering questions about one. This is **read
 
 ## Source of Truth: Master Repos Only
 Always read from a master repo, never from the dev fork (the fork may hold uncommitted local changes):
-- **Current plugins** → `~/Documents/GitHub/insightconnect-plugins/plugins/<name>`
-- **Legacy plugins** → `~/Documents/GitHub/komand-plugins/plugins/<name>`
+- **Current plugins** → `$GITHUB_ROOT/insightconnect-plugins/plugins/<name>`
+- **Legacy plugins** → `$GITHUB_ROOT/komand-plugins/plugins/<name>`
 
 If unsure, check `insightconnect-plugins` first, then fall back to `komand-plugins`.
+
+`$GITHUB_ROOT` is the directory holding the sibling clones, defined in `repos.md`. It defaults to
+`~/Documents/GitHub`.
 
 ## Steps
 
 ### 1. Locate the plugin
 ```bash
-ls ~/Documents/GitHub/insightconnect-plugins/plugins/<name> \
-  || ls ~/Documents/GitHub/komand-plugins/plugins/<name>
+ls $GITHUB_ROOT/insightconnect-plugins/plugins/<name> \
+  || ls $GITHUB_ROOT/komand-plugins/plugins/<name>
 ```
 
 ### 2. Read the relevant files
